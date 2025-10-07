@@ -59,6 +59,25 @@ class Login_model extends CI_Model
         $query = $this->db->get('crud');
         return ($query->num_rows() == 0);
     }
+
+    public function save_remember_token($user_id, $token)
+    {
+        $this->db->where('id', $user_id);
+        return $this->db->update('crud', ['remember_token' => $token]);
+    }
+
+    public function get_user_by_token($token)
+{
+    $query = $this->db->get_where('crud', ['remember_token' => $token]);
+    return $query->row_array();
+
+        }
+
+    public function clear_remember_token($user_id)
+    {
+        $this->db->where('id', $user_id);
+        return $this->db->update('crud', ['remember_token' => null]);
+    }
 }
 
 

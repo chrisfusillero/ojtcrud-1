@@ -277,7 +277,7 @@ justify-content: center; align-items: center; text-shadow: 2px 2px 4px rgba(0, 0
 
       <section id="home" class="portfolio-section p-4 mb-5">
         <h2>Welcome!</h2>
-        <p>This is my personal portfolio where I showcase my skills, projects, and experiences.</p>
+        <p>This is my personal portfolio where I showcase my skills, projects, and experiences. Click on the each section to know more</p>
       </section>
 
 
