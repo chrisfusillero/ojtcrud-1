@@ -100,12 +100,23 @@
                     <input type="checkbox" class="form-check-input" id="rememberMe">
                     <label class="form-check-label" for="rememberMe">Remember me</label>
                 </div>
+
+            <div class="form-group">
+                <label for="role">Login Type</label>
+                <select name="role" id="role" class="form-control" required>
+                    <option value="regular">Regular User</option>
+                    <option value="admin">Admin</option>
+                </select>
+            </div>
             </div>
             <button type="submit" class="btn btn-primary">Login</button>
 
             <div>
             <p>Don't have an account? <a href="<?php echo base_url('index.php/AuthLogin/signup'); ?>">Sign up</a></p>
             </div>
+
+
+
         </form>
 
         </div>

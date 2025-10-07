@@ -48,11 +48,12 @@
                     
                     <div class="mb-3">
                         <label for="role" class="form-label fw-bold">Sign up as:</label>
-                        <select class="form-select" name="role" required>
-                            <option value="" disabled selected>Select role</option>
-                            <option value="user" <?php echo set_select('role', 'user'); ?>>Regular User</option>
-                            <option value="admin" <?php echo set_select('role', 'admin'); ?>>Admin</option>
-                        </select>
+                    <select class="form-select" name="role" required>
+                        <option value="" disabled selected>Select role</option>
+                        <option value="regular" <?php echo set_select('role', 'regular'); ?>>Regular User</option>
+                        <option value="admin" <?php echo set_select('role', 'admin'); ?>>Admin</option>
+                    </select>
+
                     </div>
 
                     <div class="d-flex justify-content-center mt-3">

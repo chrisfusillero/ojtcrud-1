@@ -33,46 +33,43 @@ class AuthLogin extends CI_Controller
 
    public function login()
 {
-    $this->form_validation->set_rules('email', 'Email', 'required');
-    $this->form_validation->set_rules('password', 'Password', 'required');
+    $email = $this->input->post('email');
+    $password = $this->input->post('password');
+    $selected_role = $this->input->post('role'); 
 
-    if ($this->form_validation->run() == FALSE) {
-        $this->load->view('login_form');
-        return;
-    }
+    
+    $user = $this->login_model->check_login($email, $selected_role);
 
-    $email = $this->input->post('email', true);
-    $password = $this->input->post('password', true);
-    $rememberMe = $this->input->post('remember_me'); 
-
-    $user_id = $this->login_model->validate_login($email, $password);
-
-    if ($user_id) {
-        $user_data = $this->login_model->get_user_data($user_id);
-
-        $this->session->set_userdata('user_id', $user_id);
-        $this->session->set_userdata('user_data', $user_data);
-        $this->session->set_userdata('logged_in', true);
-
+    if ($user) {
         
-        if ($rememberMe) {
-            $token = bin2hex(random_bytes(16));
-            $this->login_model->save_remember_token($user_id, $token);
-            set_cookie('remember_token', $token, 60 * 60 * 24 * 7); 
-        }
+        if (password_verify($password, $user['password'])) {
 
-        
-        if (isset($user_data['role']) && $user_data['role'] === 'admin') {
-            redirect('admin_dashboard');
+            
+            $this->session->set_userdata([
+                'user_id' => $user['id'],
+                'email'   => $user['email'],
+                'role'    => $user['user']
+            ]);
+
+            
+            if ($user['user'] === 'admin') {
+                redirect('admin_welcome');
+            } else {
+                redirect('welcome');
+            }
+
         } else {
-            redirect('welcome');
+            $this->session->set_flashdata('error', 'Invalid email or password.');
+            redirect('AuthLogin');
         }
-
     } else {
-        $this->session->set_flashdata('error', 'Invalid email or password.');
+        
+        $this->session->set_flashdata('error', 'Invalid email, password, or login type.');
         redirect('AuthLogin');
     }
 }
+
+
 
     public function signup()
     {

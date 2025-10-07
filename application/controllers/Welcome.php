@@ -22,41 +22,34 @@ class Welcome extends CI_Controller
     /**
      * Default method (e.g., accessed by /mycontroller)
      */
-    public function index()
-    {
-
-$data['info'] = $this->session->userdata();
-
-if (!$this->session->userdata('user_id')) {
-    redirect('AuthLogin');
-    return;
-}
-
-$user_id = $this->session->userdata('user_id');
-$data['firstname'] = $this->session->userdata('user_data')['firstname'];
-$data['lastname'] = $this->session->userdata('user_data')['lastname'];
-$data['username'] = $this->session->userdata('username');
-
-// echo print_r($data['firstname']);exit;
-
-
-if (empty($data['info']['user_id'])) {
-    redirect('AuthLogin');
-    return;
-}
-
-        $data['title'] = 'Welcome to My Controller';
-        $data['message'] = 'This is the default method.';
-        // $data['getUsers'] = $this->My_model->getdata();
-
-        $this->load->view('welcome_message', $data);
-
-
-        // Load a view file
-        // $this->load->view('header', $data); // Example of a header view
-        // $this->load->view('my_view', $data);
-        // $this->load->view('footer', $data); // Example of a footer view
+public function index()
+{
+    if (!$this->session->userdata('user_id')) {
+        redirect('AuthLogin');
+        return;
     }
+
+    $user_id = $this->session->userdata('user_id');
+
+   
+    $this->load->model('Login_model');
+    $user_data = $this->Login_model->get_user_data($user_id);
+
+    if ($user_data) {
+        $data['firstname'] = $user_data['firstname'];
+        $data['lastname']  = $user_data['lastname'];
+        $data['username']  = $user_data['username'];
+    } else {
+        $data['firstname'] = '';
+        $data['lastname']  = '';
+        $data['username']  = '';
+    }
+
+    $data['title'] = 'Welcome Page';
+    $data['message'] = 'Welcome to your dashboard!';
+    
+    $this->load->view('welcome_message', $data);
+}
 
     /**
      * Another method (e.g., accessed by /mycontroller/another_method)

@@ -40,18 +40,21 @@ class Login_model extends CI_Model
     }
 
     public function create_user($data)
-    {
+{
+    $insert_data = array(
+        'firstname' => $data['firstname'],
+        'lastname'  => $data['lastname'],
+        'username'  => $data['username'],
+        'address'   => $data['address'],
+        'email'     => $data['email'],
+        'password'  => password_hash($data['password'], PASSWORD_DEFAULT),
+        'user'      => $data['role'],   
+        'valid'     => 1
+    );
 
-        $insert_data = array(
-            'firstname' => $data['firstname'], 'lastname'  => $data['lastname'],
-            'username'  => $data['username'], 'address'   => $data['address'],
-            'email'     => $data['email'], 'password'  => password_hash($data['password'], PASSWORD_DEFAULT),
-            'valid'     => 1
-        );
-
-        $this->db->insert('crud', $insert_data);
-        return $this->db->insert_id();
-    }
+    $this->db->insert('crud', $insert_data);
+    return $this->db->insert_id();
+}
 
     public function is_email_available($email)
     {
@@ -59,6 +62,18 @@ class Login_model extends CI_Model
         $query = $this->db->get('crud');
         return ($query->num_rows() == 0);
     }
+
+    public function check_login($email, $role)
+{
+    $this->db->where('email', $email);
+    $this->db->where('user', $role);  // column 'user' contains 'regular' or 'admin'
+    $this->db->where('valid', 1);
+    $query = $this->db->get('crud');
+
+    return $query->row_array();
+}
+
+
 }
 
 
