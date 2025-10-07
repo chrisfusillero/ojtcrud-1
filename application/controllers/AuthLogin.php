@@ -31,39 +31,48 @@ class AuthLogin extends CI_Controller
         $this->load->view('login_form', $data);
     }
 
-    public function login()
-    {
-        $this->form_validation->set_rules('email', 'Email', 'required');
-        $this->form_validation->set_rules('password', 'Password', 'required');
+   public function login()
+{
+    $this->form_validation->set_rules('email', 'Email', 'required');
+    $this->form_validation->set_rules('password', 'Password', 'required');
 
-        if ($this->form_validation->run() == FALSE) {
-            $this->load->view('login_form');
-        } else {
-            $email = $this->input->post('email', true);
-            $password = $this->input->post('password', true);
-
-            $user_id = $this->login_model->validate_login($email, $password);
-
-            if ($user_id) {
-                $user_data = $this->login_model->get_user_data($user_id);
-
-                $this->session->set_userdata('user_id', $user_id);
-                $this->session->set_userdata('user_data', $user_data);
-                $this->session->set_userdata('logged_in', true);
-
-                echo '<script>';
-                echo 'history.replaceState(null, "", "' . base_url('index.php/welcome') . '");';
-                echo 'window.location.href = "' . base_url('index.php/welcome') . '";';
-                echo '</script>';
-            } else {
-                $this->session->set_flashdata('error', 'Invalid email or password.');
-                echo '<script>';
-                echo 'history.replaceState(null, "", "' . base_url('index.php/AuthLogin') . '");';
-                echo 'window.location.href = "' . base_url('index.php/AuthLogin') . '";';
-                echo '</script>';
-            }
-        }
+    if ($this->form_validation->run() == FALSE) {
+        $this->load->view('login_form');
+        return;
     }
+
+    $email = $this->input->post('email', true);
+    $password = $this->input->post('password', true);
+    $rememberMe = $this->input->post('remember_me'); 
+
+    $user_id = $this->login_model->validate_login($email, $password);
+
+    if ($user_id) {
+        $user_data = $this->login_model->get_user_data($user_id);
+
+        $this->session->set_userdata('user_id', $user_id);
+        $this->session->set_userdata('user_data', $user_data);
+        $this->session->set_userdata('logged_in', true);
+
+        
+        if ($rememberMe) {
+            $token = bin2hex(random_bytes(16));
+            $this->login_model->save_remember_token($user_id, $token);
+            set_cookie('remember_token', $token, 60 * 60 * 24 * 7); 
+        }
+
+        
+        if (isset($user_data['role']) && $user_data['role'] === 'admin') {
+            redirect('admin_dashboard');
+        } else {
+            redirect('welcome');
+        }
+
+    } else {
+        $this->session->set_flashdata('error', 'Invalid email or password.');
+        redirect('AuthLogin');
+    }
+}
 
     public function signup()
     {
@@ -88,9 +97,13 @@ class AuthLogin extends CI_Controller
             }
 
             $data = array(
-                'firstname' => $this->input->post('firstname'), 'lastname'  => $this->input->post('lastname'),
-                'username'  => $this->input->post('username'), 'address'   => $this->input->post('address'),
-                'email'     => $this->input->post('email'), 'password'  => $this->input->post('password') 
+                'firstname' => $this->input->post('firstname'),
+                'lastname'  => $this->input->post('lastname'),
+                'username'  => $this->input->post('username'),
+                'address'   => $this->input->post('address'),
+                'email'     => $this->input->post('email'),
+                'password'  => $this->input->post('password'),
+                'role'      => $this->input->post('role')
             );
 
             $user_id = $this->login_model->create_user($data);
