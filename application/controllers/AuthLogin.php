@@ -6,36 +6,29 @@ class AuthLogin extends CI_Controller
     public function __construct()
     {
         parent::__construct();
-        $this->load->helper(['url', 'form', 'security', 'cookie']);
+        $this->load->helper(['url', 'form', 'security']);
         $this->load->library(['session', 'form_validation']);
         $this->load->model('login_model');
     }
 
     public function index()
     {
-        
-        if (!$this->session->userdata('logged_in')) {
-            $remember_token = get_cookie('remember_token');
+        $data['title'] = 'Welcome to My Controller';
+        $data['message'] = 'This is the default method.';
+        $data['userdata'] = $this->session->userdata();
+        $data['info'] = $this->session->userdata();
 
-            if ($remember_token) {
-                $user = $this->login_model->get_user_by_token($remember_token);
-                if ($user) {
-                    $this->session->set_userdata('user_id', $user['id']);
-                    $this->session->set_userdata('user_data', $user);
-                    $this->session->set_userdata('logged_in', true);
-                    redirect('welcome');
-                    return;
-                }
+        
+        if (isset($data['info']['user_id'])) {
+            $this->session->unset_userdata('user_id');
+            $this->session->unset_userdata('user_data');
+            $this->session->userdata('logged_in'); {
+                redirect('welcome');
+                return;
             }
         }
 
-        
-        if ($this->session->userdata('logged_in')) {
-            redirect('welcome');
-            return;
-        }
-
-        $this->load->view('login_form');
+        $this->load->view('login_form', $data);
     }
 
     public function login()
@@ -69,19 +62,6 @@ class AuthLogin extends CI_Controller
                 echo 'window.location.href = "' . base_url('index.php/AuthLogin') . '";';
                 echo '</script>';
             }
-
-                if($rememberMe) {
-                    $token = bin2hex(random_bytes(16));
-                    $this->login_model->save_remember_token($user_id, $token);
-
-                    set_cookie('remember_token', $token, 60 * 60 * 24 * 7);
-                }
-
-                redirect('welcome');
-                } else {
-            $this->session->set_flashdata('error', 'Invalid email or password.');
-            redirect('AuthLogin');
-        }
         }
     }
 
@@ -137,13 +117,6 @@ class AuthLogin extends CI_Controller
 
     public function logout()
     {
-        
-        $user_id = $this->session->userdata('user_id');
-        if ($user_id) {
-            $this->login_model->clear_remember_token($user_id);
-        }
-
-        delete_cookie('remember_token');
         $this->session->sess_destroy();
         redirect('AuthLogin');
     }
