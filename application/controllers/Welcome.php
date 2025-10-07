@@ -1,0 +1,242 @@
+<?php
+defined('BASEPATH') or exit('No direct script access allowed');
+
+class Welcome extends CI_Controller
+{
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        parent::__construct();
+        // Load any necessary helpers, libraries, or models here
+        $this->load->helper('url', 'form','security');
+        $this->load->library('session');
+        $this->load->model('My_model');
+        // $this->load->model('My_model');
+
+        $this->load->library('form_validation');
+    }
+
+    /**
+     * Default method (e.g., accessed by /mycontroller)
+     */
+    public function index()
+    {
+
+$data['info'] = $this->session->userdata();
+
+if (!$this->session->userdata('user_id')) {
+    redirect('AuthLogin');
+    return;
+}
+
+$user_id = $this->session->userdata('user_id');
+$data['firstname'] = $this->session->userdata('user_data')['firstname'];
+$data['lastname'] = $this->session->userdata('user_data')['lastname'];
+$data['username'] = $this->session->userdata('username');
+
+// echo print_r($data['firstname']);exit;
+
+
+if (empty($data['info']['user_id'])) {
+    redirect('AuthLogin');
+    return;
+}
+
+        $data['title'] = 'Welcome to My Controller';
+        $data['message'] = 'This is the default method.';
+        // $data['getUsers'] = $this->My_model->getdata();
+
+        $this->load->view('welcome_message', $data);
+
+
+        // Load a view file
+        // $this->load->view('header', $data); // Example of a header view
+        // $this->load->view('my_view', $data);
+        // $this->load->view('footer', $data); // Example of a footer view
+    }
+
+    /**
+     * Another method (e.g., accessed by /mycontroller/another_method)
+     * @param string $param1 Optional parameter
+     */
+
+
+    public function delete($id) {
+
+    if (!is_numeric($id)) {
+        show_error('Invalid ID.');
+        return;
+    }
+
+    $id = intval($id);
+
+    $result = $this->My_model->soft_delete_data($id);
+
+    if ($result) {
+        $this->session->set_flashdata('kyre', [
+            'type' => 'success',
+            'message' => 'Record deleted successfully.'
+        ]);
+    } else {
+        $this->session->set_flashdata('kyre', [
+            'type' => 'danger',
+            'message' => 'Failed to delete record.'
+        ]);
+    }
+
+    echo '<script>';
+    echo 'window.location.replace("' . base_url('index.php/welcome/crud_details') . '");';
+    echo '</script>';
+}
+
+    public function edit($id) {
+        if (!is_numeric($id)) {
+            show_error('Invalid ID.');
+            return;
+        }
+        $data['record'] = $this->My_model->edit_data($id);
+        $data['firstname'] = $this->session->userdata('user_data')['firstname'];
+        $data['lastname'] = $this->session->userdata('user_data')['lastname'];
+        $this->load->view('edit_view', $data);
+    }
+
+    public function update($id) {
+    if (!is_numeric($id)) {
+        show_error('Invalid ID.');
+        return;
+    }
+
+    $id = intval($id);
+
+    $this->form_validation->set_rules('name', 'Name', 'required|trim');
+    $this->form_validation->set_rules('address', 'Address', 'trim');
+
+    if ($this->form_validation->run() == FALSE) {
+        $data['record'] = $this->My_model->get_data_by_id($id);
+        $this->load->view('edit_view', $data);
+    } else {
+        $data = array(
+            'id' => $id,
+            'firstname' => $this->input->post('name', true),
+            'email' => $this->input->post('email', true),
+            'address' => $this->input->post('address', true)
+        );
+
+        $result = $this->My_model->update_data($data);
+
+       if ($result) {
+        $this->session->set_flashdata('kyre', [
+            'type' => 'success',
+            'message' => 'Record updated successfully.'
+        ]);
+    } else {
+        $this->session->set_flashdata('kyre', [
+            'type' => 'danger',
+            'message' => 'Failed to update record.'
+        ]);
+    }
+
+        echo '<script>';
+        echo 'window.location.replace("' . base_url('index.php/welcome/crud_details') . '");';
+        echo '</script>';
+    }
+}
+
+    public function logout() {
+        // $this->session->unset_userdata('user_id');
+        $this->session->sess_destroy();
+        redirect('index.php/AuthLogin');
+        return;
+
+    }
+
+
+    public function crud_details()
+    {
+            $this->load->model('My_model');
+
+        $data['getUsers'] = $this->My_model->get_users();
+        $data['firstname'] = $this->session->userdata('user_data')['firstname'];
+        $data['lastname'] = $this->session->userdata('user_data')['lastname'];
+        $data['records'] = $this->My_model->getdata();
+        $data['valid_records'] = $this->My_model->get_valid_records();
+        //  echo print_r( $data['records']);exit;
+
+        $this->load->view('crud_details', $data);
+    }
+
+    public function settings()
+{
+
+    if (!$this->session->userdata('user_id')) {
+        redirect('AuthLogin');
+        return;
+    }
+
+    $user_id = $this->session->userdata('user_id');
+
+
+    $user = $this->My_model->get_single_data($user_id);
+
+
+    $data['firstname']     = $user['firstname'] ?? 'Guest';
+    $data['lastname']      = $user['lastname'] ?? '';
+    $data['email']         = $user['email'] ?? 'guest@example.com';
+    $data['getUsers']      = $this->My_model->get_users();
+    $data['records']       = $this->My_model->getdata();
+    $data['valid_records'] = $this->My_model->get_valid_records();
+
+    $this->load->view('settings', $data);
+}
+
+    public function calculator()
+{
+    $data['result'] = 0;  
+
+    if (!$this->session->userdata('user_id')) {
+        redirect('AuthLogin');
+        return;
+    }
+
+    $user_id = $this->session->userdata('user_id');
+
+
+    $user = $this->My_model->get_single_data($user_id);
+
+
+    $data['firstname']     = $user['firstname'] ?? 'Guest';
+    $data['lastname']      = $user['lastname'] ?? '';
+    $data['email']         = $user['email'] ?? 'guest@example.com';
+    $data['getUsers']      = $this->My_model->get_users();
+    $data['records']       = $this->My_model->getdata();
+    $data['valid_records'] = $this->My_model->get_valid_records();  
+
+    if ($this->input->post('expression')) {
+        $expression = $this->input->post('expression', true);
+
+        
+        $safe_expression = preg_replace('/[^0-9+\-*\/().]/', '', $expression);
+
+        try {
+            
+            $data['result'] = eval("return $safe_expression;");
+        } catch (Throwable $e) {
+            $data['result'] = 'Error';
+        }
+
+        $data['expression'] = $expression;
+
+        
+    }
+
+        
+
+    
+    $this->load->view('calculator', $data);
+}
+
+
+}
