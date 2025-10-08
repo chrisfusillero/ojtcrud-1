@@ -23,7 +23,7 @@ class admin_AuthLogin extends CI_Controller
             $this->session->unset_userdata('user_id');
             $this->session->unset_userdata('user_data');
             $this->session->userdata('logged_in'); {
-                redirect('welcome');
+                redirect('admin_welcome');
                 return;
             }
         }

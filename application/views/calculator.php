@@ -264,10 +264,15 @@ document.addEventListener('DOMContentLoaded', function () {
         expressionDiv.textContent = currentExpression;
     }
 
-    function handleNumberClick(number) {
-        currentResult += number;
-        updateDisplay();
+  function handleNumberClick(number) {
+    if (currentResult === '0') {
+        currentResult = number;  
+    } else {
+        currentResult += number; 
     }
+    updateDisplay();
+}
+
 
     function handleOperatorClick(operator) {
         if (currentResult !== '') {
@@ -341,3 +346,4 @@ document.addEventListener('DOMContentLoaded', function () {
 
 </body>
 </html>
+
