@@ -147,19 +147,31 @@ public function index()
     }
 
 
-    public function crud_details()
-    {
-            $this->load->model('My_model');
+   public function crud_details() {
 
-        $data['getUsers'] = $this->My_model->get_users();
-        $data['firstname'] = $this->session->userdata('user_data')['firstname'];
-        $data['lastname'] = $this->session->userdata('user_data')['lastname'];
-        $data['records'] = $this->My_model->getdata();
-        $data['valid_records'] = $this->My_model->get_valid_records();
-        //  echo print_r( $data['records']);exit;
-
-        $this->load->view('crud_details', $data);
+    if (!$this->session->userdata('user_id'))  {
+        redirect('AuthLogin');
+        return;
     }
+
+    $this->load->model('My_model');
+    $this->load->model('Login_model');
+
+    $user_id = $this->session->userdata('user_id');
+    $user_data = $this->Login_model->get_user_data($user_id);
+
+    $data['firstname'] = $user_data['firstname'];
+    $data['lastname']  = $user_data['lastname'];
+    $data['username']  = $user_data['username'];
+
+    $data['getUsers']      = $this->My_model->get_users();
+    $data['records']       = $this->My_model->getdata();    
+    $data['valid_records'] = $this->My_model->get_valid_records();
+
+    $this->load->view('crud_details', $data);
+
+
+   }
 
     public function settings()
 {

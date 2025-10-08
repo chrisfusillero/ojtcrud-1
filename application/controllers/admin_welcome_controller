@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
-class admin_controller extends CI_Controller
+class Welcome extends CI_Controller
 {
 
     /**
@@ -22,41 +22,34 @@ class admin_controller extends CI_Controller
     /**
      * Default method (e.g., accessed by /mycontroller)
      */
-    public function index()
-    {
-
-$data['info'] = $this->session->userdata();
-
-if (!$this->session->userdata('user_id')) {
-    redirect('AuthLogin');
-    return;
-}
-
-$user_id = $this->session->userdata('user_id');
-$data['firstname'] = $this->session->userdata('user_data')['firstname'];
-$data['lastname'] = $this->session->userdata('user_data')['lastname'];
-$data['username'] = $this->session->userdata('username');
-
-// echo print_r($data['firstname']);exit;
-
-
-if (empty($data['info']['user_id'])) {
-    redirect('AuthLogin');
-    return;
-}
-
-        $data['title'] = 'Welcome to My Controller';
-        $data['message'] = 'This is the default method.';
-        // $data['getUsers'] = $this->My_model->getdata();
-
-        $this->load->view('welcome_message', $data);
-
-
-        // Load a view file
-        // $this->load->view('header', $data); // Example of a header view
-        // $this->load->view('my_view', $data);
-        // $this->load->view('footer', $data); // Example of a footer view
+public function index()
+{
+    if (!$this->session->userdata('user_id')) {
+        redirect('AuthLogin');
+        return;
     }
+
+    $user_id = $this->session->userdata('user_id');
+
+   
+    $this->load->model('Login_model');
+    $user_data = $this->Login_model->get_user_data($user_id);
+
+    if ($user_data) {
+        $data['firstname'] = $user_data['firstname'];
+        $data['lastname']  = $user_data['lastname'];
+        $data['username']  = $user_data['username'];
+    } else {
+        $data['firstname'] = '';
+        $data['lastname']  = '';
+        $data['username']  = '';
+    }
+
+    $data['title'] = 'Welcome Page';
+    $data['message'] = 'Welcome to your dashboard!';
+    
+    $this->load->view('welcome_message', $data);
+}
 
     /**
      * Another method (e.g., accessed by /mycontroller/another_method)
@@ -154,19 +147,31 @@ if (empty($data['info']['user_id'])) {
     }
 
 
-    public function crud_details()
-    {
-            $this->load->model('My_model');
+   public function crud_details() {
 
-        $data['getUsers'] = $this->My_model->get_users();
-        $data['firstname'] = $this->session->userdata('user_data')['firstname'];
-        $data['lastname'] = $this->session->userdata('user_data')['lastname'];
-        $data['records'] = $this->My_model->getdata();
-        $data['valid_records'] = $this->My_model->get_valid_records();
-        //  echo print_r( $data['records']);exit;
-
-        $this->load->view('crud_details', $data);
+    if (!$this->session->userdata('user_id'))  {
+        redirect('AuthLogin');
+        return;
     }
+
+    $this->load->model('My_model');
+    $this->load->model('Login_model');
+
+    $user_id = $this->session->userdata('user_id');
+    $user_data = $this->Login_model->get_user_data($user_id);
+
+    $data['firstname'] = $user_data['firstname'];
+    $data['lastname']  = $user_data['lastname'];
+    $data['username']  = $user_data['username'];
+
+    $data['getUsers']      = $this->My_model->get_users();
+    $data['records']       = $this->My_model->getdata();    
+    $data['valid_records'] = $this->My_model->get_valid_records();
+
+    $this->load->view('crud_details', $data);
+
+
+   }
 
     public function settings()
 {
@@ -194,18 +199,49 @@ if (empty($data['info']['user_id'])) {
 
     public function calculator()
 {
-    $data['firstname'] = $this->session->userdata('user_data')['firstname'];
-    $data['lastname'] = $this->session->userdata('user_data')['lastname'];
-    $data['result'] = null;
-    $data['expression'] = null;
+    $data['result'] = 0;  
 
-    if ($this->input->server('REQUEST_METHOD') === 'POST') {
-        $expression = $this->input->post('expression', true);
-        $data['result'] = $this->My_model->calculate($expression);
-        $data['expression'] = $expression;
+    if (!$this->session->userdata('user_id')) {
+        redirect('AuthLogin');
+        return;
     }
 
+    $user_id = $this->session->userdata('user_id');
+
+
+    $user = $this->My_model->get_single_data($user_id);
+
+
+    $data['firstname']     = $user['firstname'] ?? 'Guest';
+    $data['lastname']      = $user['lastname'] ?? '';
+    $data['email']         = $user['email'] ?? 'guest@example.com';
+    $data['getUsers']      = $this->My_model->get_users();
+    $data['records']       = $this->My_model->getdata();
+    $data['valid_records'] = $this->My_model->get_valid_records();  
+
+    if ($this->input->post('expression')) {
+        $expression = $this->input->post('expression', true);
+
+        
+        $safe_expression = preg_replace('/[^0-9+\-*\/().]/', '', $expression);
+
+        try {
+            
+            $data['result'] = eval("return $safe_expression;");
+        } catch (Throwable $e) {
+            $data['result'] = 'Error';
+        }
+
+        $data['expression'] = $expression;
+
+        
+    }
+
+        
+
+    
     $this->load->view('calculator', $data);
 }
+
 
 }

@@ -150,7 +150,8 @@ body {
           <th scope="col">First Name</th>
           <th scope="col">Last Name</th>
           <th scope="col">Username</th>
-          <th scope="col">Address</th>  
+          <th scope="col">Address</th>
+            <th scope="col">Role</th>  
           <th scope="col">Actions</th>
         </tr>
       </thead>
@@ -161,6 +162,7 @@ body {
             <td><?= $value['lastname']; ?></td>
             <td><?= $value['username']; ?></td>
             <td><?= $value['address']; ?></td>
+            <td><?= $value['user']; ?></td>
             <td class="text-nowrap">
               <button onclick="edit_data(<?= $value['id']; ?>)" class="btn btn-sm btn-success me-1">edit</button>
               <button onclick="deletedata(<?= $value['id']; ?>)" class="btn btn-sm btn-danger">delete</button>

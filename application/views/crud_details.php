@@ -151,6 +151,7 @@ body {
           <th scope="col">Last Name</th>
           <th scope="col">Username</th>
           <th scope="col">Address</th> 
+          <th scope="col">Role</th>
         </tr>
       </thead>
       <tbody>
@@ -160,6 +161,7 @@ body {
             <td><?= $value['lastname']; ?></td>
             <td><?= $value['username']; ?></td>
             <td><?= $value['address']; ?></td>
+            <td><?= $value['user']; ?></td>
             <td class="text-nowrap">
             </td>
           </tr>
