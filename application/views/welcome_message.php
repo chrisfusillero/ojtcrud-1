@@ -22,6 +22,11 @@
 <style>
 
 body {
+  background-image: url('<?php echo base_url("assets/portfolio_image/symmetry.jpg"); ?>');
+  background-size: cover;         
+  background-position: center;    
+  background-repeat: no-repeat;   
+  background-attachment: fixed;   
   font-size: 16px;
   margin: 0;
   padding-top: 70px; 
@@ -67,6 +72,7 @@ body {
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
   background-size: cover;
   background-position: center;
+  margin-top: -56px;
 }
 
 .navbar-toggler:hover {
@@ -219,23 +225,16 @@ body {
 </nav>
 
 </header>
-
-
-
-    
-
-    <br>
-    <br>
  
 <div class="hero-section text-center p-5 rounded shadow" 
-style="background-image: url('<?php echo base_url('assets/portfolio_image/abstract-technology-background.png'); ?>');
+style="background-image: url('<?php echo base_url('assets/portfolio_image/ict-2.png'); ?>');
 background-size: cover; color: white; height: 100vh; display: flex; flex-direction: column; 
 justify-content: center; align-items: center; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);">
   <div class="content">
     <h1 class="display-4">Welcome!!</h1>
     <p class="lead">Everything at one glance, one click</p>
-    <br>
-  </div>
+    
+  </div>  
 </div>
 
 </div>

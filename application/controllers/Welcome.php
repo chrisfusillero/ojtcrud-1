@@ -86,15 +86,29 @@ public function index()
 }
 
     public function edit($id) {
-        if (!is_numeric($id)) {
-            show_error('Invalid ID.');
-            return;
-        }
-        $data['record'] = $this->My_model->edit_data($id);
-        $data['firstname'] = $this->session->userdata('user_data')['firstname'];
-        $data['lastname'] = $this->session->userdata('user_data')['lastname'];
-        $this->load->view('edit_view', $data);
+        if (!$this->session->userdata('user_id'))  {
+        redirect('AuthLogin');
+        return;
     }
+
+    $this->load->model('My_model');
+    $this->load->model('Login_model');
+
+    $user_id = $this->session->userdata('user_id');
+    $user_data = $this->Login_model->get_user_data($user_id);
+
+    $data['firstname'] = $user_data['firstname'];
+    $data['lastname']  = $user_data['lastname'];
+    $data['username']  = $user_data['username'];
+
+    $data['getUsers']      = $this->My_model->get_users();
+    $data['records']       = $this->My_model->getdata();    
+    $data['valid_records'] = $this->My_model->get_valid_records();
+
+    $this->load->view('edit_view', $data);
+
+
+   }
 
     public function update($id) {
     if (!is_numeric($id)) {
