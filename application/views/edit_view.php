@@ -128,7 +128,8 @@
   <div class="card p-4">
     <h3 class="text-center mb-4">Edit</h3>
 
-    <form action="http://localhost/crud/index.php/Welcome/update/<?= $record['id'] ?>" method="POST">
+   <form action="<?= base_url('index.php/Welcome/update/'.$record['id']) ?>" method="POST">
+    <input type="text" name="firstname" value="<?= htmlspecialchars($record['firstname']); ?>" required>
       <div class="row g-3">
         <div class="col-md-6">
           <div class="form-floating">

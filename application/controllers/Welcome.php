@@ -14,6 +14,7 @@ class Welcome extends CI_Controller
         $this->load->helper('url', 'form','security');
         $this->load->library('session');
         $this->load->model('My_model');
+        $this->load->model('Login_model');
         // $this->load->model('My_model');
 
         $this->load->library('form_validation');
@@ -85,30 +86,25 @@ public function index()
     echo '</script>';
 }
 
-    public function edit($id) {
-        if (!$this->session->userdata('user_id'))  {
-        redirect('AuthLogin');
+    public function edit($id)
+{
+    $this->load->model('My_model');
+    $data['record'] = $this->My_model->get_record_by_id($id);
+
+    $user_id = $this->session->userdata('user_id');
+    $data['user'] = $this->Login_model->get_user_data($user_id);
+    $this->load->view('settings', $data);
+
+
+  
+    if (!$data['record']) {
+        show_404();
         return;
     }
 
-    $this->load->model('My_model');
-    $this->load->model('Login_model');
-
-    $user_id = $this->session->userdata('user_id');
-    $user_data = $this->Login_model->get_user_data($user_id);
-
-    $data['firstname'] = $user_data['firstname'];
-    $data['lastname']  = $user_data['lastname'];
-    $data['username']  = $user_data['username'];
-
-    $data['getUsers']      = $this->My_model->get_users();
-    $data['records']       = $this->My_model->getdata();    
-    $data['valid_records'] = $this->My_model->get_valid_records();
-
     $this->load->view('edit_view', $data);
+}
 
-
-   }
 
     public function update($id) {
     if (!is_numeric($id)) {
@@ -199,6 +195,7 @@ public function index()
 
 
     $user = $this->My_model->get_single_data($user_id);
+    $data['user'] = $this->My_model->get_user_data($this->session->userdata('user_id'));
 
 
     $data['firstname']     = $user['firstname'] ?? 'Guest';

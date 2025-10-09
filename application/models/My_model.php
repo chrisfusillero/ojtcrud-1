@@ -47,6 +47,12 @@ class My_model extends CI_Model
         return $query->row_array();
     }
 
+    public function get_record_by_id($id)
+{
+    return $this->db->get_where('crud', ['id' => $id])->row_array();
+}
+
+
     public function get_single_data($id)
     {
         $this->db->select('*');
@@ -54,6 +60,14 @@ class My_model extends CI_Model
         $this->db->where('id', $id);
         $query = $this->db->get();
         return $query->row_array();
+    }
+
+    public function get_user_data($id)
+    {
+        $this->db->where('id', $id);    
+        $query = $this->db->get('crud'); 
+
+        return $query->row_array(); 
     }
 
     public function update_data($data)
