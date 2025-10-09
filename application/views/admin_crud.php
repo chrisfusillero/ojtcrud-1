@@ -107,7 +107,7 @@ body {
 
         
         <li class="nav-item">
-          <a class="nav-link fw-medium" href="<?= base_url('index.php/welcome/calculator'); ?>">Calculator</a>
+          <a class="nav-link fw-medium" href="<?= base_url('index.php/admin_Main/admin_calculator'); ?>">Calculator</a>
         </li>
 
         
@@ -124,7 +124,7 @@ body {
           </button>
           <ul class="dropdown-menu dropdown-menu-end">
             <li>
-              <a class="dropdown-item" href="<?= base_url('index.php/welcome/settings'); ?>">Settings</a>
+              <a class="dropdown-item" href="<?= base_url('index.php/admin_Main/admin_settings'); ?>">Settings</a>
             </li>
             <li>
               <a class="dropdown-item text-danger" href="<?= base_url('index.php/AuthLogin'); ?>">
@@ -222,12 +222,12 @@ body {
         }
 
         function edit_data(id) {
-            window.location.href = url + 'index.php/Welcome/edit/' + id;
+            window.location.href = url + 'index.php/admin_Main/admin_edit_access/' + id;
 
         }
 
         function update_data(id) {
-            window.location.href = url + 'index.php/Welcome/update/' + id;
+            window.location.href = url + 'index.php/admin_Main/admin_update_access/' + id;
         }
     </script>
 

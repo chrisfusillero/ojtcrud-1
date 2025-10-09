@@ -175,7 +175,7 @@ public function index()
 
    }
 
-    public function settings()
+    public function admin_settings()
 {
 
     if (!$this->session->userdata('user_id')) {
@@ -196,10 +196,10 @@ public function index()
     $data['records']       = $this->My_model->getdata();
     $data['valid_records'] = $this->My_model->get_valid_records();
 
-    $this->load->view('settings', $data);
+    $this->load->view('admin_settings', $data);
 }
 
-    public function calculator()
+    public function admin_calculator()
 {
     $data['result'] = 0;  
 
@@ -242,7 +242,7 @@ public function index()
         
 
     
-    $this->load->view('calculator', $data);
+    $this->load->view('admin_calculator', $data);
 }
 
 

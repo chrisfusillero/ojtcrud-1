@@ -207,7 +207,7 @@ body {
           </button>
           <ul class="dropdown-menu dropdown-menu-end">
             <li>
-              <a class="dropdown-item" href="<?= base_url('index.php/welcome/settings'); ?>">Settings</a>
+              <a class="dropdown-item" href="<?= base_url('index.php/admin_Main/admin_settings'); ?>">Settings</a>
             </li>
             <li>
               <a class="dropdown-item text-danger" href="<?= base_url('index.php/AuthLogin'); ?>">
