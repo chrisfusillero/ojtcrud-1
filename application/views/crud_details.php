@@ -150,26 +150,26 @@ body {
           <th scope="col">First Name</th>
           <th scope="col">Last Name</th>
           <th scope="col">Username</th>
-          <th scope="col">Address</th> 
+          <th scope="col">Address</th>
           <th scope="col">Role</th>
         </tr>
       </thead>
       <tbody>
-        <?php foreach ($getUsers as $key => $value): ?>
+        <?php foreach ($getUsers as $value): ?>
           <tr>
             <td><?= $value['firstname']; ?></td>
             <td><?= $value['lastname']; ?></td>
             <td><?= $value['username']; ?></td>
             <td><?= $value['address']; ?></td>
             <td><?= $value['user']; ?></td>
-            <td class="text-nowrap">
-            </td>
+            
           </tr>
         <?php endforeach; ?>
       </tbody>
     </table>
   </div>
 </div>
+
 
 
 

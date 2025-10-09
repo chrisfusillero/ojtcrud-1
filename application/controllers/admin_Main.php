@@ -201,9 +201,7 @@ public function index()
 
     public function admin_calculator()
 {
-    $data['result'] = 0;  
-
-    if (!$this->session->userdata('user_id')) {
+   if (!$this->session->userdata('user_id')) {
         redirect('AuthLogin');
         return;
     }
@@ -213,35 +211,33 @@ public function index()
 
     $user = $this->My_model->get_single_data($user_id);
 
-
     $data['firstname']     = $user['firstname'] ?? 'Guest';
     $data['lastname']      = $user['lastname'] ?? '';
-    $data['email']         = $user['email'] ?? 'guest@example.com';
-    $data['getUsers']      = $this->My_model->get_users();
-    $data['records']       = $this->My_model->getdata();
-    $data['valid_records'] = $this->My_model->get_valid_records();  
+    $data['result'] = null;
+    $data['expression'] = null;
 
-    if ($this->input->post('expression')) {
+    if ($this->input->server('REQUEST_METHOD') === 'POST') {
         $expression = $this->input->post('expression', true);
+
+        
+        if (strlen($expression) > 1 && strpos($expression, '0') === 0) {
+            
+            $expression = substr($expression, 1);
+        }
 
         
         $safe_expression = preg_replace('/[^0-9+\-*\/().]/', '', $expression);
 
         try {
             
-            $data['result'] = eval("return $safe_expression;");
-        } catch (Throwable $e) {
+            $data['result'] = $this->My_model->calculate($safe_expression);
+        } catch (Exception $e) {
             $data['result'] = 'Error';
         }
 
         $data['expression'] = $expression;
-
-        
     }
 
-        
-
-    
     $this->load->view('admin_calculator', $data);
 }
 

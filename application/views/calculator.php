@@ -39,8 +39,6 @@
   
   padding-top: 90px;
   box-sizing: border-box;
-
-  
   height: calc(100vh - 90px);
   display: flex;
   align-items: center;

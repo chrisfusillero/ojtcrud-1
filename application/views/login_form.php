@@ -27,8 +27,8 @@
         }
 
         .login-form {
-            width: 300px; 
-            padding: 20px;
+            width: 550px; 
+            padding: 30px;
             border: 1px solid #ddd; 
             border-radius: 5px;
             background-color: #fff; 

@@ -238,7 +238,7 @@ background-size: cover; color: white; height: 100vh; display: flex; flex-directi
 justify-content: center; align-items: center; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);">
   <div class="content">
     <h1 class="display-4">Welcome!!</h1>
-    <p class="lead">Everything at one glance, one click</p>
+    <p class="lead">This is the administrator interface</p>
     <br>
   </div>
 </div>
