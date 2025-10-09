@@ -8,16 +8,18 @@ class admin_Main extends CI_Controller
      * Constructor
      */
     public function __construct()
-    {
-        parent::__construct();
-        // Load any necessary helpers, libraries, or models here
-        $this->load->helper('url', 'form','security');
-        $this->load->library('session');
-        $this->load->model('My_model');
-        // $this->load->model('My_model');
+{
+    parent::__construct();
+    $this->load->helper(['url', 'form', 'security']);
+    $this->load->library(['session', 'form_validation']);
+    $this->load->model(['My_model', 'Login_model']);
 
-        $this->load->library('form_validation');
+    
+    if ($this->session->userdata('role') !== 'admin') {
+        redirect('AuthLogin');
+        return;
     }
+}
 
     /**
      * Default method (e.g., accessed by /mycontroller)
@@ -48,7 +50,7 @@ public function index()
     $data['title'] = 'Welcome Page';
     $data['message'] = 'Welcome to your dashboard!';
     
-    $this->load->view('welcome_message', $data);
+    $this->load->view('admin_welcome', $data);
 }
 
     /**
@@ -147,7 +149,7 @@ public function index()
     }
 
 
-   public function crud_details() {
+   public function admin_crud() {
 
     if (!$this->session->userdata('user_id'))  {
         redirect('AuthLogin');
@@ -168,7 +170,7 @@ public function index()
     $data['records']       = $this->My_model->getdata();    
     $data['valid_records'] = $this->My_model->get_valid_records();
 
-    $this->load->view('crud_details', $data);
+    $this->load->view('admin_crud', $data);
 
 
    }

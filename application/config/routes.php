@@ -54,5 +54,7 @@ $route['main'] = 'Welcome/index';
 $route['login'] = 'AuthLogin/index';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
+$route['welcome'] = 'welcome';
 $route['welcome/crud_details'] = 'welcome/crud_details';
 $route['welcome/calculator'] = 'welcome/calculator';
+$route['admin_welcome'] = 'admin_welcome';

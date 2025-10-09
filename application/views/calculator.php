@@ -19,19 +19,7 @@
         }
     </script>
 
-    <style>
-        
-body {
-  font-family: 'Segoe UI', Arial, sans-serif;
-  background-color: #f5f5f5;
-  color: #333;
-  margin: 0;
-  padding-top: 90px; 
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-height: 100vh;
-}
+<style>
 
 
 .header {
@@ -47,41 +35,48 @@ body {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
+.main-container {
+  
+  padding-top: 90px;
+  box-sizing: border-box;
+
+  
+  height: calc(100vh - 90px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+ 
+  overflow: hidden;
+}
 
 
 .calculator {
-  font-family: 'Roboto Mono', monospace; 
+  font-family: 'Roboto Mono', monospace;
   width: 100%;
-  max-width: 400px;
+  max-width: 340px;        
   background-color: #222;
   border-radius: 12px;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.3);
   overflow: hidden;
-  margin: 30px 0;
 }
 
 
 .display {
-  background-color: #333;
-  padding: 20px;
+  background-color: #a8a8a8ff;
+  padding: 16px 18px;      
   text-align: right;
 }
 
-.display .expression {
-  font-size: 1.2em;
-  color: #aaa;
-  min-height: 1.2em;
-  word-wrap: break-word;
-}
 
 .display .result {
-  font-size: 3em;
+  font-size: 2.6rem;       
+  line-height: 1;
+  color: #fff;
+  width: 100%;
+  background: transparent;
   border: none;
   outline: none;
-  background-color: transparent;
-  width: 100%;
-  text-align: right;
-  color: #fff;
 }
 
 
@@ -92,74 +87,47 @@ body {
   background-color: #333;
 }
 
+
 .buttons button {
   border: none;
-  padding: 20px;
-  font-size: 1.5em;
+  padding: 14px;           
+  min-height: 56px;       
+  font-size: 1.3em;        
   cursor: pointer;
   background-color: #555;
   color: #fff;
   transition: background 0.2s ease;
 }
 
-.buttons button:hover {
-  background-color: #777;
-}
 
-
-.clear,
-.number,
-.decimal {
-  background-color: #555;
-}
-
-.operator,
-.equals {
-  background-color: #ff9800;
-  color: #fff;
-}
-
-.zero {
-  grid-column: span 2;
-}
+.clear, .number, .decimal { background-color: #555; }
+.operator, .equals { background-color: #ff9800; color: #fff; }
+.zero { grid-column: span 2; }
 
 
 @media (max-width: 768px) {
-  body {
-    padding-top: 80px;
-  }
+  .calculator { max-width: 320px; }
+  .buttons button { padding: 12px; min-height: 50px; font-size: 1.15em; }
+  .display .result { font-size: 2.2rem; }
+}
 
+
+@media (max-height: 700px) {
   .calculator {
-    max-width: 100%;
-  }
-
-  .display .result {
-    font-size: 2.2em;
-  }
-
-  .buttons button {
-    padding: 15px;
-    font-size: 1.2em;
-  }
-}
-
-@media (max-width: 576px) {
-  body {
-    padding-top: 70px;
-  }
-
-  .display .result {
-    font-size: 2em;
-  }
-
-  .buttons button {
-    padding: 12px;
-    font-size: 1em;
+    transform: scale(0.92);
+    transform-origin: top center;
   }
 }
 
 
-    </style>
+@media (max-width: 420px) {
+  .calculator { max-width: 300px; }
+  .buttons button { padding: 10px; min-height: 44px; font-size: 1em; }
+  .display .result { font-size: 1.9rem; }
+}
+
+</style>
+
 </head>
 
 <body onload="noBack();" onpageshow="if (event.persisted) noBack();" onunload="">
@@ -216,7 +184,8 @@ body {
     <br />
     <br>
 
-    <div class="calculator">
+    <div class="main-container">
+        <div class="calculator">
         <div class="display">
             <div class="expression">
                 <?php echo isset($expression) ? htmlspecialchars($expression) : ''; ?>
@@ -247,6 +216,7 @@ body {
             <button class="number zero" value="0">0</button>
             <button class="decimal" value=",">,</button>
             <button class="equals" value="=">=</button>
+        </div>
         </div>
     </div>
 

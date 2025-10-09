@@ -22,6 +22,11 @@
 <style>
 
 body {
+  background-image: url('<?php echo base_url("assets/portfolio_image/symmetry.jpg"); ?>');
+  background-size: cover;         
+  background-position: center;    
+  background-repeat: no-repeat;   
+  background-attachment: fixed;   
   font-size: 16px;
   margin: 0;
   padding-top: 70px; 
@@ -67,8 +72,29 @@ body {
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
   background-size: cover;
   background-position: center;
+  margin-top: -56px;
 }
 
+.navbar-toggler:hover {
+  transform: scale(1.1); 
+  transition: transform 0.2s ease-in-out; 
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.navbar-toggler:hover {
+  animation: pulse 1s infinite;
+}
 
 .col-md-4 {
   margin-bottom: 30px; 
@@ -138,7 +164,7 @@ body {
   <div class="container">
 
     
-    <a class="navbar-brand fw-bold text-primary" href="<?= base_url('index.php/welcome'); ?>">
+    <a class="navbar-brand fw-bold text-primary" href="<?= base_url('index.php/admin_Main'); ?>">
       DigiCrud101
     </a>
 
@@ -154,17 +180,17 @@ body {
 
         
         <li class="nav-item">
-          <a class="nav-link fw-medium" href="<?= base_url('index.php/welcome'); ?>">Home</a>
+          <a class="nav-link fw-medium" href="<?= base_url('index.php/admin_Main'); ?>">Home</a>
         </li>
 
         
         <li class="nav-item">
-          <a class="nav-link fw-medium" href="<?= base_url('index.php/welcome/crud_details'); ?>">Details</a>
+          <a class="nav-link fw-medium" href="<?= base_url('index.php/admin_Main/admin_crud'); ?>">Details</a>
         </li>
 
         
         <li class="nav-item">
-          <a class="nav-link fw-medium" href="<?= base_url('index.php/welcome/calculator'); ?>">Calculator</a>
+          <a class="nav-link fw-medium" href="<?= base_url('index.php/admin_Main/admin_calculator'); ?>">Calculator</a>
         </li>
 
         
@@ -325,7 +351,7 @@ justify-content: center; align-items: center; text-shadow: 2px 2px 4px rgba(0, 0
 
     navLinks.forEach(link => {
       link.addEventListener('click', function(event) {
-        event.preventDefault(); 
+         
 
        
         const sectionId = this.dataset.section;

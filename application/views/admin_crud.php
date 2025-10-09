@@ -81,7 +81,7 @@ body {
   <div class="container">
 
     
-    <a class="navbar-brand fw-bold text-primary" href="<?= base_url('index.php/welcome'); ?>">
+    <a class="navbar-brand fw-bold text-primary" href="<?= base_url('index.php/admin_Main'); ?>">
       DigiCrud101
     </a>
 
@@ -97,12 +97,12 @@ body {
 
         
         <li class="nav-item">
-          <a class="nav-link fw-medium" href="<?= base_url('index.php/welcome'); ?>">Home</a>
+          <a class="nav-link fw-medium" href="<?= base_url('index.php/admin_Main'); ?>">Home</a>
         </li>
 
         
         <li class="nav-item">
-          <a class="nav-link fw-medium" href="<?= base_url('index.php/welcome/crud_details'); ?>">Details</a>
+          <a class="nav-link fw-medium" href="<?= base_url('index.php/admin_Main/admin_crud'); ?>">Details</a>
         </li>
 
         

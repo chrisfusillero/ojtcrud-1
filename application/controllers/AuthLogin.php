@@ -31,43 +31,62 @@ class AuthLogin extends CI_Controller
         $this->load->view('login_form', $data);
     }
 
-   public function login()
-{
-    $email = $this->input->post('email');
-    $password = $this->input->post('password');
-    $selected_role = $this->input->post('role'); 
+   public function login() {
 
-    
+    //collect input
+    $email = trim($this->input->post('email'));
+    $password = trim($this->input->post('password'));
+    $selected_role = trim($this->input->post('role'));
+
+
+    //validate required fields
+    if (empty($email) || empty($password) || empty($selected_role)) {
+        $this->session->set_flashdata('error', 'All fields are required.');
+        redirect('AuthLogin');
+        return;
+    }
+
+    //check user credentials
     $user = $this->login_model->check_login($email, $selected_role);
 
-    if ($user) {
-        
-        if (password_verify($password, $user['password'])) {
-
-            
-            $this->session->set_userdata([
-                'user_id' => $user['id'],
-                'email'   => $user['email'],
-                'role'    => $user['user']
-            ]);
-
-            
-            if ($user['user'] === 'admin') {
-                redirect('admin_welcome');
-            } else {
-                redirect('welcome');
-            }
-
-        } else {
-            $this->session->set_flashdata('error', 'Invalid email or password.');
-            redirect('AuthLogin');
-        }
-    } else {
-        
-        $this->session->set_flashdata('error', 'Invalid email, password, or login type.');
+    //verify if user exists
+    if(!$user) {
+        $this->session->set_flashdata('error', 'No account found with those credentials or role.');
         redirect('AuthLogin');
+        return;
     }
-}
+
+    //optional
+    if (isset($user['valid']) && $user['valid'] != 1) {
+        $this->session->set_flashdata('error', 'Your account is not active. ');
+        redirect('AuthLogin');
+        return;
+    }
+
+    //save session data
+    $this->session->set_userdata([
+        'user_id' => $user['id'],
+        'email' => $user['email'],
+        'role' => $user['user'],
+        'logged_in' => true
+    ]);
+
+    //redirect based on role
+    switch (strtolower($user['user'])) {
+        case 'admin':
+            redirect('admin_Main');
+            break;
+
+        case 'regular':
+            redirect('welcome');
+            break;
+
+        default:
+            $this->session->set_flashdata('error', 'Unknown user type, please contact support');
+            redirect('AuthLogin');
+            break;
+    }
+   }
 
 
 
@@ -100,7 +119,7 @@ class AuthLogin extends CI_Controller
                 'address'   => $this->input->post('address'),
                 'email'     => $this->input->post('email'),
                 'password'  => $this->input->post('password'),
-                'role'      => $this->input->post('role')
+                'user'      => $this->input->post('role')
             );
 
             $user_id = $this->login_model->create_user($data);
