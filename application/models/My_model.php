@@ -47,6 +47,11 @@ class My_model extends CI_Model
         return $query->row_array();
     }
 
+    public function get_single_record($id) {
+
+        return $this->db->get_where('crud', ['id' => $id])->row_array();
+    }
+
     public function get_record_by_id($id)
 {
     return $this->db->get_where('crud', ['id' => $id])->row_array();

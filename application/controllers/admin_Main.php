@@ -3,243 +3,191 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 class admin_Main extends CI_Controller
 {
-
-    /**
-     * Constructor
-     */
     public function __construct()
+    {
+        parent::__construct();
+
+  
+        $this->load->helper(['url', 'form', 'security']);
+        $this->load->library(['session', 'form_validation']);
+
+        $this->load->model('admin_model');
+        $this->load->model(['My_model', 'Login_model']);
+
+       
+        $user_role = $this->session->userdata('role') ?? null;
+        $user_id   = $this->session->userdata('user_id') ?? null;
+
+        if (!$user_id || $user_role !== 'admin') {
+            
+            redirect('AuthLogin');
+            return;
+        }
+    }
+
+    public function index()
+    {
+
+        $user_id = $this->session->userdata('user_id');
+
+        
+        $user_data = $this->Login_model->get_user_data($user_id);
+
+        $data = [
+            'firstname' => $user_data['firstname'] ?? '',
+            'lastname'  => $user_data['lastname'] ?? '',
+            'username'  => $user_data['username'] ?? '',
+            'title'     => 'Admin Dashboard',
+            'message'   => 'Welcome to the admin dashboard'
+        ];
+
+        $this->load->view('admin_welcome', $data);
+    }
+
+    public function admin_crud()
+    {
+        $user_id = $this->session->userdata('user_id');
+
+        $user_data = $this->Login_model->get_user_data($user_id);
+
+        $data = [
+            'firstname'      => $user_data['firstname'] ?? '',
+            'lastname'       => $user_data['lastname'] ?? '',
+            'username'       => $user_data['username'] ?? '',
+            'getUsers'       => $this->My_model->get_users(),
+            'records'        => $this->My_model->getdata(),
+            'valid_records'  => $this->My_model->get_valid_records()
+        ];
+
+        $this->load->view('admin_crud', $data);
+    }
+
+    public function admin_edit_access($id)
 {
-    parent::__construct();
-    $this->load->helper(['url', 'form', 'security']);
-    $this->load->library(['session', 'form_validation']);
-    $this->load->model(['My_model', 'Login_model']);
+    if (!is_numeric($id)) show_error('Invalid ID.');
 
-    
-    if ($this->session->userdata('role') !== 'admin') {
-        redirect('AuthLogin');
-        return;
-    }
+    $record = $this->admin_model->get_data_by_id($id); 
+    if (!$record) show_error('Not found');
+
+    $session_user = $this->session->userdata('user_data') ?? [];
+    $data = [
+        'record' => $record,
+        'firstname' => $session_user['firstname'] ?? 'Guest',
+        'lastname'  => $session_user['lastname'] ?? ''
+    ];
+
+    $this->load->view('admin_edit_access', $data);
 }
 
-    /**
-     * Default method (e.g., accessed by /mycontroller)
-     */
-public function index()
-{
-    if (!$this->session->userdata('user_id')) {
-        redirect('AuthLogin');
-        return;
-    }
 
-    $user_id = $this->session->userdata('user_id');
-
-   
-    $this->load->model('Login_model');
-    $user_data = $this->Login_model->get_user_data($user_id);
-
-    if ($user_data) {
-        $data['firstname'] = $user_data['firstname'];
-        $data['lastname']  = $user_data['lastname'];
-        $data['username']  = $user_data['username'];
-    } else {
-        $data['firstname'] = '';
-        $data['lastname']  = '';
-        $data['username']  = '';
-    }
-
-    $data['title'] = 'Welcome Page';
-    $data['message'] = 'Welcome to your dashboard!';
-    
-    $this->load->view('admin_welcome', $data);
-}
-
-    /**
-     * Another method (e.g., accessed by /mycontroller/another_method)
-     * @param string $param1 Optional parameter
-     */
-
-
-    public function delete($id) {
-
-    if (!is_numeric($id)) {
-        show_error('Invalid ID.');
-        return;
-    }
-
-    $id = intval($id);
-
-    $result = $this->My_model->soft_delete_data($id);
-
-    if ($result) {
-        $this->session->set_flashdata('kyre', [
-            'type' => 'success',
-            'message' => 'Record deleted successfully.'
-        ]);
-    } else {
-        $this->session->set_flashdata('kyre', [
-            'type' => 'danger',
-            'message' => 'Failed to delete record.'
-        ]);
-    }
-
-    echo '<script>';
-    echo 'window.location.replace("' . base_url('index.php/welcome/crud_details') . '");';
-    echo '</script>';
-}
-
-    public function edit($id) {
+    public function update($id)
+    {
         if (!is_numeric($id)) {
             show_error('Invalid ID.');
             return;
         }
-        $data['record'] = $this->My_model->edit_data($id);
-        $data['firstname'] = $this->session->userdata('user_data')['firstname'];
-        $data['lastname'] = $this->session->userdata('user_data')['lastname'];
-        $this->load->view('edit_view', $data);
-    }
 
-    public function update($id) {
-    if (!is_numeric($id)) {
-        show_error('Invalid ID.');
-        return;
-    }
+        $id = intval($id);
 
-    $id = intval($id);
+      
+        $this->form_validation->set_rules('name', 'First Name', 'required|trim');
+        $this->form_validation->set_rules('lastname', 'Last Name', 'trim');
+        $this->form_validation->set_rules('address', 'Address', 'trim');
+        $this->form_validation->set_rules('email', 'Email', 'required|valid_email');
 
-    $this->form_validation->set_rules('name', 'Name', 'required|trim');
-    $this->form_validation->set_rules('address', 'Address', 'trim');
-
-    if ($this->form_validation->run() == FALSE) {
-        $data['record'] = $this->My_model->get_data_by_id($id);
-        $this->load->view('edit_view', $data);
-    } else {
-        $data = array(
-            'id' => $id,
-            'firstname' => $this->input->post('name', true),
-            'email' => $this->input->post('email', true),
-            'address' => $this->input->post('address', true)
-        );
-
-        $result = $this->My_model->update_data($data);
-
-       if ($result) {
-        $this->session->set_flashdata('kyre', [
-            'type' => 'success',
-            'message' => 'Record updated successfully.'
-        ]);
-    } else {
-        $this->session->set_flashdata('kyre', [
-            'type' => 'danger',
-            'message' => 'Failed to update record.'
-        ]);
-    }
-
-        echo '<script>';
-        echo 'window.location.replace("' . base_url('index.php/welcome/crud_details') . '");';
-        echo '</script>';
-    }
+        if ($this->form_validation->run() === FALSE) {
+    $data['record'] = $this->admin_model->get_data_by_id($id);
+    $this->load->view('admin_edit_access', $data);
+    return;
 }
 
-    public function logout() {
-        // $this->session->unset_userdata('user_id');
-        $this->session->sess_destroy();
-        redirect('index.php/AuthLogin');
-        return;
+
+$updateData = [
+    'id' => $id,
+    'firstname' => $this->input->post('name', true),
+    'lastname'  => $this->input->post('lastname', true),
+    'email'     => $this->input->post('email', true),
+    'address'   => $this->input->post('address', true)
+];
+
+$result = $this->admin_model->update_data($updateData);
+
+redirect('admin_Main/admin_crud');
 
     }
 
+    public function delete($id)
+    {
+        if (!is_numeric($id)) {
+            show_error('Invalid ID.');
+            return;
+        }
 
-   public function admin_crud() {
+        $id = intval($id);
+        $result = $this->My_model->soft_delete_data($id);
 
-    if (!$this->session->userdata('user_id'))  {
-        redirect('AuthLogin');
-        return;
+        if ($result) {
+            $this->session->set_flashdata('kyre', [
+                'type'    => 'success',
+                'message' => 'Record deleted successfully.'
+            ]);
+        } else {
+            $this->session->set_flashdata('kyre', [
+                'type'    => 'danger',
+                'message' => 'Failed to delete record.'
+            ]);
+        }
+
+        redirect('index.php/admin_Main/admin_crud');
     }
-
-    $this->load->model('My_model');
-    $this->load->model('Login_model');
-
-    $user_id = $this->session->userdata('user_id');
-    $user_data = $this->Login_model->get_user_data($user_id);
-
-    $data['firstname'] = $user_data['firstname'];
-    $data['lastname']  = $user_data['lastname'];
-    $data['username']  = $user_data['username'];
-
-    $data['getUsers']      = $this->My_model->get_users();
-    $data['records']       = $this->My_model->getdata();    
-    $data['valid_records'] = $this->My_model->get_valid_records();
-
-    $this->load->view('admin_crud', $data);
-
-
-   }
 
     public function admin_settings()
-{
+    {
+        $user_id = $this->session->userdata('user_id');
 
-    if (!$this->session->userdata('user_id')) {
-        redirect('AuthLogin');
-        return;
+        $user = $this->My_model->get_single_data($user_id) ?? [];
+
+        $data = [
+            'firstname'     => $user['firstname'] ?? 'Guest',
+            'lastname'      => $user['lastname'] ?? '',
+            'email'         => $user['email'] ?? 'guest@example.com',
+            'getUsers'      => $this->My_model->get_users(),
+            'records'       => $this->My_model->getdata(),
+            'valid_records' => $this->My_model->get_valid_records()
+        ];
+
+        $this->load->view('admin_settings', $data);
     }
-
-    $user_id = $this->session->userdata('user_id');
-
-
-    $user = $this->My_model->get_single_data($user_id);
-
-
-    $data['firstname']     = $user['firstname'] ?? 'Guest';
-    $data['lastname']      = $user['lastname'] ?? '';
-    $data['email']         = $user['email'] ?? 'guest@example.com';
-    $data['getUsers']      = $this->My_model->get_users();
-    $data['records']       = $this->My_model->getdata();
-    $data['valid_records'] = $this->My_model->get_valid_records();
-
-    $this->load->view('admin_settings', $data);
-}
 
     public function admin_calculator()
-{
-   if (!$this->session->userdata('user_id')) {
-        redirect('AuthLogin');
-        return;
-    }
+    {
+        $user_id = $this->session->userdata('user_id');
+        $user = $this->My_model->get_single_data($user_id) ?? [];
 
-    $user_id = $this->session->userdata('user_id');
+        $data = [
+            'firstname'  => $user['firstname'] ?? 'Guest',
+            'lastname'   => $user['lastname'] ?? '',
+            'result'     => null,
+            'expression' => null
+        ];
 
+        if ($this->input->server('REQUEST_METHOD') === 'POST') {
+            $expression = $this->input->post('expression', true);
 
-    $user = $this->My_model->get_single_data($user_id);
+           
+            $safe_expression = preg_replace('/[^0-9+\-*\/().]/', '', $expression);
 
-    $data['firstname']     = $user['firstname'] ?? 'Guest';
-    $data['lastname']      = $user['lastname'] ?? '';
-    $data['result'] = null;
-    $data['expression'] = null;
-
-    if ($this->input->server('REQUEST_METHOD') === 'POST') {
-        $expression = $this->input->post('expression', true);
-
-        
-        if (strlen($expression) > 1 && strpos($expression, '0') === 0) {
-            
-            $expression = substr($expression, 1);
-        }
-
-        
-        $safe_expression = preg_replace('/[^0-9+\-*\/().]/', '', $expression);
-
-        try {
-            
+           
             $data['result'] = $this->My_model->calculate($safe_expression);
-        } catch (Exception $e) {
-            $data['result'] = 'Error';
+            $data['expression'] = $expression;
         }
 
-        $data['expression'] = $expression;
+        $this->load->view('admin_calculator', $data);
     }
 
-    $this->load->view('admin_calculator', $data);
-}
-
-
+    public function logout()
+    {
+        $this->session->sess_destroy();
+        redirect('index.php/AuthLogin');
+    }
 }

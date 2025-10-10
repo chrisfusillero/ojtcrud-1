@@ -86,24 +86,24 @@ public function index()
     echo '</script>';
 }
 
-    public function edit($id)
-{
+  public function edit($id) 
+  {
+
     $this->load->model('My_model');
-    $data['record'] = $this->My_model->get_record_by_id($id);
 
-    $user_id = $this->session->userdata('user_id');
-    $data['user'] = $this->Login_model->get_user_data($user_id);
-    $this->load->view('settings', $data);
+    $data['record'] = $this->My_model->get_single_record($id);
 
-
-  
-    if (!$data['record']) {
-        show_404();
+    if (empty($data['record'])) {
+        show_error('Record not found.');
         return;
     }
 
+    $data['firstname'] = $this->session->userdata('firstname');
+    $data['lastname']  = $this->session->userdata('lastname');
+    $data['username']  = $this->session->userdata('username');
+
     $this->load->view('edit_view', $data);
-}
+  }
 
 
     public function update($id) {

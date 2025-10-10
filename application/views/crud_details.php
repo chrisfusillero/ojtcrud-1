@@ -81,7 +81,7 @@ body {
   <div class="container">
 
     
-    <a class="navbar-brand fw-bold text-primary" href="<?= base_url('index.php/welcome'); ?>">
+    <a class="navbar-brand fw-bold text-primary" href="<?= base_url('index.php/admin_Main'); ?>">
       DigiCrud101
     </a>
 
