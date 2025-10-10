@@ -21,7 +21,7 @@ class admin_Main extends CI_Controller
         if (!$user_id || $user_role !== 'admin') {
             
             redirect('AuthLogin');
-            return;
+            return; 
         }
     }
 
@@ -96,24 +96,39 @@ class admin_Main extends CI_Controller
         $this->form_validation->set_rules('email', 'Email', 'required|valid_email');
 
         if ($this->form_validation->run() === FALSE) {
-    $data['record'] = $this->admin_model->get_data_by_id($id);
-    $this->load->view('admin_edit_access', $data);
-    return;
-}
+           
+            $data['record'] = $this->My_model->edit_data($id);
+            $this->load->view('admin_edit_access', $data);
+            return;
+        }
 
+        
+        $updateData = [
+            'id'        => $id,
+         
+            'firstname' => $this->input->post('name', true),
+            'lastname'  => $this->input->post('lastname', true), // if your update_data doesn't handle lastname add it
+            'email'     => $this->input->post('email', true),
+            'address'   => $this->input->post('address', true)
+        ];
 
-$updateData = [
-    'id' => $id,
-    'firstname' => $this->input->post('name', true),
-    'lastname'  => $this->input->post('lastname', true),
-    'email'     => $this->input->post('email', true),
-    'address'   => $this->input->post('address', true)
-];
+       
+        $result = $this->My_model->update_data($updateData);
 
-$result = $this->admin_model->update_data($updateData);
+        if ($result) {
+            $this->session->set_flashdata('kyre', [
+                'type'    => 'success',
+                'message' => 'Record updated successfully.'
+            ]);
+        } else {
+            $this->session->set_flashdata('kyre', [
+                'type'    => 'danger',
+                'message' => 'Failed to update record.'
+            ]);
+        }
 
-redirect('admin_Main/admin_crud');
-
+     
+        redirect('admin_Main/admin_crud');
     }
 
     public function delete($id)
@@ -138,7 +153,7 @@ redirect('admin_Main/admin_crud');
             ]);
         }
 
-        redirect('index.php/admin_Main/admin_crud');
+        redirect('admin_Main/admin_crud');
     }
 
     public function admin_settings()

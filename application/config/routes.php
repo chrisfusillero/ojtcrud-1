@@ -57,4 +57,7 @@ $route['translate_uri_dashes'] = FALSE;
 $route['welcome'] = 'welcome';
 $route['welcome/crud_details'] = 'welcome/crud_details';
 $route['welcome/calculator'] = 'welcome/calculator';
-$route['admin_welcome'] = 'admin_welcome';
+
+
+$route['admin_Main/update/(:num)'] = 'admin_Main/update/$1';
+

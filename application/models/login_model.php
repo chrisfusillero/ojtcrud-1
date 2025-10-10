@@ -66,12 +66,20 @@ class Login_model extends CI_Model
     public function check_login($email, $role)
 {
     $this->db->where('email', $email);
-    $this->db->where('user', $role);  // column 'user' contains 'regular' or 'admin'
+    $this->db->where('user', $role); 
     $this->db->where('valid', 1);
     $query = $this->db->get('crud');
 
     return $query->row_array();
 }
+
+public function update_user_profile($data)
+{
+    $this->db->where('id', $data['id']);
+    $this->db->update('crud', $data); 
+    return $this->db->affected_rows();
+}
+
 
 
 }
