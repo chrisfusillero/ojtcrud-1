@@ -62,12 +62,22 @@ class admin_Main extends CI_Controller
         $this->load->view('admin_crud', $data);
     }
 
-    public function admin_edit_access($id)
-{
-    if (!is_numeric($id)) show_error('Invalid ID.');
+    public function admin_edit_access($username) {
+    
+    $this->load->model('admin_model');
 
-    $record = $this->admin_model->get_data_by_id($id); 
-    if (!$record) show_error('Not found');
+    
+    $username = urldecode($username);
+
+    
+    $record = $this->admin_model->get_user_by_username($username);
+
+    
+    if (!$record) {
+        
+        show_404(); // Or redirect to an error page
+        return;
+    }
 
     $session_user = $this->session->userdata('user_data') ?? [];
     $data = [
@@ -78,59 +88,76 @@ class admin_Main extends CI_Controller
 
     $this->load->view('admin_edit_access', $data);
 }
+   public function admin_edit_profile($username) {
+    
+    $this->load->model('admin_model');
+
+    $username = urldecode($username);
 
 
-    public function update($id)
-    {
-        if (!is_numeric($id)) {
-            show_error('Invalid ID.');
-            return;
-        }
+    $record = $this->admin_model->get_user_by_username($username);
 
-        $id = intval($id);
-
-      
-        $this->form_validation->set_rules('name', 'First Name', 'required|trim');
-        $this->form_validation->set_rules('lastname', 'Last Name', 'trim');
-        $this->form_validation->set_rules('address', 'Address', 'trim');
-        $this->form_validation->set_rules('email', 'Email', 'required|valid_email');
-
-        if ($this->form_validation->run() === FALSE) {
-           
-            $data['record'] = $this->My_model->edit_data($id);
-            $this->load->view('admin_edit_access', $data);
-            return;
-        }
-
+    
+    if (!$record) {
         
-        $updateData = [
-            'id'        => $id,
-         
-            'firstname' => $this->input->post('name', true),
-            'lastname'  => $this->input->post('lastname', true), // if your update_data doesn't handle lastname add it
-            'email'     => $this->input->post('email', true),
-            'address'   => $this->input->post('address', true)
-        ];
-
-       
-        $result = $this->My_model->update_data($updateData);
-
-        if ($result) {
-            $this->session->set_flashdata('kyre', [
-                'type'    => 'success',
-                'message' => 'Record updated successfully.'
-            ]);
-        } else {
-            $this->session->set_flashdata('kyre', [
-                'type'    => 'danger',
-                'message' => 'Failed to update record.'
-            ]);
-        }
-
-     
-        redirect('admin_Main/admin_crud');
+        show_404(); 
+        return;
     }
 
+    $session_user = $this->session->userdata('user_data') ?? [];
+    $data = [
+        'record' => $record,
+        'firstname' => $session_user['firstname'] ?? 'Guest',
+        'lastname'  => $session_user['lastname'] ?? ''
+    ];
+
+    $this->load->view('admin_edit_profile', $data);
+}
+
+    public function update($username) {
+    
+    $this->load->model('admin_model');
+
+    
+    $username = urldecode($username);
+
+    
+    $user = $this->admin_model->get_user_by_username($username);
+
+    
+    if (!$user) {
+        
+        show_404(); 
+        return;
+    }
+
+    $id = $user['id'];
+
+    
+    $firstname = $this->input->post('name');
+    $lastname = $this->input->post('lastname');
+    $username = $this->input->post('username');
+    $address = $this->input->post('address');
+    $email = $this->input->post('email');
+
+    
+    $data = array(
+        'firstname' => $firstname,
+        'lastname' => $lastname,
+        'username' => $username,
+        'address' => $address,
+        'email' => $email
+    );
+
+    
+    $this->admin_model->update_data($data);
+
+    
+    $this->session->set_flashdata('kyre', array('message' => 'Record updated successfully!', 'type' => 'success'));
+
+    
+    redirect('admin_Main/admin_settings');
+}
     public function delete($id)
     {
         if (!is_numeric($id)) {

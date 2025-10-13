@@ -223,7 +223,7 @@
 
 div class="container">
   <div class="card p-4">
-    <h3 class="text-center mb-4 fw-bold">Edit User</h3>
+    <h3 class="text-center mb-4 fw-bold">Edit Profile</h3>
 
     <form action="<?= site_url('admin_Main/update/' . urlencode($record['username'])); ?>" method="POST">
       <div class="row g-3">

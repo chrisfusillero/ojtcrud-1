@@ -84,7 +84,7 @@
   <div class="card p-4">
     <h3 class="text-center mb-4">Edit</h3>
 
-    <form action="<?= isset($record['id']) ? base_url('index.php/Welcome/update/'.$record['id']) : '#' ?>" method="POST">
+    <form action="<?= base_url('index.php/Welcome/update/'.urlencode($record['username'])); ?>" method="POST">
       <div class="row g-3">
         <div class="col-md-6">
           <div class="form-floating">
@@ -131,7 +131,7 @@
         <button type="submit" class="btn btn-success me-2">Update</button>
         <a href="<?= base_url('index.php/welcome/settings'); ?>" class="btn btn-danger ms-2">Cancel</a>
       </div>
-    </form>
+    </form> 
   </div>
 
   <?php if ($this->session->flashdata('kyre')): ?>

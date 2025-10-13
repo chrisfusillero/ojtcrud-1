@@ -194,7 +194,7 @@ body.dark-mode a {
       </div>
 
       
-      <a href="<?= base_url('index.php/Welcome/edit/'.$user['id']); ?>" class="btn btn-primary">Edit Profile</a>
+      <a href="<?= base_url('index.php/Welcome/edit/'.urlencode($user['username'])); ?>" class="btn btn-primary">Edit Profile</a>
     </div>
 
     <hr>

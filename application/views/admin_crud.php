@@ -164,7 +164,7 @@ body {
             <td><?= $value['address']; ?></td>
             <td><?= $value['user']; ?></td>
             <td class="text-nowrap">
-              <button onclick="edit_data(<?= $value['id']; ?>)" class="btn btn-sm btn-success me-1">edit</button>
+              <button onclick="edit_data('<?= urlencode($value['username']); ?>')" class="btn btn-sm btn-success me-1">edit</button>
               <button onclick="deletedata(<?= $value['id']; ?>)" class="btn btn-sm btn-danger">delete</button>
             </td>
           </tr>
@@ -221,8 +221,8 @@ body {
 
         }
 
-        function edit_data(id) {
-            window.location.href = url + 'index.php/admin_Main/admin_edit_access/' + id;
+        function edit_data(username) {
+            window.location.href = url + 'index.php/admin_Main/admin_edit_access/' + username;
 
         }
 
@@ -247,4 +247,3 @@ body {
 
 </body>
 </html>
-

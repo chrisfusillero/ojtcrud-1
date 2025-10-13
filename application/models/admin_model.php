@@ -61,5 +61,16 @@ class admin_model extends CI_Model
         return $this->db->affected_rows();
     }
 
+
+    public function get_user_by_username($username) {
+    $this->db->where('username', $username);
+    $query = $this->db->get('crud');
+    if ($query->num_rows() > 0) {
+        return $query->row_array();
+    } else {
+        return null;
+    }
+}
+
  
 }

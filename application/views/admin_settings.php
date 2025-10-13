@@ -194,10 +194,10 @@ body.dark-mode a {
       </div>
 
       
-      <a class="btn btn-outline-dark btn-sm mt-2 mt-md-0"
-         href="<?= base_url('index.php/admin_Main/admin_edit_access/' . $this->session->userdata('user_id')); ?>">
-         Edit profile
-      </a>
+     <a class="btn btn-outline-dark btn-sm mt-2 mt-md-0"
+   href="<?= base_url('index.php/admin_Main/admin_edit_profile/' . urlencode($this->session->userdata('username'))); ?>">
+   Edit profile
+</a>
     </div>
 
     <hr>

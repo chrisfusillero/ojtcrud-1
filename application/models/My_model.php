@@ -81,6 +81,8 @@ class My_model extends CI_Model
         $this->db->where('id', $data['id']);
         $this->db->set('address', $data['address']);
         $this->db->set('firstname', $data['firstname']);
+        $this->db->set('lastname', $data['lastname']);
+        $this->db->set('email', $data['email']);
         $this->db->update('crud');
 
         $this->db->trans_complete();
@@ -92,6 +94,11 @@ class My_model extends CI_Model
         return true;
     }
 
+
+    public function update_record($id, $data) {
+    $this->db->where('id', $id);
+    $this->db->update('crud', $data);
+}
     public function get_users()
     {
          $this->db->select('*');     
@@ -110,6 +117,18 @@ class My_model extends CI_Model
         $query = $this->db->get();
         return $query->result_array();
     }
+
+    public function get_user_by_username($username) 
+    {
+    $this->db->where('username', $username);
+    $query = $this->db->get('crud'); 
+
+    if ($query->num_rows() > 0) {
+        return $query->row_array();
+    } else {
+        return null;
+    }
+}
 
     public function calculate($expression) {
     
