@@ -183,53 +183,33 @@ body {
 
 
    <script>
-        let url = '<?= base_url() ?>';
+    let url = '<?= base_url() ?>';
 
-        function deletedata(id) {
+    function deletedata(id) {
+        iziToast.show({
+            theme: 'dark',
+            icon: 'icon-person',
+            title: ' ',
+            message: 'Are you sure you want to delete this record?',
+            position: 'center',
+            progressBarColor: 'rgb(0, 255, 184)',
+            buttons: [
+                ['<button>OK</button>', function (instance, toast) {
+                    window.location.href = url + 'index.php/Welcome/delete/' + id;
+                }, true],
+                ['<button>Cancel</button>', function (instance, toast) {
+                    instance.hide({ transitionOut: 'fadeOutUp' }, toast);
+                }]
+            ]
+        });
+    }
 
-            iziToast.show({
-                theme: 'dark',
-                icon: 'icon-person',
-                title: ' ',
-                message: 'are you sure?',
-                position: 'center', // bottomRight, bottomLeft, topRight, topLeft, topCenter, bottomCenter
-                progressBarColor: 'rgb(0, 255, 184)',
-                buttons: [
-                    ['<button>Ok</button>', function(instance, toast) {
+    
+    function edit_data(id) {
+        window.location.href = url + 'index.php/admin_Main/admin_edit_access/' + id;
+    }
+</script>
 
-
-                        window.location.href = url + 'index.php/Welcome/delete/' + id;
-
-                    }, true], // true to focus
-                    ['<button>Close</button>', function(instance, toast) {
-                        instance.hide({
-                            transitionOut: 'fadeOutUp',
-                            onClosing: function(instance, toast, closedBy) {
-                                console.info('closedBy: ' + closedBy); // The return will be: 'closedBy: buttonName'
-                            }
-                        }, toast, 'buttonName');
-                    }]
-                ],
-                onOpening: function(instance, toast) {
-                    console.info('callback abriu!');
-                },
-                onClosing: function(instance, toast, closedBy) {
-                    console.info('closedBy: ' + closedBy); // tells if it was closed by 'drag' or 'button'
-                }
-            });
-
-
-        }
-
-        function edit_data(username) {
-            window.location.href = url + 'index.php/admin_Main/admin_edit_access/' + username;
-
-        }
-
-        function update_data(id) {
-            window.location.href = url + 'index.php/admin_Main/admin_update_access/' + id;
-        }
-    </script>
 
  </div>
 </div>

@@ -43,17 +43,26 @@ class admin_model extends CI_Model
         return $this->edit_data($id);
     }
 
-    public function update_data($data)
-    {
-        $this->db->where('id', $data['id']);
-        $this->db->update('crud', [
-            'firstname' => $data['firstname'] ?? null,
-            'lastname'  => $data['lastname'] ?? null,
-            'email'     => $data['email'] ?? null,
-            'address'   => $data['address'] ?? null,
-        ]);
-        return ($this->db->affected_rows() >= 0);
+  public function update_data($data)
+{
+    if (empty($data['id'])) {
+        return false; 
     }
+
+    $update_fields = [
+        'firstname' => $data['firstname'] ?? null,
+        'lastname'  => $data['lastname'] ?? null,
+        'username'  => $data['username'] ?? null,
+        'address'   => $data['address'] ?? null,
+        'email'     => $data['email'] ?? null
+    ];
+
+    $this->db->where('id', $data['id']);
+    $this->db->update('crud', $update_fields);
+
+    return ($this->db->affected_rows() >= 0);
+}
+
 
     public function soft_delete_data($id)
     {

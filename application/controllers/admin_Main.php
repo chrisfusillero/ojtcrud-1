@@ -62,60 +62,40 @@ class admin_Main extends CI_Controller
         $this->load->view('admin_crud', $data);
     }
 
-    public function admin_edit_access($username) {
-    
-    $this->load->model('admin_model');
+   public function admin_edit_access($username = null) {
 
-    
-    $username = urldecode($username);
+    if (empty($username)) {
+        $username = $this->session->userdata('username');
+    }
 
-    
-    $record = $this->admin_model->get_user_by_username($username);
-
-    
-    if (!$record) {
-        
-        show_404(); // Or redirect to an error page
+    if (empty($username)) {
+        show_error('No username provided or logged in.');
         return;
     }
 
-    $session_user = $this->session->userdata('user_data') ?? [];
-    $data = [
-        'record' => $record,
-        'firstname' => $session_user['firstname'] ?? 'Guest',
-        'lastname'  => $session_user['lastname'] ?? ''
-    ];
-
-    $this->load->view('admin_edit_access', $data);
-}
-   public function admin_edit_profile($username) {
-    
     $this->load->model('admin_model');
-
     $username = urldecode($username);
-
-
     $record = $this->admin_model->get_user_by_username($username);
 
-    
     if (!$record) {
-        
-        show_404(); 
+        show_404();
         return;
     }
 
-    $session_user = $this->session->userdata('user_data') ?? [];
+    $session_user = $this->session->userdata('user_data')  ??  [];
+
     $data = [
-        'record' => $record,
+        'record'    => $record,
         'firstname' => $session_user['firstname'] ?? 'Guest',
-        'lastname'  => $session_user['lastname'] ?? ''
+        'lastname'  => $session_user['lastname'] ?? '',
     ];
 
-    $this->load->view('admin_edit_profile', $data);
-}
+     $this->load->view('admin_edit_access', $data);
+   }
 
-    public function update($username) {
-    
+
+    public function update($username)
+{
     $this->load->model('admin_model');
 
     
@@ -124,40 +104,43 @@ class admin_Main extends CI_Controller
     
     $user = $this->admin_model->get_user_by_username($username);
 
-    
     if (!$user) {
-        
-        show_404(); 
+        show_404();
         return;
     }
 
+    
     $id = $user['id'];
 
     
-    $firstname = $this->input->post('name');
-    $lastname = $this->input->post('lastname');
-    $username = $this->input->post('username');
-    $address = $this->input->post('address');
-    $email = $this->input->post('email');
+    $data = [
+        'id'        => $id,
+        'firstname' => $this->input->post('firstname', true),
+        'lastname'  => $this->input->post('lastname', true),
+        'username'  => $this->input->post('username', true),
+        'address'   => $this->input->post('address', true),
+        'email'     => $this->input->post('email', true)
+    ];
+
+  
+    $update_result = $this->admin_model->update_data($data);
+
+    if ($update_result) {
+        $this->session->set_flashdata('kyre', [
+            'message' => 'Record updated successfully!',
+            'type' => 'success'
+        ]);
+    } else {
+        $this->session->set_flashdata('kyre', [
+            'message' => 'No changes were made or update failed.',
+            'type' => 'warning'
+        ]);
+    }
 
     
-    $data = array(
-        'firstname' => $firstname,
-        'lastname' => $lastname,
-        'username' => $username,
-        'address' => $address,
-        'email' => $email
-    );
-
-    
-    $this->admin_model->update_data($data);
-
-    
-    $this->session->set_flashdata('kyre', array('message' => 'Record updated successfully!', 'type' => 'success'));
-
-    
-    redirect('admin_Main/admin_settings');
+    redirect('admin_Main/admin_crud');
 }
+
     public function delete($id)
     {
         if (!is_numeric($id)) {

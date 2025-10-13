@@ -170,8 +170,8 @@
       aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
+      
 
-    
     <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
       <ul class="navbar-nav align-items-center">
 
@@ -221,70 +221,61 @@
   </div>
 </nav>
 
-div class="container">
+<div class="container">
   <div class="card p-4">
-    <h3 class="text-center mb-4 fw-bold">Edit User</h3>
+    <h3 class="text-center mb-4">Edit</h3>
 
-    <form action="<?= site_url('admin_Main/update/' . urlencode($record['username'])); ?>" method="POST">
+    <form action="<?= base_url('index.php/admin_Main/update/'.urlencode($record['username'])); ?>" method="POST">
       <div class="row g-3">
-        
         <div class="col-md-6">
-          <div class="form-group">
-            <label for="firstname" class="form-label">First Name</label>
-            <input type="text" class="form-control" id="firstname" name="name"
-                   value="<?= isset($record['firstname']) ? htmlspecialchars($record['firstname']) : '' ?>" required>
+          <div class="form-floating">
+            <input type="text" class="form-control" id="firstname" name="firstname"
+                   value="<?= htmlspecialchars($record['firstname'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
+            <label for="firstname">First Name</label>
           </div>
         </div>
 
-        
         <div class="col-md-6">
-          <div class="form-group">
-            <label for="lastname" class="form-label">Last Name</label>
+          <div class="form-floating">
             <input type="text" class="form-control" id="lastname" name="lastname"
-                   value="<?= isset($record['lastname']) ? htmlspecialchars($record['lastname']) : '' ?>" required>
+                   value="<?= htmlspecialchars($record['lastname'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
+            <label for="lastname">Last Name</label>
           </div>
         </div>
 
-        
         <div class="col-md-6">
-          <div class="form-group">
-            <label for="username" class="form-label">Username</label>
+          <div class="form-floating">
             <input type="text" class="form-control" id="username" name="username"
-                   value="<?= isset($record['username']) ? htmlspecialchars($record['username']) : '' ?>" required>
+                   value="<?= htmlspecialchars($record['username'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
+            <label for="username">Username</label>
           </div>
         </div>
 
-       
         <div class="col-md-6">
-          <div class="form-group">
-            <label for="address" class="form-label">Address</label>
+          <div class="form-floating">
             <input type="text" class="form-control" id="address" name="address"
-                   value="<?= isset($record['address']) ? htmlspecialchars($record['address']) : '' ?>">
+                   value="<?= htmlspecialchars($record['address'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+            <label for="address">Address</label>
           </div>
         </div>
 
-        
         <div class="col-12">
-          <div class="form-group">
-            <label for="email" class="form-label">E-mail</label>
+          <div class="form-floating">
             <input type="email" class="form-control" id="email" name="email"
-                   value="<?= isset($record['email']) ? htmlspecialchars($record['email']) : '' ?>" required>
+                   value="<?= htmlspecialchars($record['email'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+            <label for="email">E-mail</label>
           </div>
         </div>
       </div>
 
-      
       <div class="d-flex justify-content-center mt-4">
-        <button type="submit" class="btn btn-success px-4 me-2">Update</button>
-        <a href="<?= site_url('admin_Main/admin_crud'); ?>" class="btn btn-danger px-4 ms-2">Cancel</a>
+        <button type="submit" class="btn btn-success me-2">Update</button>
+        <a href="<?= base_url('index.php/admin_Main/admin_settings'); ?>" class="btn btn-danger ms-2">Cancel</a>
       </div>
-    </form>
+    </form> 
   </div>
-</div>
 
-
-  
-  <?php if($this->session->flashdata('kyre')): ?>
+  <?php if ($this->session->flashdata('kyre')): ?>
     <?php $alert = $this->session->flashdata('kyre'); ?>
     <div class="alert alert-<?= $alert['type']; ?> alert-dismissible fade show mt-3" role="alert">
       <?= $alert['message']; ?>
