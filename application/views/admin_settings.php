@@ -6,7 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>Settings</title>
 
-
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/izitoast@1.4.0/dist/css/iziToast.min.css">
   <script src="https://cdn.jsdelivr.net/npm/izitoast@1.4.0/dist/js/iziToast.min.js"></script>
   <link rel="stylesheet" href="<?php echo base_url('assets/css/bootstrap.min.css'); ?>" />
@@ -89,7 +88,6 @@
 
 <body>
 
- 
   <header class="header">
     <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top">
       <div class="container">
@@ -103,8 +101,8 @@
         <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
           <ul class="navbar-nav align-items-center">
             <li class="nav-item"><a class="nav-link fw-medium" href="<?= base_url('index.php/admin_Main'); ?>">Home</a></li>
-            <li class="nav-item"><a class="nav-link fw-medium" href="<?= base_url('index.php/admin_Main/admin_crud'); ?>">Details</a></li>
-            <li class="nav-item"><a class="nav-link fw-medium" href="<?= base_url('index.php/admin_Main/admin_calculator'); ?>">Calculator</a></li>
+            <li class="nav-item"><a class="nav-link fw-medium" href="<?= base_url('index.php/admin_Main/admin_crud'); ?>">Accounts</a></li>
+            <li class="nav-item"><a class="nav-link fw-medium" href="<?= base_url('index.php/admin_Main/admin_projects'); ?>">Projects</a></li>
 
             <li class="nav-item ms-3">
               <span class="navbar-text">
@@ -125,7 +123,6 @@
     </nav>
   </header>
 
-
   <div class="container mt-5">
     <div class="profile-card">
       <div class="profile-header">
@@ -136,18 +133,10 @@
           <div class="ms-3">
             <h5 class="mb-0"><?= $firstname ?? 'Guest'; ?> <?= $lastname ?? ''; ?></h5>
             <small class="text-muted"><?= htmlspecialchars($email ?? 'No email available', ENT_QUOTES, 'UTF-8'); ?></small>
-
+          </div>
         </div>
 
-      
-      
-
-      </div>
-
-  
-
-      
-     
+       
     </div>
   </div>
 

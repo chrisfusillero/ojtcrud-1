@@ -60,8 +60,6 @@
     <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
       <ul class="navbar-nav align-items-center">
         <li class="nav-item"><a class="nav-link fw-medium" href="<?= base_url('index.php/welcome'); ?>">Home</a></li>
-        <li class="nav-item"><a class="nav-link fw-medium" href="<?= base_url('index.php/welcome/crud_details'); ?>">Details</a></li>
-        <li class="nav-item"><a class="nav-link fw-medium" href="<?= base_url('index.php/welcome/calculator'); ?>">Calculator</a></li>
         <li class="nav-item ms-3">
           <span class="navbar-text">
             👤 <strong><?= ($firstname ?? 'Guest') . ' ' . ($lastname ?? ''); ?></strong>
@@ -142,6 +140,9 @@
     </div>
   <?php endif; ?>
 </div>
+
+
+
 
 </body>
 </html>

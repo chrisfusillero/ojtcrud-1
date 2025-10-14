@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Edit User</title>
 
-  <!-- CSS / JS -->
+  
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/izitoast@1.4.0/dist/css/iziToast.min.css">
   <script src="https://cdn.jsdelivr.net/npm/izitoast@1.4.0/dist/js/iziToast.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
@@ -14,142 +14,38 @@
   <script src="<?php echo base_url("assets/js/jquery-3.7.1.min.js"); ?>"></script>
 
   <style>
-  body {
-    padding-top: 80px;
-    background-color: #f8f9fa;
-    font-family: 'Poppins', sans-serif;
-    margin: 0;
-  }
-
-  
-  .header {
-    background-color: #fff;
-    color: #222;
-    padding: 12px 0;
-    text-align: center;
-    position: fixed;
-    top: 0;
-    width: 100%;
-    z-index: 100;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-  }
-
-  .header h1 {
-    font-size: 1.5rem;
-    margin: 0;
-  }
-
-  
-  .card {
-    max-width: 800px;
-    width: 90%;
-    margin: 20px auto;
-    padding: 30px 40px;
-    border-radius: 12px;
-    background-color: #fff;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-  }
-
-  .card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-  }
-
-  
-  .form-label {
-    font-weight: 500;
-    color: #333;
-    display: block;
-    margin-bottom: 5px;
-  }
-
-  .form-control {
-    width: 100%;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    padding: 10px 12px;
-    font-size: 15px;
-    transition: border-color 0.2s ease;
-  }
-
-  .form-control:focus {
-    outline: none;
-    border-color: #007bff;
-    box-shadow: 0 0 3px rgba(0, 123, 255, 0.3);
-  }
-
-  
-  .btn {
-    display: inline-block;
-    border-radius: 6px;
-    font-weight: 500;
-    padding: 10px 20px;
-    font-size: 15px;
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.2s ease, transform 0.2s ease;
-  }
-
-  .btn-primary {
-    background-color: #007bff;
-    color: #fff;
-  }
-
-  .btn-primary:hover {
-    background-color: #0069d9;
-    transform: scale(1.02);
-  }
-
-  .btn-secondary {
-    background-color: #6c757d;
-    color: #fff;
-  }
-
-  .btn-secondary:hover {
-    background-color: #5a6268;
-  }
-
- 
-  @media (max-width: 768px) {
-    .card {
-      padding: 20px;
-      width: 95%;
-    }
-
-    .header h1 {
-      font-size: 1.25rem;
-    }
-
-    .btn {
-      width: 100%;
-      margin-top: 10px;
-    }
-  }
-
-  @media (max-width: 576px) {
     body {
-      padding-top: 70px;
-    }
-
-    .card {
-      padding: 15px;
-      border-radius: 10px;
-    }
-
-    .form-control {
-      font-size: 14px;
+      padding-top: 80px;
+      background-color: #f8f9fa;
     }
 
     .header {
-      padding: 10px;
+      background-color: #fff;
+      color: #222;
+      font-family: 'Poppins', sans-serif; 
+      padding: 10px 0;
+      text-align: center;
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 100;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
     }
 
-    .header h1 {
-      font-size: 1.1rem;
+    .card {
+      max-width: 700px;
+      width: 100%;
+      margin: 20px auto;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
-  }
-</style>
+
+    @media (max-width: 576px) {
+      body { padding-top: 70px; }
+      .navbar-brand { font-size: 1.1rem; }
+      .card { padding: 15px; }
+    }
+  </style>
 
 </head>
 
@@ -182,7 +78,7 @@
 
         
         <li class="nav-item">
-          <a class="nav-link fw-medium" href="<?= base_url('index.php/admin_Main/admin_crud'); ?>">Details</a>
+          <a class="nav-link fw-medium" href="<?= base_url('index.php/admin_Main/admin_crud'); ?>">Accounts</a>
         </li>
 
         

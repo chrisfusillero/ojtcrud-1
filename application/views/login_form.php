@@ -104,7 +104,7 @@
             <div class="form-group">
                 <label for="role">Login Type</label>
                 <select name="role" id="role" class="form-control" required>
-                    <option value="regular">Regular User</option>
+                    <option value="regular">User</option>
                     <option value="admin">Admin</option>
                 </select>
             </div>

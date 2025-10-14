@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
-class Welcome extends CI_Controller
+class Welcome extends MY_Controller
 {
     public function __construct()
     {
@@ -9,6 +9,7 @@ class Welcome extends CI_Controller
         $this->load->helper(['url', 'form', 'security']);
         $this->load->library(['session', 'form_validation']);
         $this->load->model(['My_model', 'Login_model']);
+        
     }
 
     public function index()
@@ -18,18 +19,22 @@ class Welcome extends CI_Controller
             return;
         }
 
+        $this->load->model('Post_model');
+
         $user_id = $this->session->userdata('user_id');
         $user_data = $this->Login_model->get_user_data($user_id);
+        $posts = $this->Post_model->get_all_posts();
 
         $data = [
             'firstname' => $user_data['firstname'] ?? '',
             'lastname'  => $user_data['lastname'] ?? '',
             'username'  => $user_data['username'] ?? '',
+            'posts'     => $posts,
             'title'     => 'Welcome Page',
             'message'   => 'Welcome to your dashboard!'
         ];
 
-        $this->load->view('welcome_message', $data);
+        $this->template('welcome_message', $data);
     }
 
     public function delete($id)
@@ -122,28 +127,7 @@ class Welcome extends CI_Controller
         redirect('AuthLogin');
     }
 
-    public function crud_details()
-    {
-        if (!$this->session->userdata('user_id')) {
-            redirect('AuthLogin');
-            return;
-        }
-
-        $user_id = $this->session->userdata('user_id');
-        $user_data = $this->Login_model->get_user_data($user_id);
-
-        $data = [
-            'firstname'     => $user_data['firstname'],
-            'lastname'      => $user_data['lastname'],
-            'username'      => $user_data['username'],
-            'getUsers'      => $this->My_model->get_users(),
-            'records'       => $this->My_model->getdata(),
-            'valid_records' => $this->My_model->get_valid_records()
-        ];
-
-        $this->load->view('crud_details', $data);
-    }
-
+    
     public function settings()
     {
         if (!$this->session->userdata('user_id')) {
@@ -200,4 +184,49 @@ class Welcome extends CI_Controller
 
         $this->load->view('calculator', $data);
     }
+ 
+ public function add_post()
+{
+    if (!$this->session->userdata('user_id')) {
+        redirect('AuthLogin');
+        return;
+    }
+
+    $this->load->model('Post_model');
+
+    $user_id = $this->session->userdata('user_id');
+    $content = $this->input->post('content');
+    $image = null;
+
+ 
+    $config['upload_path']   = './uploads/posts/';
+    $config['allowed_types'] = 'jpg|jpeg|png|gif';
+    $config['max_size']      = 2048;
+    $config['encrypt_name']  = TRUE;
+
+    $this->load->library('upload', $config);
+
+    
+    if (!empty($_FILES['image']['name'])) {
+        if ($this->upload->do_upload('image')) {
+            $uploadData = $this->upload->data();
+            $image = $uploadData['file_name'];
+        } else {
+            echo $this->upload->display_errors();
+            return;
+        }
+    }
+
+ 
+    $this->Post_model->insert_post($user_id, $content, $image);
+
+   
+    redirect('welcome');
+}
+
+
+
+
+
+
 }

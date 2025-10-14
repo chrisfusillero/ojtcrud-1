@@ -130,6 +130,8 @@
 
 </head>
 
+<title>Calculator</title>
+
 <body onload="noBack();" onpageshow="if (event.persisted) noBack();" onunload="">
     <header class="header">
         <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top">
@@ -146,7 +148,7 @@
                             <a class="nav-link fw-medium" href="<?= base_url('index.php/admin_Main'); ?>">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link fw-medium" href="<?= base_url('index.php/admin_Main/admin_crud'); ?>">Details</a>
+                            <a class="nav-link fw-medium" href="<?= base_url('index.php/admin_Main/admin_crud'); ?>">Accounts</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link fw-medium" href="<?= base_url('index.php/admin_Main/admin_calculator'); ?>">Calculator</a>

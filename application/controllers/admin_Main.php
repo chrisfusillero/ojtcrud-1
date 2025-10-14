@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
-class admin_Main extends CI_Controller
+class admin_Main extends MY_Controller
 {
     public function __construct()
     {
@@ -41,7 +41,7 @@ class admin_Main extends CI_Controller
             'message'   => 'Welcome to the admin dashboard'
         ];
 
-        $this->load->view('admin_welcome', $data);
+        $this->template('admin_welcome', $data);
     }
 
     public function admin_crud()
@@ -59,7 +59,7 @@ class admin_Main extends CI_Controller
             'valid_records'  => $this->My_model->get_valid_records()
         ];
 
-        $this->load->view('admin_crud', $data);
+        $this->template('admin_crud', $data);
     }
 
    public function admin_edit_access($username = null) {
@@ -181,7 +181,7 @@ class admin_Main extends CI_Controller
             'valid_records' => $this->My_model->get_valid_records()
         ];
 
-        $this->load->view('admin_settings', $data);
+        $this->template('admin_settings', $data);
     }
 
     public function admin_calculator()
@@ -207,7 +207,21 @@ class admin_Main extends CI_Controller
             $data['expression'] = $expression;
         }
 
-        $this->load->view('admin_calculator', $data);
+        $this->template('admin_calculator', $data);
+    }
+
+    public function admin_projects()
+    {
+        $user_id = $this->session->userdata('user_id');
+        $user = $this->My_model->get_single_data($user_id) ?? [];
+
+        $data = [
+            'firstname'  => $user['firstname'] ?? 'Guest',
+            'lastname'   => $user['lastname'] ?? '',
+            
+        ];
+
+        $this->template('admin_projects', $data);
     }
 
     public function logout()

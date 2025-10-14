@@ -140,14 +140,7 @@ body.dark-mode a {
         </li>
 
         
-        <li class="nav-item">
-          <a class="nav-link fw-medium" href="<?= base_url('index.php/welcome/crud_details'); ?>">Details</a>
-        </li>
-
         
-        <li class="nav-item">
-          <a class="nav-link fw-medium" href="<?= base_url('index.php/welcome/calculator'); ?>">Calculator</a>
-
         
         <li class="nav-item ms-3">
           <span class="navbar-text">

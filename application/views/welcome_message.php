@@ -1,23 +1,4 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>DigiCrud101</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/izitoast@1.4.0/dist/css/iziToast.min.css">
-<script src="https://cdn.jsdelivr.net/npm/izitoast@1.4.0/dist/js/iziToast.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="<?php echo base_url('assets/css/bootstrap.min.css'); ?>" />
-<script type="text/javascript" src="<?php echo base_url("assets/js/bootstrap.min.js"); ?>"></script>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script type="text/javascript" src="<?php echo base_url("assets/js/jquery-3.7.1.min.js"); ?>"></script>
-<script type="text/javascript">   
-             window.history.forward();
-             function noBack() { 
-                  window.history.forward(); 
-             }
-        </script>
+
 
 <style>
 
@@ -152,10 +133,28 @@ body {
   .footer {
     font-size: 0.9rem;
   }
+
+.card {
+  border-radius: 12px;
+  border: none;
+}
+textarea {
+  resize: none;
+  border-radius: 12px;
+}
+.btn-primary {
+  border-radius: 20px;
+}
+
+
+
+
 }
 
 </style>  
-</head>
+
+<title>Blogspot101</title>
+
 
 <body onload="noBack();" onpageshow="if (event.persisted) noBack();" onunload="">
 
@@ -165,7 +164,7 @@ body {
 
     
     <a class="navbar-brand fw-bold text-primary" href="<?= base_url('index.php/welcome'); ?>">
-      DigiCrud101
+      Blogspot101
     </a>
 
     
@@ -184,15 +183,7 @@ body {
         </li>
 
         
-        <li class="nav-item">
-          <a class="nav-link fw-medium" href="<?= base_url('index.php/welcome/crud_details'); ?>">Details</a>
-        </li>
-
         
-        <li class="nav-item">
-          <a class="nav-link fw-medium" href="<?= base_url('index.php/welcome/calculator'); ?>">Calculator</a>
-        </li>
-        </li>
 
         
         <li class="nav-item ms-3">
@@ -225,7 +216,7 @@ body {
 </nav>
 
 </header>
- 
+
 <div class="hero-section text-center p-5 rounded shadow" 
 style="background-image: url('<?php echo base_url('assets/portfolio_image/ict-2.png'); ?>');
 background-size: cover; color: white; height: 100vh; display: flex; flex-direction: column; 
@@ -237,9 +228,95 @@ justify-content: center; align-items: center; text-shadow: 2px 2px 4px rgba(0, 0
   </div>  
 </div>
 
+
+
+<div class="container mt-5" style="max-width: 600px;">
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <form action="<?= base_url('index.php/welcome/add_post'); ?>" 
+        method="post" enctype="multipart/form-data">
+        <div class="d-flex align-items-start">
+          <img src="<?= base_url('assets/portfolio_image/default-avatar.png'); ?>" 
+               alt="Profile" class="rounded-circle me-3" width="45" height="45">
+          <textarea name="content" class="form-control" 
+                    placeholder="What's on your mind, <?= htmlspecialchars($firstname); ?>?" 
+                    rows="3" required></textarea>
+        </div>
+
+      
+        <div class="mt-3 d-flex justify-content-between align-items-center">
+          <div>
+            <label class="btn btn-light border px-3 py-1 mb-0">
+              📷 Photo
+              <input type="file" name="image" id="postImage" 
+                     accept="image/*" hidden onchange="previewImage(event)">
+            </label>
+          </div>
+          <button type="submit" class="btn btn-primary px-4 py-1">Post</button>
+        </div>
+
+        
+        <div class="mt-3 text-center">
+          <img id="imagePreview" src="#" alt="Image Preview" 
+               class="img-fluid rounded d-none" style="max-height: 250px; object-fit: cover;">
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
 
 
+<div class="container mt-4" style="max-width: 600px;">
+  <?php if (!empty($posts)): ?>
+    <?php foreach ($posts as $post): ?>
+      <div class="card mb-3 shadow-sm">
+        <div class="card-body">
+          <h6 class="mb-1">
+            <strong><?= htmlspecialchars($post['firstname'] . ' ' . $post['lastname']); ?></strong>
+            <span class="text-muted" style="font-size: 0.9em;">
+              • <?= date('M d, Y h:i ', strtotime($post['created_at'])); ?>
+            </span>
+          </h6>
+          <p class="mt-2"><?= nl2br(htmlspecialchars($post['content'])); ?></p>
+
+          <?php if (!empty($post['image'])): ?>
+            <div class="mt-2 text-center">
+              <img src="<?= base_url('uploads/posts/' . htmlspecialchars($post['image'])); ?>" 
+                   alt="Post Image" class="img-fluid rounded shadow-sm"
+                   style="max-height: 350px; object-fit: cover;">
+            </div>
+          <?php endif; ?>
+        </div>
+      </div>
+    <?php endforeach; ?>
+  <?php else: ?>
+    <p class="text-center text-muted mt-4">No posts yet. Be the first to share something!</p>
+  <?php endif; ?>
+</div>
+
+
+
+
+<script>
+  function previewImage(event) {
+    const imagePreview = document.getElementById('imagePreview');
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = e => {
+        imagePreview.src = e.target.result;
+        imagePreview.classList.remove('d-none');
+      };
+      reader.readAsDataURL(file);
+    } else {
+      imagePreview.src = '#';
+      imagePreview.classList.add('d-none');
+    }
+  }
+</script>
+
+
+
   <br>
   <br>
   <br />
@@ -255,24 +332,11 @@ justify-content: center; align-items: center; text-shadow: 2px 2px 4px rgba(0, 0
 <br />
 
 
-     
-
-
-
-
-
-
+  
       
 </div>
 
-<div class="footer">
-<p>&copy; <?php echo date("Y"); ?> Demo Website. All Rights Reserved.</p>
-</div>
 
 
 
- 
-</body>
-
-</html>
 
