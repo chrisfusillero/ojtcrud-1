@@ -349,24 +349,29 @@ justify-content: center; align-items: center; text-shadow: 2px 2px 4px rgba(0, 0
   <h3 class="text-center mb-4 text-light">📸 Image Gallery</h3>
   <div class="row g-3">
     <?php 
-      $imagesExist = false;
-      foreach ($posts as $post):
-        if (!empty($post['image'])):
-          $imagesExist = true;
+      
+      $galleryPath = FCPATH . 'assets/gallery_path/';
+      $galleryURL  = base_url('assets/gallery_path/');
+
+    
+      $galleryImages = glob($galleryPath . '*.{jpg,jpeg,png,gif,JPG,JPEG,PNG,GIF}', GLOB_BRACE);
+
+      if (!empty($galleryImages)):
+        foreach ($galleryImages as $img):
+          $fileName = basename($img); 
     ?>
       <div class="col-6 col-md-4 col-lg-3">
         <div class="gallery-card">
-          <img src="<?= base_url('assets/post_image/' . htmlspecialchars($post['image'])); ?>" 
+          <img src="<?= $galleryURL . $fileName; ?>" 
                alt="Gallery Image" class="img-fluid rounded shadow-sm gallery-img"
                onclick="openModal(this.src)">
         </div>
       </div>
     <?php 
-        endif;
-      endforeach; 
-      if (!$imagesExist): 
+        endforeach;
+      else: 
     ?>
-      <p class="text-center text-muted">No images available yet.</p>
+      <p class="text-center text-muted">No images in gallery yet.</p>
     <?php endif; ?>
   </div>
 </div>

@@ -17,6 +17,7 @@
 
   <style>
     body {
+      background-image: url('<?php echo base_url("assets/portfolio_image/emerald-2.jpg"); ?>');
       padding-top: 80px;
       background-color: #f8f9fa;
       font-family: 'Poppins', sans-serif;

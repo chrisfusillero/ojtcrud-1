@@ -13,39 +13,70 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="<?php echo base_url("assets/js/jquery-3.7.1.min.js"); ?>"></script>
 
-  <style>
-    body {
-      padding-top: 80px;
-      background-color: #f8f9fa;
-    }
+<style>
+  body {
+    background-image: url('<?php echo base_url("assets/portfolio_image/emerald-2.jpg"); ?>');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-color: #f8f9fa;
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Poppins', sans-serif;
+  }
 
-    .header {
-      background-color: #fff;
-      color: #222;
-      font-family: 'Poppins', sans-serif; 
-      padding: 10px 0;
-      text-align: center;
-      position: fixed;
-      top: 0;
-      width: 100%;
-      z-index: 100;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    }
+  .form-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    min-height: 100vh; 
+    padding: 20px;
+  }
 
+  .card {
+    width: 100%;
+    max-width: 600px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    background-color: rgba(255, 255, 255, 0.95);
+    padding: 30px;
+    transition: all 0.3s ease;
+  }
+
+  
+  @media (hover: hover) {
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 15px rgba(0,0,0,0.25);
+    }
+  }
+
+  @media (max-width: 768px) {
     .card {
-      max-width: 700px;
-      width: 100%;
-      margin: 20px auto;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      max-width: 90%;
+      padding: 25px;
+    }
+  }
+
+  
+  @media (max-width: 576px) {
+    .card {
+      max-width: 95%;
+      padding: 20px;
+      border-radius: 10px;
     }
 
-    @media (max-width: 576px) {
-      body { padding-top: 70px; }
-      .navbar-brand { font-size: 1.1rem; }
-      .card { padding: 15px; }
+    body {
+      background-attachment: scroll; /* smoother on mobile */
     }
-  </style>
+  }
+</style>
+
 
 </head>
 
@@ -117,67 +148,69 @@
   </div>
 </nav>
 
-<div class="container">
-  <div class="card p-4">
-    <h3 class="text-center mb-4">Edit</h3>
+<div class="form-wrapper">
+  <div class="container">
+    <div class="card p-4">
+      <h3 class="text-center mb-4">Edit</h3>
 
-    <form action="<?= base_url('index.php/admin_Main/update/'.urlencode($record['username'])); ?>" method="POST">
-      <div class="row g-3">
-        <div class="col-md-6">
-          <div class="form-floating">
-            <input type="text" class="form-control" id="firstname" name="firstname"
-                   value="<?= htmlspecialchars($record['firstname'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
-            <label for="firstname">First Name</label>
+      <form action="<?= base_url('index.php/admin_Main/update/'.urlencode($record['username'])); ?>" method="POST">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <div class="form-floating">
+              <input type="text" class="form-control" id="firstname" name="firstname"
+                     value="<?= htmlspecialchars($record['firstname'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
+              <label for="firstname">First Name</label>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="form-floating">
+              <input type="text" class="form-control" id="lastname" name="lastname"
+                     value="<?= htmlspecialchars($record['lastname'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
+              <label for="lastname">Last Name</label>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="form-floating">
+              <input type="text" class="form-control" id="username" name="username"
+                     value="<?= htmlspecialchars($record['username'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
+              <label for="username">Username</label>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="form-floating">
+              <input type="text" class="form-control" id="address" name="address"
+                     value="<?= htmlspecialchars($record['address'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+              <label for="address">Address</label>
+            </div>
+          </div>
+
+          <div class="col-12">
+            <div class="form-floating">
+              <input type="email" class="form-control" id="email" name="email"
+                     value="<?= htmlspecialchars($record['email'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+              <label for="email">E-mail</label>
+            </div>
           </div>
         </div>
 
-        <div class="col-md-6">
-          <div class="form-floating">
-            <input type="text" class="form-control" id="lastname" name="lastname"
-                   value="<?= htmlspecialchars($record['lastname'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
-            <label for="lastname">Last Name</label>
-          </div>
+        <div class="d-flex justify-content-center mt-4 flex-wrap">
+          <button type="submit" class="btn btn-success me-2 mb-2">Update</button>
+          <a href="<?= base_url('index.php/admin_Main/admin_settings'); ?>" class="btn btn-danger ms-2 mb-2">Cancel</a>
         </div>
+      </form> 
 
-        <div class="col-md-6">
-          <div class="form-floating">
-            <input type="text" class="form-control" id="username" name="username"
-                   value="<?= htmlspecialchars($record['username'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
-            <label for="username">Username</label>
-          </div>
+      <?php if ($this->session->flashdata('kyre')): ?>
+        <?php $alert = $this->session->flashdata('kyre'); ?>
+        <div class="alert alert-<?= $alert['type']; ?> alert-dismissible fade show mt-3" role="alert">
+          <?= $alert['message']; ?>
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
-
-        <div class="col-md-6">
-          <div class="form-floating">
-            <input type="text" class="form-control" id="address" name="address"
-                   value="<?= htmlspecialchars($record['address'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
-            <label for="address">Address</label>
-          </div>
-        </div>
-
-        <div class="col-12">
-          <div class="form-floating">
-            <input type="email" class="form-control" id="email" name="email"
-                   value="<?= htmlspecialchars($record['email'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
-            <label for="email">E-mail</label>
-          </div>
-        </div>
-      </div>
-
-      <div class="d-flex justify-content-center mt-4">
-        <button type="submit" class="btn btn-success me-2">Update</button>
-        <a href="<?= base_url('index.php/admin_Main/admin_settings'); ?>" class="btn btn-danger ms-2">Cancel</a>
-      </div>
-    </form> 
-  </div>
-
-  <?php if ($this->session->flashdata('kyre')): ?>
-    <?php $alert = $this->session->flashdata('kyre'); ?>
-    <div class="alert alert-<?= $alert['type']; ?> alert-dismissible fade show mt-3" role="alert">
-      <?= $alert['message']; ?>
-      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      <?php endif; ?>
     </div>
-  <?php endif; ?>
+  </div>
 </div>
 
 </body>

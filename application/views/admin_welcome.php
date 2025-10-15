@@ -2,7 +2,7 @@
 <style>
 
 body {
-  background-image: url('<?php echo base_url("assets/portfolio_image/symmetry.jpg"); ?>');
+  background-image: url('<?php echo base_url("assets/portfolio_image/emerald-2.jpg"); ?>');
   background-size: cover;         
   background-position: center;    
   background-repeat: no-repeat;   
@@ -215,7 +215,7 @@ body {
     <br>
  
 <div class="hero-section text-center p-5 rounded shadow" 
-style="background-image: url('<?php echo base_url('assets/portfolio_image/abstract-technology-background.png'); ?>');
+style="background-image: url('<?php echo base_url('assets/portfolio_image/emerald-gem.jpg'); ?>');
 background-size: cover; color: white; height: 100vh; display: flex; flex-direction: column; 
 justify-content: center; align-items: center; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);">
   <div class="content">

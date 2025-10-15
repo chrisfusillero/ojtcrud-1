@@ -1,6 +1,19 @@
 
 
 <style>
+  body {
+  background-image: url('<?php echo base_url("assets/portfolio_image/emerald-2.jpg"); ?>');
+  background-size: cover;         
+  background-position: center;    
+  background-repeat: no-repeat;   
+  background-attachment: fixed;   
+  font-size: 16px;
+  margin: 0;
+  padding-top: 70px; 
+}
+
+
+
   .table {
   width: 100%;               
   margin: 20px auto;

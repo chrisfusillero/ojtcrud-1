@@ -21,6 +21,16 @@
 
 <style>
 
+body {
+  background-image: url('<?php echo base_url("assets/portfolio_image/emerald-2.jpg"); ?>');
+  background-size: cover;         
+  background-position: center;    
+  background-repeat: no-repeat;   
+  background-attachment: fixed;   
+  font-size: 16px;
+
+}
+
 
 .header {
   background-color: #fff;

@@ -1,7 +1,7 @@
 <style>
 
 body {
-  background-image: url('<?php echo base_url("assets/portfolio_image/symmetry.jpg"); ?>');
+  background-image: url('<?php echo base_url("assets/portfolio_image/emerald-2.jpg"); ?>');
   background-size: cover;         
   background-position: center;    
   background-repeat: no-repeat;   
@@ -240,7 +240,7 @@ body {
       <div class="col">
         <a href="<?= base_url('index.php/admin_Main/admin_calculator'); ?>" class="text-decoration-none text-dark">
           <div class="card h-100 shadow-sm border-0 project-tile">
-            <img src="assets/projects/project1.jpg" class="card-img-top" alt="Project 1">
+            <img src="<?= base_url('assets/projects/calculator-1.jpg'); ?>" class="card-img-top" alt="Project 1">
             <div class="card-body text-center">
               <h6 class="fw-semibold">Calculator</h6>
             </div>
@@ -248,7 +248,7 @@ body {
         </a>
       </div>
 
-      <!-- Project Tile -->
+     
       <div class="col">
         <a href="project2.html" class="text-decoration-none text-dark">
           <div class="card h-100 shadow-sm border-0 project-tile">
@@ -260,7 +260,7 @@ body {
         </a>
       </div>
 
-      <!-- Project Tile -->
+
       <div class="col">
         <a href="project3.html" class="text-decoration-none text-dark">
           <div class="card h-100 shadow-sm border-0 project-tile">
