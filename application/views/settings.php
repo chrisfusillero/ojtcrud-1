@@ -89,26 +89,6 @@ small {
     padding: 15px;
   }
 }
-
-  body.dark-mode {
-  background-color: #121212;
-  color: #e0e0e0;
-}
-
-body.dark-mode .navbar {
-  background-color: #1e1e1e !important;
-}
-
-body.dark-mode .profile-card {
-  background: #1e1e1e;
-  color: #e0e0e0;
-  border: 1px solid #444;
-}
-
-body.dark-mode a {
-  color: #90caf9;
-}
-
   </style>
 </head>
 

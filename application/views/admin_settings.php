@@ -17,73 +17,73 @@
 
   <style>
     body {
-      background-image: url('<?php echo base_url("assets/portfolio_image/emerald-2.jpg"); ?>');
       padding-top: 80px;
       background-color: #f8f9fa;
-      font-family: 'Poppins', sans-serif;
     }
+
 
     .header {
-      background-color: #fff;
-      color: #222;
-      padding: 10px 0;
-      text-align: center;
-      position: fixed;
-      top: 0;
-      width: 100%;
-      z-index: 100;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    }
+  background-color: #fff;
+  color: #222;
+  font-family: 'Poppins', sans-serif; 
+  padding: 10px 0;
+  text-align: center;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 100;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
 
-    .profile-card {
-      width: 100%;
-      max-width: 700px;
-      margin: 0 auto;
-      background: #fff;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      padding: 20px;
-    }
+  .profile-card {
+  width: 100%;              
+  max-width: 700px;          
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 20px;              
+}
 
-    .profile-header {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: center;
-      gap: 15px;
-    }
+.profile-header {
+  display: flex;
+  flex-wrap: wrap;              
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;                    
+}
 
-    .profile-avatar {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      background-color: #007bff;
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5rem;
-      font-weight: bold;
-      text-transform: uppercase;
-    }
 
-    h5 {
-      font-size: 1.1rem;
-    }
+.profile-avatar {
+  width: 60px;               
+  height: 60px;
+  border-radius: 50%;        
+  background-color: #007bff; 
+  color: #fff;               
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-transform: uppercase;
+}
 
-    small {
-      font-size: 0.85rem;
-    }
 
-    @media (max-width: 576px) {
-      body {
-        padding-top: 70px;
-      }
+h5 {
+  font-size: 1.1rem;
+}
+small {
+  font-size: 0.85rem;
+}
 
-      .profile-card {
-        padding: 15px;
-      }
-    }
+@media (max-width: 576px) {
+  body {
+    padding-top: 70px; 
+  }
+  .profile-card {
+    padding: 15px;
+  }
+}
   </style>
 </head>
 

@@ -181,7 +181,7 @@ class admin_Main extends MY_Controller
             'valid_records' => $this->My_model->get_valid_records()
         ];
 
-        $this->template('admin_settings', $data);
+        $this->load->view('admin_settings', $data);
     }
 
     public function admin_calculator()
