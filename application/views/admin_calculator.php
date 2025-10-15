@@ -280,15 +280,13 @@ document.addEventListener('DOMContentLoaded', function () {
     function handleEqualsClick() {
         let completeExpression = currentExpression + currentResult;
 
-        
         completeExpression = completeExpression
             .replace(/x/g, '*')
             .replace(/÷/g, '/');
 
-        
         const form = document.createElement('form');
         form.method = 'POST';
-        form.action = '<?php echo base_url('index.php/welcome/calculator'); ?>';
+        form.action = '<?php echo base_url('index.php/admin_Main/admin_calculator'); ?>';
 
         const expressionInput = document.createElement('input');
         expressionInput.type = 'hidden';
@@ -318,7 +316,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     updateDisplay();
 
-    
     <?php if(isset($result)): ?>
         currentResult = <?php echo json_encode($result); ?>;
         updateDisplay();
