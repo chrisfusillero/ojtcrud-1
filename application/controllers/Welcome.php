@@ -13,29 +13,43 @@ class Welcome extends MY_Controller
     }
 
     public function index()
-    {
-        if (!$this->session->userdata('user_id')) {
-            redirect('AuthLogin');
-            return;
-        }
+{
 
-        $this->load->model('Post_model');
-
-        $user_id = $this->session->userdata('user_id');
-        $user_data = $this->Login_model->get_user_data($user_id);
-        $posts = $this->Post_model->get_all_posts();
-
-        $data = [
-            'firstname' => $user_data['firstname'] ?? '',
-            'lastname'  => $user_data['lastname'] ?? '',
-            'username'  => $user_data['username'] ?? '',
-            'posts'     => $posts,
-            'title'     => 'Welcome Page',
-            'message'   => 'Welcome to your dashboard!'
-        ];
-
-        $this->template('welcome_message', $data);
+    if (!$this->session->userdata('user_id')) {
+        redirect('AuthLogin');
+        return;
     }
+
+    
+    $this->load->model('Login_model');
+    $this->load->model('Post_model');
+
+   
+    $user_id = $this->session->userdata('user_id');
+    $user_data = $this->Login_model->get_user_data($user_id);
+
+    
+    $posts = $this->Post_model->get_all_posts();
+
+ 
+    if (is_object($user_data)) {
+        $user_data = (array) $user_data;
+    }
+
+    
+    $data = [
+        'firstname' => $user_data['firstname'] ?? '',
+        'lastname'  => $user_data['lastname'] ?? '',
+        'username'  => $user_data['username'] ?? '',
+        'posts'     => $posts,
+        'title'     => 'Welcome Page',
+        'message'   => 'Welcome to your dashboard!'
+    ];
+
+    
+    $this->template('welcome_message', $data);
+}
+
 
     public function delete($id)
     {
@@ -187,29 +201,22 @@ class Welcome extends MY_Controller
  
  public function add_post()
 {
+  
     if (!$this->session->userdata('user_id')) {
         redirect('AuthLogin');
         return;
     }
 
-    $this->load->model('Post_model');
-
-    
-    $user_id   = $this->session->userdata('user_id');
-    $firstname = $this->session->userdata('firstname');
-    $lastname  = $this->session->userdata('lastname');
-    $content   = $this->input->post('content');
-    $image     = null;
-
-    
-    $config['upload_path']   = './uploads/posts/';
+   
+    $config['upload_path']   = './assets/post_image/';
     $config['allowed_types'] = 'jpg|jpeg|png|gif';
-    $config['max_size']      = 2048;
+    $config['max_size']      = 2048; // 2MB limit
     $config['encrypt_name']  = TRUE;
 
     $this->load->library('upload', $config);
 
-    
+   
+    $image = null;
     if (!empty($_FILES['image']['name'])) {
         if ($this->upload->do_upload('image')) {
             $uploadData = $this->upload->data();
@@ -220,11 +227,22 @@ class Welcome extends MY_Controller
         }
     }
 
+   
+    $data = [
+        'user_id'    => $this->session->userdata('user_id'),
+        'content'    => $this->input->post('content'),
+        'image'      => $image,
+        'created_at' => date('Y-m-d H:i:s')
+    ];
+
     
-    $this->Post_model->insert_post($user_id, $firstname, $lastname, $content, $image);
+    $this->db->insert('posts', $data);
 
     redirect('welcome');
 }
+
+
+
 
 
 

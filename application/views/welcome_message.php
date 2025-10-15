@@ -54,6 +54,8 @@ body {
   background-size: cover;
   background-position: center;
   margin-top: -56px;
+  margin-bottom: 40px !important;
+
 }
 
 .navbar-toggler:hover {
@@ -78,7 +80,8 @@ body {
 }
 
 .col-md-4 {
-  margin-bottom: 30px; 
+  margin-bottom: 40px !important;
+
 }
 
 
@@ -146,6 +149,52 @@ textarea {
   border-radius: 20px;
 }
 
+.gallery-card {
+    overflow: hidden;
+    border-radius: 12px;
+    transition: transform 0.3s ease;
+  }
+  .gallery-img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    cursor: pointer;
+    border-radius: 12px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .gallery-img:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  }
+  .image-modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    padding-top: 60px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.85);
+    text-align: center;
+  }
+  .image-modal img {
+    max-width: 80%;
+    max-height: 80%;
+    border-radius: 12px;
+  }
+  .close {
+    position: absolute;
+    top: 20px;
+    right: 45px;
+    color: #fff;
+    font-size: 35px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  .close:hover {
+    color: #bbb;
+  }
 
 
 
@@ -230,7 +279,7 @@ justify-content: center; align-items: center; text-shadow: 2px 2px 4px rgba(0, 0
 
 
 
-<div class="container mt-5" style="max-width: 600px;">
+<div class="container mt-5 mb-5" style="max-width: 600px;">
   <div class="card shadow-sm">
     <div class="card-body">
       <form action="<?= base_url('index.php/welcome/add_post'); ?>" 
@@ -269,19 +318,21 @@ justify-content: center; align-items: center; text-shadow: 2px 2px 4px rgba(0, 0
 <div class="container mt-4" style="max-width: 600px;">
   <?php if (!empty($posts)): ?>
     <?php foreach ($posts as $post): ?>
-      <div class="card mb-3 shadow-sm">
+      <div class="card mb-5 shadow-sm">
         <div class="card-body">
           <h6 class="mb-1">
             <strong><?= htmlspecialchars($post['firstname'] . ' ' . $post['lastname']); ?></strong>
-            <span class="text-muted" style="font-size: 0.9em;">
-              • <?= date('M d, Y h:i ', strtotime($post['created_at'])); ?>
-            </span>
+            <span class="text-muted" style="font-size: 0.9em;"
+      data-time="<?= htmlspecialchars($post['created_at']); ?>">
+  on <?= htmlspecialchars($post['created_at']); ?>
+</span>
+
           </h6>
           <p class="mt-2"><?= nl2br(htmlspecialchars($post['content'])); ?></p>
 
           <?php if (!empty($post['image'])): ?>
             <div class="mt-2 text-center">
-              <img src="<?= base_url('uploads/posts/' . htmlspecialchars($post['image'])); ?>" 
+              <img src="<?= base_url('assets/post_image/' . htmlspecialchars($post['image'])); ?>" 
                    alt="Post Image" class="img-fluid rounded shadow-sm"
                    style="max-height: 350px; object-fit: cover;">
             </div>
@@ -293,6 +344,39 @@ justify-content: center; align-items: center; text-shadow: 2px 2px 4px rgba(0, 0
     <p class="text-center text-muted mt-4">No posts yet. Be the first to share something!</p>
   <?php endif; ?>
 </div>
+
+<div class="container mt-5 mb-5">
+  <h3 class="text-center mb-4 text-light">📸 Image Gallery</h3>
+  <div class="row g-3">
+    <?php 
+      $imagesExist = false;
+      foreach ($posts as $post):
+        if (!empty($post['image'])):
+          $imagesExist = true;
+    ?>
+      <div class="col-6 col-md-4 col-lg-3">
+        <div class="gallery-card">
+          <img src="<?= base_url('assets/post_image/' . htmlspecialchars($post['image'])); ?>" 
+               alt="Gallery Image" class="img-fluid rounded shadow-sm gallery-img"
+               onclick="openModal(this.src)">
+        </div>
+      </div>
+    <?php 
+        endif;
+      endforeach; 
+      if (!$imagesExist): 
+    ?>
+      <p class="text-center text-muted">No images available yet.</p>
+    <?php endif; ?>
+  </div>
+</div>
+
+
+<div id="imageModal" class="image-modal" onclick="closeModal()">
+  <span class="close">&times;</span>
+  <img class="modal-content" id="modalImage">
+</div>
+
 
 
 
@@ -312,6 +396,22 @@ justify-content: center; align-items: center; text-shadow: 2px 2px 4px rgba(0, 0
       imagePreview.src = '#';
       imagePreview.classList.add('d-none');
     }
+
+    document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll('.text-muted[data-time]').forEach(span => {
+    const serverTime = span.getAttribute('data-time');
+    const localDate = new Date(serverTime.replace(' ', 'T'));
+    const options = {
+      month: 'short',
+      day: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    };
+    span.textContent = 'on ' + localDate.toLocaleString(undefined, options);
+  });
+});
   }
 </script>
 
