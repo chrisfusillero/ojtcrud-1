@@ -194,11 +194,14 @@ class Welcome extends MY_Controller
 
     $this->load->model('Post_model');
 
-    $user_id = $this->session->userdata('user_id');
-    $content = $this->input->post('content');
-    $image = null;
+    
+    $user_id   = $this->session->userdata('user_id');
+    $firstname = $this->session->userdata('firstname');
+    $lastname  = $this->session->userdata('lastname');
+    $content   = $this->input->post('content');
+    $image     = null;
 
- 
+    
     $config['upload_path']   = './uploads/posts/';
     $config['allowed_types'] = 'jpg|jpeg|png|gif';
     $config['max_size']      = 2048;
@@ -217,10 +220,9 @@ class Welcome extends MY_Controller
         }
     }
 
- 
-    $this->Post_model->insert_post($user_id, $content, $image);
+    
+    $this->Post_model->insert_post($user_id, $firstname, $lastname, $content, $image);
 
-   
     redirect('welcome');
 }
 

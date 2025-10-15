@@ -9,16 +9,20 @@ class Post_model extends CI_Model
         $this->load->database(); // ✅ ensures database connection
     }
 
-    public function insert_post($user_id, $content, $image = null)
-    {
-        $data = [
-            'user_id'    => $user_id,
-            'content'    => $content,
-            'image'      => $image,
-            'created_at' => date('Y-m-d H:i:s')
-        ];
-        return $this->db->insert('posts', $data);
-    }
+   public function insert_post($user_id, $firstname, $lastname, $content, $image = null)
+{
+    $data = [
+        'user_id'    => $user_id,
+        'firstname'  => $firstname,
+        'lastname'   => $lastname,
+        'content'    => $content,
+        'image'      => $image,
+        'created_at' => date('Y-m-d H:i:s')
+    ];
+
+    return $this->db->insert('posts', $data);
+}
+
 
   public function get_all_posts()
 {

@@ -131,6 +131,25 @@ body {
   .footer {
     font-size: 0.9rem;
   }
+
+
+  .project-tile {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  cursor: pointer;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.project-tile:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.project-tile img {
+  height: 160px;
+  object-fit: cover;
+}
+
 }
 
 </style>  
@@ -205,4 +224,55 @@ body {
 </nav>
 
 </header>
+
+
+<div class="container py-5">
+  <div class="card shadow-lg border-0 p-4" style="max-width: 900px; margin: 0 auto; background-color: white;">
+    <div class="text-center mb-4">
+      <h3 class="fw-bold text-primary">Our Projects</h3>
+      <p class="text-muted">Click a project to view details</p>
+    </div>
+
+    
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+      
+      
+      <div class="col">
+        <a href="<?= base_url('index.php/admin_Main/admin_calculator'); ?>" class="text-decoration-none text-dark">
+          <div class="card h-100 shadow-sm border-0 project-tile">
+            <img src="assets/projects/project1.jpg" class="card-img-top" alt="Project 1">
+            <div class="card-body text-center">
+              <h6 class="fw-semibold">Calculator</h6>
+            </div>
+          </div>
+        </a>
+      </div>
+
+      <!-- Project Tile -->
+      <div class="col">
+        <a href="project2.html" class="text-decoration-none text-dark">
+          <div class="card h-100 shadow-sm border-0 project-tile">
+            <img src="assets/projects/project2.jpg" class="card-img-top" alt="Project 2">
+            <div class="card-body text-center">
+              <h6 class="fw-semibold"> </h6>
+            </div>
+          </div>
+        </a>
+      </div>
+
+      <!-- Project Tile -->
+      <div class="col">
+        <a href="project3.html" class="text-decoration-none text-dark">
+          <div class="card h-100 shadow-sm border-0 project-tile">
+            <img src="assets/projects/project3.jpg" class="card-img-top" alt="Project 3">
+            <div class="card-body text-center">
+              <h6 class="fw-semibold"> </h6>
+            </div>
+          </div>
+        </a>
+      </div>
+
+    </div>
+  </div>
+</div>
 

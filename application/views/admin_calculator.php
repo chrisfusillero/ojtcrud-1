@@ -151,7 +151,7 @@
                             <a class="nav-link fw-medium" href="<?= base_url('index.php/admin_Main/admin_crud'); ?>">Accounts</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link fw-medium" href="<?= base_url('index.php/admin_Main/admin_calculator'); ?>">Calculator</a>
+                            <a class="nav-link fw-medium" href="<?= base_url('index.php/admin_Main/admin_projects'); ?>">Projects</a>
                         </li>
                         <li class="nav-item ms-3">
                             <span class="navbar-text">
