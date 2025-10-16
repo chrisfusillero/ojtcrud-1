@@ -62,4 +62,7 @@ $route['welcome/calculator'] = 'welcome/calculator';
 $route['admin_Main/update/(:num)'] = 'admin_Main/update/$1';
 $route['admin_Main/admin_edit_access/(:any)'] = 'admin_Main/admin_edit_access/$1';
 $route['admin_Main/admin_edit_profile/(:any)'] = 'admin_Main/admin_edit_profile/$1';
+$route['post/edit_post/(:num)'] = 'post/edit_post/$1';
+$route['post/delete_post/(:num)'] = 'post/delete_post/$1';
+
 

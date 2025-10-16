@@ -8,7 +8,7 @@ class Welcome extends MY_Controller
         parent::__construct();
         $this->load->helper(['url', 'form', 'security']);
         $this->load->library(['session', 'form_validation']);
-        $this->load->model(['My_model', 'Login_model']);
+        $this->load->model(['My_model', 'Login_model', 'Post_model']);
         
     }
 
@@ -210,7 +210,7 @@ class Welcome extends MY_Controller
    
     $config['upload_path']   = './assets/post_image/';
     $config['allowed_types'] = 'jpg|jpeg|png|gif';
-    $config['max_size']      = 2048; // 2MB limit
+    $config['max_size']      = 6144; // 6MB limit
     $config['encrypt_name']  = TRUE;
 
     $this->load->library('upload', $config);
@@ -241,10 +241,121 @@ class Welcome extends MY_Controller
     redirect('welcome');
 }
 
+public function delete_post($id) 
+{
+
+    $this->load->model('Post_model');
+
+    $user_id = $this->session->userdata('user_id');
+    $post = $this->Post_model->get_post_by_id($id);
+
+    if (!$post || $post['user_id'] !== $user_id) {
+        show_404();
+        return;
+    }
+
+    if(!empty($post['image'])){
+        $image_path = './assets/post_image/' . $post['image'];
+        if(file_exists($image_path)){
+            unlink($image_path);
+        }
+    }
+
+    $this->Post_model->delete_post($id);
+    $this->session->set_flashdata('kyre', array('message' => 'Post deleted successfully!', 'type' => 'success'));
+    redirect('welcome');
+}
+
+public function edit_post($id)
+{
+    $this->load->model('Post_model'); // make sure naming matches your model filename
+
+    $user_id = $this->session->userdata('user_id');
+    $post = $this->Post_model->get_post_by_id($id);
+
+    if (!$post || $post['user_id'] !== $user_id) {
+        show_404();
+        return;
+    }
+
+    if ($this->input->server('REQUEST_METHOD') === 'POST') {
+
+        $content = $this->input->post('content');
+        $image_name = $post['image']; // keep current image by default
+
+        // 🖼️ Handle new image upload
+        if (!empty($_FILES['image']['name'])) {
+
+        
+            $config['upload_path']   = './assets/post_image/';
+            $config['allowed_types'] = 'jpg|jpeg|png|gif';
+            $config['max_size']      = 6144; // 6MB limit
+            $config['file_name']     = time() . '_' . $_FILES['image']['name'];
+
+            $this->load->library('upload', $config);
+
+            if ($this->upload->do_upload('image')) {
+             
+                if (!empty($post['image']) && file_exists('./assets/post_image/' . $post['image'])) {
+                    unlink('./assets/post_image/' . $post['image']);
+                }
+
+               
+                $upload_data = $this->upload->data();
+                $image_name = $upload_data['file_name'];
+
+            } else {
+            
+                $error = $this->upload->display_errors();
+                $this->session->set_flashdata('error', $error);
+                redirect('welcome/edit_post/' . $id);
+                return;
+            }
+        }
+
+        
+        $update_data = [
+            'content' => $content,
+            'image' => $image_name,
+            'updated_at' => date('Y-m-d H:i:s')
+        ];
+
+        $this->Post_model->update_post($id, $update_data);
+
+        $this->session->set_flashdata('success', 'Post updated successfully!');
+        redirect('welcome');
+
+    } else {
+        $data['post'] = $post;
+        $this->load->view('edit_post', $data);
+    }
+}
 
 
+public function toggle_like($post_id)
+{
+    if (!$this->session->userdata('user_id')) {
+        redirect('AuthLogin');
+        return;
+    }
+
+    $user_id = $this->session->userdata('user_id');
+
+    
+    $this->load->model('Post_model');
+
+   
+    $status = $this->Post_model->toggle_like($post_id, $user_id);
 
 
+   
+    $this->session->set_flashdata('kyre', [
+        'message' => ($status === 'liked') ? 'You liked the post!' : 'You unliked the post!',
+        'type' => 'success'
+    ]);
+
+    redirect('welcome');
+}
 
 
 

@@ -193,8 +193,41 @@ textarea {
     cursor: pointer;
   }
   .close:hover {
-    color: #bbb;
+    color: #000000ff;
   }
+
+  .post-menu-btn {
+  background-color: #000000ff !important;
+  color: #000000ff;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.post-menu-btn:hover {
+  background-color: #000000ff !important;
+  color: #000;
+}
+
+.dropdown-menu {
+  border-radius: 10px;
+  min-width: 160px;
+  font-size: 0.9rem;
+}
+
+.dropdown-item {
+  padding: 10px 15px;
+  border-radius: 6px;
+}
+
+.dropdown-item:hover {
+  background-color: #f0f2f5;
+}
 
 
 
@@ -318,16 +351,20 @@ justify-content: center; align-items: center; text-shadow: 2px 2px 4px rgba(0, 0
 <div class="container mt-4" style="max-width: 600px;">
   <?php if (!empty($posts)): ?>
     <?php foreach ($posts as $post): ?>
+      <?php 
+        $isOwner = ($this->session->userdata('user_id') == $post['user_id']);
+        $likeCount = $this->Post_model->get_like_count($post['id']);
+        $userLiked = $this->Post_model->user_liked_post($post['id'], $this->session->userdata('user_id'));
+      ?>
       <div class="card mb-5 shadow-sm">
         <div class="card-body">
           <h6 class="mb-1">
             <strong><?= htmlspecialchars($post['firstname'] . ' ' . $post['lastname']); ?></strong>
-            <span class="text-muted" style="font-size: 0.9em;"
-      data-time="<?= htmlspecialchars($post['created_at']); ?>">
-  on <?= htmlspecialchars($post['created_at']); ?>
-</span>
-
+            <span class="text-muted" style="font-size: 0.9em;" data-time="<?= htmlspecialchars($post['created_at']); ?>">
+              on <?= htmlspecialchars($post['created_at']); ?>
+            </span>
           </h6>
+
           <p class="mt-2"><?= nl2br(htmlspecialchars($post['content'])); ?></p>
 
           <?php if (!empty($post['image'])): ?>
@@ -337,6 +374,39 @@ justify-content: center; align-items: center; text-shadow: 2px 2px 4px rgba(0, 0
                    style="max-height: 350px; object-fit: cover;">
             </div>
           <?php endif; ?>
+
+          <div class="d-flex justify-content-between align-items-center mt-3">
+            <div>
+              <a href="<?= base_url('index.php/welcome/toggle_like/' . $post['id']); ?>" 
+                 class="btn btn-sm <?= $userLiked ? 'btn-success' : 'btn-outline-success'; ?>">
+                 👍 <?= $likeCount; ?>
+              </a>
+            </div>
+            <?php if ($isOwner): ?>
+             <div class="dropdown text-end">
+  <button class="btn btn-dark btn-sm post-menu-btn" type="button" id="postMenu<?= $post['id']; ?>" data-bs-toggle="dropdown" aria-expanded="false" title="Options">
+    <i class="bi bi-three-dots-vertical"></i>
+  </button>
+
+  <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="postMenu<?= $post['id']; ?>">
+    <li>
+      <a class="dropdown-item text-primary" href="<?= base_url('index.php/welcome/edit_post/' . $post['id']); ?>">
+        ✏️ Edit Post
+      </a>
+    </li>
+    <li>
+      <a class="dropdown-item text-danger" href="<?= base_url('index.php/welcome/delete_post/' . $post['id']); ?>" 
+         onclick="return confirm('Are you sure you want to delete this post?');">
+        🗑️ Delete Post
+      </a>
+    </li>
+  </ul>
+</div>
+
+
+
+            <?php endif; ?>
+          </div>
         </div>
       </div>
     <?php endforeach; ?>
@@ -344,6 +414,7 @@ justify-content: center; align-items: center; text-shadow: 2px 2px 4px rgba(0, 0
     <p class="text-center text-muted mt-4">No posts yet. Be the first to share something!</p>
   <?php endif; ?>
 </div>
+
 
 <div class="container mt-5 mb-5">
   <h3 class="text-center mb-4 text-light">📸 Image Gallery</h3>
