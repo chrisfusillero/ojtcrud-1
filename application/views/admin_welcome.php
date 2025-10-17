@@ -2,7 +2,7 @@
 <style>
 
 body {
-  background-image: url('<?php echo base_url("assets/portfolio_image/emerald-2.jpg"); ?>');
+  background-image: url('<?php echo base_url("assets/portfolio_image/emeraldgreen.jpg"); ?>');
   background-size: cover;         
   background-position: center;    
   background-repeat: no-repeat;   
@@ -214,16 +214,11 @@ body {
     <br>
     <br>
  
-<div class="hero-section text-center p-5 rounded shadow" 
-style="background-image: url('<?php echo base_url('assets/portfolio_image/emerald-gem.jpg'); ?>');
-background-size: cover; color: white; height: 100vh; display: flex; flex-direction: column; 
-justify-content: center; align-items: center; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);">
-  <div class="content">
-    <h1 class="display-4">Welcome!!</h1>
-    <p class="lead">This is the administrator interface</p>
-    <br>
-  </div>
+<div class="welcome-message">
+    <h4>Hello Admin</h4>
+    <p class="text-muted mb-0">This is the admin interface</p>
 </div>
+
 
 </div>
 

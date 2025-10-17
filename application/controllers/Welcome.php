@@ -24,7 +24,8 @@ class Welcome extends MY_Controller
     $this->load->model('Login_model');
     $this->load->model('Post_model');
 
-   
+    $this->load->library('session');
+     $firstname = $this->session->userdata('firstname');
     $user_id = $this->session->userdata('user_id');
     $user_data = $this->Login_model->get_user_data($user_id);
 
@@ -45,6 +46,8 @@ class Welcome extends MY_Controller
         'title'     => 'Welcome Page',
         'message'   => 'Welcome to your dashboard!'
     ];
+
+    
 
     
     $this->template('welcome_message', $data);
@@ -243,26 +246,28 @@ class Welcome extends MY_Controller
 
 public function delete_post($id) 
 {
-
     $this->load->model('Post_model');
 
     $user_id = $this->session->userdata('user_id');
     $post = $this->Post_model->get_post_by_id($id);
 
+    // Ensure the post exists and belongs to the logged-in user
     if (!$post || $post['user_id'] !== $user_id) {
         show_404();
         return;
     }
 
-    if(!empty($post['image'])){
-        $image_path = './assets/post_image/' . $post['image'];
-        if(file_exists($image_path)){
-            unlink($image_path);
-        }
-    }
-
+    // Perform soft delete (set valid = 0)
     $this->Post_model->delete_post($id);
-    $this->session->set_flashdata('kyre', array('message' => 'Post deleted successfully!', 'type' => 'success'));
+
+    // Keep image file for potential restoration or audit purposes
+    // (Optional: you can remove it if you truly want to)
+    
+    $this->session->set_flashdata('kyre', [
+        'message' => 'Post deleted successfully (soft delete applied)!',
+        'type' => 'success'
+    ]);
+
     redirect('welcome');
 }
 
@@ -283,7 +288,7 @@ public function edit_post($id)
         $content = $this->input->post('content');
         $image_name = $post['image']; // keep current image by default
 
-        // 🖼️ Handle new image upload
+       
         if (!empty($_FILES['image']['name'])) {
 
         
@@ -353,7 +358,7 @@ public function toggle_like($post_id)
         'message' => ($status === 'liked') ? 'You liked the post!' : 'You unliked the post!',
         'type' => 'success'
     ]);
-
+    
     redirect('welcome');
 }
 

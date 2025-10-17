@@ -15,14 +15,16 @@ class Post_model extends CI_Model
     }
 
     public function get_all_posts()
-    {
-        $this->db->select('posts.*, crud.firstname, crud.lastname');
-        $this->db->from('posts');
-        $this->db->join('crud', 'crud.id = posts.user_id', 'left');
-        $this->db->order_by('posts.created_at', 'DESC');
-        $query = $this->db->get();
-        return $query->result_array();
-    }
+{
+    $this->db->select('posts.*, crud.firstname, crud.lastname');    
+    $this->db->from('posts');
+    $this->db->join('crud', 'crud.id = posts.user_id', 'left');
+    $this->db->where('posts.valid', 1);
+    $this->db->order_by('posts.created_at', 'DESC');
+    $query = $this->db->get();
+    return $query->result_array();
+}
+
 
     public function get_post_by_id($id)
     {
@@ -35,46 +37,70 @@ class Post_model extends CI_Model
     }
 
     public function delete_post($id)
-    {
-        return $this->db->where('id', $id)->delete('posts');
-    }
+{
+    
+    return $this->db->where('id', $id)
+                    ->update('posts', ['valid' => 0]);
+}
 
-    public function toggle_like($post_id, $user_id)
+
+    	public function toggle_reaction($post_id, $user_id, $reaction_type)
     {
-       
-        $query = $this->db->get_where('post_likes', [
+        $existing = $this->db->get_where('post_likes', [
             'post_id' => $post_id,
             'user_id' => $user_id
-        ]);
+        ])->row();
 
-        if ($query->num_rows() > 0) {
-          
-            $this->db->delete('post_likes', [
-                'post_id' => $post_id,
-                'user_id' => $user_id
-            ]);
-            return 'unliked';
-        } else {
-            
+        if ($existing) {
+            // If same reaction → remove it
+            if ($existing->reaction_type === $reaction_type) {
+                $this->db->delete('post_likes', ['id' => $existing->id]);
+                return 'removed';
+            } 
+            // Else update to new reaction
+            else {
+                $this->db->where('id', $existing->id)
+                         ->update('post_likes', ['reaction_type' => $reaction_type]);
+                return $reaction_type . 'ed'; // returns liked, hearted, laughed, sadded
+            }
+        } 
+        else {
+            // Add new reaction
             $this->db->insert('post_likes', [
                 'post_id' => $post_id,
                 'user_id' => $user_id,
-                'created_at' => date('Y-m-d H:i:s')
+                'reaction_type' => $reaction_type
             ]);
-            return 'liked';
+            return $reaction_type . 'ed';
         }
     }
 
-    public function get_like_count($post_id)
+    
+    public function get_reaction_counts($post_id)
     {
-        return $this->db->where('post_id', $post_id)->count_all_results('post_likes');
+        $this->db->select('reaction_type, COUNT(*) as count');
+        $this->db->where('post_id', $post_id);
+        $this->db->group_by('reaction_type');
+        $query = $this->db->get('post_likes');
+
+        $counts = ['like' => 0, 'heart' => 0, 'laugh' => 0, 'sad' => 0];
+        foreach ($query->result() as $row) {
+            $counts[$row->reaction_type] = $row->count;
+        }
+
+        return $counts;
     }
 
-    public function user_liked_post($post_id, $user_id)
+    
+    public function user_reaction_type($post_id, $user_id)
     {
-        return $this->db->get_where('post_likes', [
+        $row = $this->db->get_where('post_likes', [
             'post_id' => $post_id,
             'user_id' => $user_id
-        ])->num_rows() > 0;
+        ])->row();
+
+        return $row ? $row->reaction_type : null;
     }
+
+
 }

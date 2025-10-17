@@ -22,6 +22,7 @@
 
   <style>
     body {
+      background-image: url('<?php echo base_url("assets/portfolio_image/skyblue.jpg"); ?>');
       padding-top: 80px;
       background-color: #f8f9fa;
     }

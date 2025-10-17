@@ -2,7 +2,7 @@
 
 <style>
   body {
-  background-image: url('<?php echo base_url("assets/portfolio_image/emerald-2.jpg"); ?>');
+  background-image: url('<?php echo base_url("assets/portfolio_image/emeraldgreen.jpg"); ?>');
   background-size: cover;         
   background-position: center;    
   background-repeat: no-repeat;   
