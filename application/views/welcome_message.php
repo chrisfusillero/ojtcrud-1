@@ -173,8 +173,8 @@ body {
 
 .post-options {
   position: absolute;
-  top: 8px;
-  right: 10px;
+  top: 10px;
+  right: 30px;
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.2s ease, visibility 0.2s ease;
@@ -214,7 +214,7 @@ body {
   background-color: #e4e6eb;
 }
 
-/* Make current reaction stand out */
+
 .reaction-btn.active-like { color: #1877f2; font-weight: bold; }   /* blue like */
 .reaction-btn.active-heart { color: #f02849; font-weight: bold; }  /* red love */
 .reaction-btn.active-laugh { color: #f7b125; font-weight: bold; }  /* yellow laugh */
@@ -228,7 +228,9 @@ body {
   padding: 6px 10px;
   top: -50px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  z-index: 1000;
 }
+
 
 .reactions-bar.active {
   opacity: 1;
@@ -241,7 +243,7 @@ body {
   gap: 10px;
 }
 
-/* On hover — show the reaction bar */
+
 .reaction-wrapper:hover .reactions-bar,
 .reactions-bar:hover {
   opacity: 1;
@@ -249,7 +251,7 @@ body {
   pointer-events: auto;
 }
 
-/* Emoji styling */
+
 .reaction {
   font-size: 22px;
   text-decoration: none;
@@ -337,15 +339,37 @@ textarea {
   padding: 10px;
 }
 
-.btn-primary {
-  border-radius: 20px;
-  transition: background-color 0.2s ease, transform 0.2s ease;
+
+
+
+.dots-btn {
+  background: none;
+  border: none;
+  padding: 5px;
+  cursor: pointer;
+  position: relative;
 }
 
-.btn-primary:hover {
-  background-color: #5f5b5bff;
-  transform: translateY(-2px);
+.dots-btn .dots {
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  background-color: #000;
+  border-radius: 50%;
+  box-shadow: 6px 0 #000, 12px 0 #000; /* three horizontal dots */
+  transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 }
+
+
+..dots-btn:hover .dots {
+  background-color: #007bff;
+  box-shadow: 6px 0 #007bff, 12px 0 #007bff;
+}
+
+.dots-btn:hover {
+  transform: scale(1.1);
+}
+
 
 
 .reaction-wrapper {
@@ -570,7 +594,7 @@ textarea {
         default:      echo '👍 Like'; break;
       }
     ?>
-  </button>
+  </button> 
 
 
   <div class="reactions-bar shadow-sm">
@@ -589,9 +613,9 @@ textarea {
 
             <?php if ($isOwner): ?>
   <div class="post-options dropdown">
-    <button class="btn post-menu-btn" type="button" id="postMenu<?= $post['id']; ?>"
+    <button class="btn post-menu-btn dots-btn" type="button" id="postMenu<?= $post['id']; ?>"
             data-bs-toggle="dropdown" aria-expanded="false" title="Options">
-      <i class="bi bi-three-dots-vertical"></i>
+      <span class="dots"></span>
     </button>
 
     <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="postMenu<?= $post['id']; ?>">
@@ -608,7 +632,7 @@ textarea {
       </li>
     </ul>
   </div>
-    <?php endif; ?>
+<?php endif; ?>
           </div>
         </div>
 
@@ -692,50 +716,46 @@ textarea {
     };
     span.textContent = 'on ' + localDate.toLocaleString(undefined, options);
   });
-});
+})
+  };
      
-    function toggleReactions(btn) {
-  const bar = btn.parentElement.querySelector('.reactions-bar');
-  bar.style.display = (bar.style.display === 'flex') ? 'none' : 'flex';
+    function toggleReactions(button) {
+  const wrapper = button.closest('.reaction-wrapper');
+  const bar = wrapper.querySelector('.reactions-bar');
+
+
+  document.querySelectorAll('.reactions-bar').forEach(b => {
+    if (b !== bar) b.style.display = 'none';
+  });
+
+  // Toggle visibility
+  if (bar.style.display === 'flex') {
+    bar.style.display = 'none';
+  } else {
+    bar.style.display = 'flex';
+  }
 }
 
-document.querySelectorAll('.reaction').forEach(btn => {
-  btn.addEventListener('click', async function (e) {
-    e.preventDefault();
 
-    const reactionType = this.dataset.type;
-    const wrapper = this.closest('.reaction-wrapper');
-    const postId = wrapper.dataset.postId;
-    const mainBtn = wrapper.querySelector('.reaction-btn');
-
-    try {
-      // Send the reaction to the backend
-      const response = await fetch(`<?= base_url('index.php/welcome/react/'); ?>${postId}/${reactionType}`, {
-        method: 'GET'
-      });
-
-      // If success, update UI instantly
-      if (response.ok) {
-        mainBtn.className = 'reaction-btn active-' + reactionType;
-        switch (reactionType) {
-          case 'heart': mainBtn.innerHTML = '❤️ Loved'; break;
-          case 'laugh': mainBtn.innerHTML = '😂 Haha'; break;
-          case 'sad':   mainBtn.innerHTML = '😢 Sad'; break;
-          case 'like':  mainBtn.innerHTML = '👍 Liked'; break;
-        }
-
-        // Remove previous highlights
-        wrapper.querySelectorAll('.reaction').forEach(r => r.classList.remove('active'));
-        this.classList.add('active');
-        
-        // Hide reaction bar after click
-        wrapper.querySelector('.reactions-bar').style.display = 'none';
-      }
-    } catch (err) {
-      console.error('Error sending reaction:', err);
-    }
-  });
+document.addEventListener('click', function(event) {
+  if (!event.target.closest('.reaction-wrapper')) {
+    document.querySelectorAll('.reactions-bar').forEach(bar => {
+      bar.style.display = 'none';
+    });
+  }
 });
+
+window.toggleReactions = function(button) {
+  const wrapper = button.closest('.reaction-wrapper');
+  const bar = wrapper.querySelector('.reactions-bar');
+
+  
+  document.querySelectorAll('.reactions-bar').forEach(b => {
+    if (b !== bar) b.style.display = 'none';
+  });
+
+  
+  bar.style.display = (bar.style.display === 'flex') ? 'none' : 'flex';
 };
 
     

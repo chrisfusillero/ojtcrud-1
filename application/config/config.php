@@ -70,7 +70,7 @@ $config['url_suffix'] = '';
 
 /*
 |--------------------------------------------------------------------------
-| Default Language
+| Default Languagedat
 |--------------------------------------------------------------------------
 |
 | This determines which set of language files should be used. Make sure
@@ -274,6 +274,8 @@ $config['log_file_permissions'] = 0644;
 |
 */
 $config['log_date_format'] = 'Y-m-d H:i:s';
+date_default_timezone_set('Asia/Manila');
+
 
 /*
 |--------------------------------------------------------------------------
