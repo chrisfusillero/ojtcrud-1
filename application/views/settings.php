@@ -116,15 +116,15 @@ small {
       <ul class="navbar-nav align-items-center">
 
         
-        <li class="nav-item">
-          <a class="nav-link fw-medium" href="<?= base_url('index.php/welcome'); ?>">Home</a>
+        <li class="nav-item me-2">
+          <a class="nav-link fw-medium ms-2" href="<?= base_url('index.php/welcome'); ?>">Home</a>
         </li>
 
         
         
         
-        <li class="nav-item ms-3">
-          <span class="navbar-text">
+        <li class="nav-item me-2">
+          <span class="navbar-text me-2">
             👤 <strong><?= isset($firstname) || isset($lastname) ? ($firstname ?? '') . ' ' . ($lastname ?? '') : 'Guest'; ?></strong>
           </span>
         </li>

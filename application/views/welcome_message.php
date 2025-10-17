@@ -37,6 +37,11 @@ body {
   animation: pulse 1s infinite;
 }
 
+
+
+
+
+
 @keyframes pulse {
   0% { transform: scale(1); }
   50% { transform: scale(1.1); }
@@ -190,36 +195,50 @@ body {
   display: inline-block;
 }
 
+.reaction.active {
+  transform: scale(1.4);
+  filter: brightness(1.2);
+}
+
 .reaction-btn {
+  background-color: #f0f2f5;
   border: none;
-  background: #f8f9fa;
   border-radius: 20px;
   padding: 6px 14px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  font-size: 16px;
+  transition: background 0.2s ease;
 }
 
 .reaction-btn:hover {
-  background-color: #e9ecef;
-  transform: translateY(-1px);
+  background-color: #e4e6eb;
 }
 
-/* FIXED: Center and align emojis above button properly */
+/* Make current reaction stand out */
+.reaction-btn.active-like { color: #1877f2; font-weight: bold; }   /* blue like */
+.reaction-btn.active-heart { color: #f02849; font-weight: bold; }  /* red love */
+.reaction-btn.active-laugh { color: #f7b125; font-weight: bold; }  /* yellow laugh */
+.reaction-btn.active-sad { color: #f0a04b; font-weight: bold; }    /* orange sad */
+
 .reactions-bar {
+  display: none;
   position: absolute;
-  bottom: 100%; /* directly above the button */
-  left: 50%;
-  transform: translateX(-50%) translateY(-10px) scale(0.95);
   background: #fff;
-  border-radius: 40px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  border-radius: 20px;
+  padding: 6px 10px;
+  top: -50px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.reactions-bar.active {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(0) scale(1);
+}
+
+.reaction-wrapper:hover .reactions-bar {
   display: flex;
   gap: 10px;
-  padding: 8px 14px;
-  opacity: 0;
-  pointer-events: none;
-  transition: all 0.25s ease;
-  z-index: 10;
 }
 
 /* On hover — show the reaction bar */
@@ -232,13 +251,13 @@ body {
 
 /* Emoji styling */
 .reaction {
-  font-size: 1.4rem;
-  cursor: pointer;
-  transition: transform 0.15s ease;
+  font-size: 22px;
+  text-decoration: none;
+  transition: transform 0.2s ease;
 }
 
 .reaction:hover {
-  transform: scale(1.4);
+  transform: scale(1.3);
 }
 
 
@@ -256,22 +275,8 @@ body {
 
 
 
-.dropdown-menu {
-  border-radius: 10px;
-  min-width: 160px;
-  font-size: 0.9rem;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
 
-.dropdown-item {
-  padding: 10px 15px;
-  border-radius: 6px;
-  transition: background-color 0.2s ease;
-}
 
-.dropdown-item:hover {
-  background-color: #f0f2f5;
-}
 
 
 @media (max-width: 991px) {
@@ -355,6 +360,7 @@ textarea {
   padding: 6px 14px;
   cursor: pointer;
   transition: all 0.2s ease;
+  font-weight: 500;
 }
 
 .reaction-btn:hover {
@@ -365,19 +371,19 @@ textarea {
 
 .reactions-bar {
   position: absolute;
-  bottom: 140%;
+  bottom: 120%;
   left: 50%;
-  transform: translateX(-50%) scale(0.95);
+  transform: translateX(-50%) translateY(10px) scale(0.95);
   background: #fff;
   border-radius: 30px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  padding: 6px 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   display: flex;
-  gap: 10px;
-  padding: 8px 12px;
+  gap: 6px;
   opacity: 0;
   pointer-events: none;
   transition: all 0.25s ease;
-  z-index: 20;
+  z-index: 10;
 }
 
 
@@ -427,16 +433,16 @@ textarea {
       <ul class="navbar-nav align-items-center">
 
         
-        <li class="nav-item">
-          <a class="nav-link fw-medium" href="<?= base_url('index.php/welcome'); ?>">Home</a>
+        <li class="nav-item me-2">
+          <a class="nav-link fw-medium ms-2" href="<?= base_url('index.php/welcome'); ?>">Home</a>
         </li>
 
         
         
 
         
-        <li class="nav-item ms-3">
-          <span class="navbar-text">
+        <li class="nav-item me-2">
+          <span class="navbar-text me-2">
             👤 <strong><?= isset($firstname) || isset($lastname) ? ($firstname ?? '') . ' ' . ($lastname ?? '') : 'Guest'; ?></strong>
           </span>
         </li>
@@ -547,16 +553,39 @@ textarea {
               </div>
             <?php endif; ?>
 
-            <!-- Reaction bar -->
-            <div class="reaction-wrapper mt-3">
-              <button type="button" class="reaction-btn">👍 Like</button>
-              <div class="reactions-bar">
-                <a href="<?= base_url('index.php/welcome/' . $post['id'] . '/like'); ?>" class="reaction" title="Like">👍</a>
-  <a href="<?= base_url('index.php/welcome/' . $post['id'] . '/heart'); ?>" class="reaction" title="Love">❤️</a>
-  <a href="<?= base_url('index.php/welcome/' . $post['id'] . '/laugh'); ?>" class="reaction" title="Haha">😂</a>
-  <a href="<?= base_url('index.php/welcome/' . $post['id'] . '/sad'); ?>" class="reaction" title="Sad">😢</a>
-              </div>
-            </div>
+            
+<div class="reaction-wrapper mt-3">
+
+  <!-- Main button showing the user's current reaction -->
+  <button type="button" 
+          class="reaction-btn <?= $userLiked ? 'active-'.$userLiked : ''; ?>" 
+          onclick="toggleReactions(this)">
+    <?php
+      // Display the icon/text based on current reaction
+      switch ($userLiked) {
+        case 'heart': echo '❤️ Love'; break;
+        case 'laugh': echo '😂 Haha'; break;
+        case 'sad':   echo '😢 Sad'; break;
+        case 'like':  echo '👍 Like'; break;
+        default:      echo '👍 Like'; break;
+      }
+    ?>
+  </button>
+
+
+  <div class="reactions-bar shadow-sm">
+    <a href="<?= base_url('index.php/welcome/react/'.$post['id'].'/like'); ?>" 
+       class="reaction <?= ($userLiked === 'like') ? 'active' : ''; ?>">👍</a>
+    <a href="<?= base_url('index.php/welcome/react/'.$post['id'].'/heart'); ?>" 
+       class="reaction <?= ($userLiked === 'heart') ? 'active' : ''; ?>">❤️</a>
+    <a href="<?= base_url('index.php/welcome/react/'.$post['id'].'/laugh'); ?>" 
+       class="reaction <?= ($userLiked === 'laugh') ? 'active' : ''; ?>">😂</a>
+    <a href="<?= base_url('index.php/welcome/react/'.$post['id'].'/sad'); ?>" 
+       class="reaction <?= ($userLiked === 'sad') ? 'active' : ''; ?>">😢</a>
+  </div>
+</div>
+
+
 
             <?php if ($isOwner): ?>
   <div class="post-options dropdown">
@@ -664,10 +693,52 @@ textarea {
     span.textContent = 'on ' + localDate.toLocaleString(undefined, options);
   });
 });
+     
+    function toggleReactions(btn) {
+  const bar = btn.parentElement.querySelector('.reactions-bar');
+  bar.style.display = (bar.style.display === 'flex') ? 'none' : 'flex';
+}
 
+document.querySelectorAll('.reaction').forEach(btn => {
+  btn.addEventListener('click', async function (e) {
+    e.preventDefault();
 
+    const reactionType = this.dataset.type;
+    const wrapper = this.closest('.reaction-wrapper');
+    const postId = wrapper.dataset.postId;
+    const mainBtn = wrapper.querySelector('.reaction-btn');
 
-  }
+    try {
+      // Send the reaction to the backend
+      const response = await fetch(`<?= base_url('index.php/welcome/react/'); ?>${postId}/${reactionType}`, {
+        method: 'GET'
+      });
+
+      // If success, update UI instantly
+      if (response.ok) {
+        mainBtn.className = 'reaction-btn active-' + reactionType;
+        switch (reactionType) {
+          case 'heart': mainBtn.innerHTML = '❤️ Loved'; break;
+          case 'laugh': mainBtn.innerHTML = '😂 Haha'; break;
+          case 'sad':   mainBtn.innerHTML = '😢 Sad'; break;
+          case 'like':  mainBtn.innerHTML = '👍 Liked'; break;
+        }
+
+        // Remove previous highlights
+        wrapper.querySelectorAll('.reaction').forEach(r => r.classList.remove('active'));
+        this.classList.add('active');
+        
+        // Hide reaction bar after click
+        wrapper.querySelector('.reactions-bar').style.display = 'none';
+      }
+    } catch (err) {
+      console.error('Error sending reaction:', err);
+    }
+  });
+});
+};
+
+    
 </script>
 
 
@@ -690,6 +761,7 @@ textarea {
 
       
 </div>
+
 
 
 

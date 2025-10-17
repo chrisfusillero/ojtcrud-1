@@ -337,7 +337,7 @@ public function edit_post($id)
 }
 
 
-public function toggle_like($post_id)
+public function react($post_id, $reaction_type)
 {
     if (!$this->session->userdata('user_id')) {
         redirect('AuthLogin');
@@ -345,24 +345,36 @@ public function toggle_like($post_id)
     }
 
     $user_id = $this->session->userdata('user_id');
-
-    
     $this->load->model('Post_model');
 
-   
-    $status = $this->Post_model->toggle_like($post_id, $user_id);
+    $status = $this->Post_model->toggle_reaction($post_id, $user_id, $reaction_type);
 
+    $reactionLabels = [
+        'like'  => 'You liked the post!',
+        'heart' => 'You loved the post!',
+        'laugh' => 'You laughed at the post!',
+        'sad'   => 'You reacted sadly to the post!'
+    ];
 
-   
+    if ($status === 'removed') {
+        $message = 'You removed your reaction.';
+    } elseif ($status === 'updated') {
+        $message = $reactionLabels[$reaction_type] ?? 'Reaction changed!';
+    } else {
+        $message = $reactionLabels[$reaction_type] ?? 'Reaction added!';
+    }
+
     $this->session->set_flashdata('kyre', [
-        'message' => ($status === 'liked') ? 'You liked the post!' : 'You unliked the post!',
+        'message' => $message,
         'type' => 'success'
     ]);
-    
+
     redirect('welcome');
 }
 
 
+
+    
 
 
 }
