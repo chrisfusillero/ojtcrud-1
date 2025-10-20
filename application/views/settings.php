@@ -74,6 +74,16 @@
   text-transform: uppercase;
 }
 
+.profile-avatar img {
+  border: 3px solid #fff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.profile-avatar div {
+  font-weight: 600;
+  background: linear-gradient(135deg, #6c757d, #adb5bd);
+}
+
 
 h5 {
   font-size: 1.1rem;
@@ -156,26 +166,40 @@ small {
 
   <div class="container mt-5">
   <div class="profile-card">
-    <div class="profile-header">
+    <div class="profile-header d-flex justify-content-between align-items-center">
+      
       <div class="d-flex align-items-center">
-        <div class="profile-avatar">
-          <?= strtoupper(substr($firstname ?? 'G', 0, 1)); ?>
+        <div class="profile-avatar me-3">
+          <?php if (!empty($user['avatar']) && file_exists(FCPATH . 'assets/avatars/' . $user['avatar'])): ?>
+            <img src="<?= base_url('assets/avatars/' . $user['avatar']); ?>" 
+                 alt="Profile Picture" 
+                 class="rounded-circle border shadow-sm"
+                 style="width: 70px; height: 70px; object-fit: cover;">
+          <?php else: ?>
+            <div class="rounded-circle bg-secondary text-white d-flex justify-content-center align-items-center shadow-sm" 
+                 style="width: 70px; height: 70px; font-size: 28px;">
+              <?= strtoupper(substr($firstname ?? 'G', 0, 1)); ?>
+            </div>
+          <?php endif; ?>
         </div>
-        <div class="ms-3">
-          <h5 class="mb-0"><?= $firstname ?? 'Guest'; ?> <?= $lastname ?? ''; ?></h5>
-          <small class="text-muted"><?= htmlspecialchars($email, ENT_QUOTES, 'UTF-8'); ?></small>
+
+        <div>
+          <h5 class="mb-0"><?= htmlspecialchars($firstname ?? 'Guest', ENT_QUOTES, 'UTF-8'); ?> 
+              <?= htmlspecialchars($lastname ?? '', ENT_QUOTES, 'UTF-8'); ?></h5>
+          <small class="text-muted"><?= htmlspecialchars($email ?? '', ENT_QUOTES, 'UTF-8'); ?></small>
         </div>
       </div>
 
-      
-      <a href="<?= base_url('index.php/Welcome/edit/'.urlencode($user['username'])); ?>" class="btn btn-primary">Edit Profile</a>
+      <a href="<?= base_url('index.php/Welcome/edit/' . urlencode($user['username'])); ?>" 
+         class="btn btn-primary">Edit Profile</a>
     </div>
 
     <hr>
 
-    
+    <!-- Add more profile info below if needed -->
   </div>
 </div>
+
 
 
 

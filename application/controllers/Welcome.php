@@ -93,50 +93,76 @@ class Welcome extends MY_Controller
     $this->load->view('edit_view', $data);
 }
 
-    public function update($username) {
-    
+    public function update($username)
+{
     $this->load->model('My_model');
 
-    
     $username = urldecode($username);
-
-    
     $user = $this->My_model->get_user_by_username($username);
 
-    
     if (!$user) {
-        
-        show_404(); 
+        show_404();
         return;
     }
 
     $id = $user['id'];
 
-    
     $firstname = $this->input->post('firstname');
     $lastname = $this->input->post('lastname');
     $username = $this->input->post('username');
     $address = $this->input->post('address');
     $email = $this->input->post('email');
 
-    
-    $data = array(
+ 
+    $data = [
         'firstname' => $firstname,
-        'lastname' => $lastname,
-        'username' => $username,
-        'address' => $address,
-        'email' => $email
-    );
+        'lastname'  => $lastname,
+        'username'  => $username,
+        'address'   => $address,
+        'email'     => $email
+    ];
 
     
+    if (!empty($_FILES['avatar']['name'])) {
+        $config['upload_path'] = './assets/avatars/';
+        $config['allowed_types'] = 'jpg|jpeg|png|gif|webp';
+        $config['max_size'] = 2048;
+        $config['file_name'] = time() . '_' . $_FILES['avatar']['name'];
+        $config['overwrite'] = TRUE;
+
+        $this->load->library('upload', $config);
+
+        if ($this->upload->do_upload('avatar')) {
+            $uploadData = $this->upload->data();
+            $data['avatar'] = $uploadData['file_name'];
+
+            
+            if (!empty($user['avatar']) && file_exists('./uploads/avatars/' . $user['avatar'])) {
+                unlink('./uploads/avatars/' . $user['avatar']);
+            }
+        } else {
+            $this->session->set_flashdata('kyre', [
+                'message' => $this->upload->display_errors(),
+                'type' => 'danger'
+            ]);
+            redirect('welcome/settings');
+            return;
+        }
+    }
+
+ 
     $this->My_model->update_record($id, $data);
 
-    
-    $this->session->set_flashdata('kyre', array('message' => 'Record updated successfully!', 'type' => 'success'));
+    $this->session->set_flashdata('kyre', [
+        'message' => 'Profile updated successfully!',
+        'type' => 'success'
+    ]);
 
-    
     redirect('welcome/settings');
 }
+
+
+
 
     public function logout()
     {
@@ -335,6 +361,9 @@ public function edit_post($id)
         $this->load->view('edit_post', $data);
     }
 }
+
+
+
 
 
 public function react($post_id, $reaction_type)

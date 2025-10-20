@@ -221,7 +221,8 @@ body {
 .reaction-btn.active-sad { color: #f0a04b; font-weight: bold; }    /* orange sad */
 
 .reactions-bar {
-  display: none;
+  display: flex;
+  gap: 10px;
   position: absolute;
   background: #fff;
   border-radius: 20px;
@@ -229,6 +230,11 @@ body {
   top: -50px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.15);
   z-index: 1000;
+  transform: translateX(-50%) translateY(-10px) scale(0.9);
+  pointer-events: none;
+  transition: 
+    opacity 0.25s ease,
+    transform 0.25s ease;
 }
 
 
@@ -249,6 +255,14 @@ body {
   opacity: 1;
   transform: translateX(-50%) translateY(-16px) scale(1);
   pointer-events: auto;
+  transition:
+    opacity 0.4s ease-in-out 0s,
+    transform 0.4s ease-in-out 0s,
+    visibility 0s linear 0s;
+}
+
+.reaction-wrapper:not(:hover) .reactions-bar {
+  transition-delay: 1s; 
 }
 
 
@@ -514,31 +528,33 @@ textarea {
   <div class="card shadow-sm">
     <div class="card-body">
       <form action="<?= base_url('index.php/welcome/add_post'); ?>" 
-        method="post" enctype="multipart/form-data">
+            method="post" enctype="multipart/form-data">
+            
         <div class="d-flex align-items-start">
-          <img src="<?= base_url('assets/portfolio_image/default-avatar.png'); ?>" 
-               alt="Profile" class="rounded-circle me-3" width="45" height="45">
-          <textarea name="content" class="form-control" 
-                    placeholder="What's on your mind, <?= htmlspecialchars($firstname); ?>?" 
+          <?php 
+            // Determine avatar path (from crud table)
+            $avatarPath = !empty($user['avatar']) && file_exists(FCPATH . 'uploads/avatars/' . $user['avatar'])
+              ? base_url('uploads/avatars/' . $user['avatar'])
+              : base_url('assets/default-avatar.png');
+          ?>
+
+          <img src="<?= $avatarPath; ?>" 
+               alt="Profile Picture" 
+               class="rounded-circle border shadow-sm me-3" 
+               style="width: 45px; height: 45px; object-fit: cover;">
+          
+          <textarea name="content" 
+                    class="form-control" 
+                    placeholder="What's on your mind, <?= htmlspecialchars($firstname ?? 'User'); ?>?" 
                     rows="3" required></textarea>
         </div>
 
-      
-        <div class="mt-3 d-flex justify-content-between align-items-center">
-          <div>
-            <label class="btn btn-light border px-3 py-1 mb-0">
-              📷 Photo
-              <input type="file" name="image" id="postImage" 
-                     accept="image/*" hidden onchange="previewImage(event)">
-            </label>
-          </div>
-          <button type="submit" class="btn btn-primary px-4 py-1">Post</button>
+        <div class="mt-3">
+          <input type="file" name="image" accept="image/*" class="form-control">
         </div>
 
-        
-        <div class="mt-3 text-center">
-          <img id="imagePreview" src="#" alt="Image Preview" 
-               class="img-fluid rounded d-none" style="max-height: 250px; object-fit: cover;">
+        <div class="text-end mt-3">
+          <button type="submit" class="btn btn-primary px-4">Post</button>
         </div>
       </form>
     </div>
@@ -620,9 +636,10 @@ textarea {
 
     <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="postMenu<?= $post['id']; ?>">
       <li>
-        <a class="dropdown-item text-primary" href="<?= base_url('index.php/welcome/edit_post/' . $post['id']); ?>">
-          ✏️ Edit Post
-        </a>
+        <button class="dropdown-item text-primary" onclick="enableInlineEdit(<?= $post['id']; ?>)">
+  ✏️ Edit Post
+</button>
+
       </li>
       <li>
         <a class="dropdown-item text-danger" href="<?= base_url('index.php/welcome/delete_post/' . $post['id']); ?>"
@@ -632,9 +649,57 @@ textarea {
       </li>
     </ul>
   </div>
+
+
+<!-- ✏️ EDIT POST MODAL -->
+  <div class="modal fade" id="editPostModal<?= $post['id']; ?>" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content border-0 shadow">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title">✏️ Edit Post</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+
+        <form id="editPostForm<?= $post['id']; ?>" enctype="multipart/form-data">
+          <div class="modal-body">
+            <input type="hidden" name="post_id" value="<?= $post['id']; ?>">
+
+            <!-- 📝 Content -->
+            <div class="mb-3">
+              <label for="content<?= $post['id']; ?>" class="form-label fw-semibold">Post Content</label>
+              <textarea class="form-control" id="content<?= $post['id']; ?>" name="content" rows="5" required><?= htmlspecialchars($post['content']); ?></textarea>
+            </div>
+
+            <!-- 🖼 Current Image -->
+            <?php if (!empty($post['image'])): ?>
+              <div class="text-center mb-3">
+                <p class="text-muted mb-1 fw-semibold">Current Image:</p>
+                <img src="<?= base_url('assets/post_image/' . $post['image']); ?>" 
+                     class="img-fluid rounded shadow-sm mb-2"
+                     id="currentImage<?= $post['id']; ?>">
+              </div>
+            <?php endif; ?>
+
+            <!-- 📸 Upload New Image -->
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Change Image (optional)</label>
+              <input type="file" name="image" class="form-control" accept="image/*"
+                     onchange="previewNewImage(event, <?= $post['id']; ?>)">
+              <img id="previewImage<?= $post['id']; ?>" class="img-fluid rounded mt-2 d-none" alt="Preview">
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-primary">💾 Save Changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 <?php endif; ?>
           </div>
-        </div>
+        </div>  
 
       <?php endforeach; ?>
     <?php else: ?>
@@ -757,6 +822,30 @@ window.toggleReactions = function(button) {
   
   bar.style.display = (bar.style.display === 'flex') ? 'none' : 'flex';
 };
+
+function previewNewImage(event, id) {
+    const preview = document.getElementById('previewImage' + id);
+    const file = event.target.files[0];
+    if (file) {
+      preview.src = URL.createObjectURL(file);
+      preview.classList.remove('d-none');
+    } else {
+      preview.classList.add('d-none');
+    }
+  }
+function openModal(src) {
+    const modal = document.getElementById('imageModal');
+    const modalImg = document.getElementById('modalImage');
+    modal.style.display = "block";
+    modalImg.src = src;
+  }
+
+  function closeModal() {
+    const modal = document.getElementById('imageModal');
+    modal.style.display = "none";
+  }
+  
+
 
     
 </script>

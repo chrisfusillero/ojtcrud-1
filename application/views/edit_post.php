@@ -5,17 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Edit Post</title>
 
-  <!-- Bootstrap -->
+
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-  <!-- Fonts -->
+ 
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
 
-  <!-- IziToast -->
+  
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/izitoast@1.4.0/dist/css/iziToast.min.css">
   <script src="https://cdn.jsdelivr.net/npm/izitoast@1.4.0/dist/js/iziToast.min.js"></script>
 
-  <!-- jQuery -->
+  
   <script src="<?php echo base_url('assets/js/jquery-3.7.1.min.js'); ?>"></script>
 
   <style>
@@ -95,7 +95,7 @@
       display: none;
     }
 
-    /* Modal styling for full-size image view */
+  /
     .modal-img {
       max-width: 100%;
       border-radius: 10px;
@@ -109,13 +109,13 @@
     
     <form method="post" action="<?= base_url('index.php/welcome/edit_post/' . $post['id']); ?>" enctype="multipart/form-data">
       
-      <!-- Post Content -->
+      
       <div class="form-group mb-3">
         <label for="content" class="form-label fw-medium">Post Content</label>
         <textarea name="content" id="content" class="form-control" rows="6" required><?= htmlspecialchars($post['content']); ?></textarea>
       </div>
 
-      <!-- Current Image Preview -->
+      
       <?php if (!empty($post['image'])): ?>
         <div class="mb-3 text-center">
           <p class="fw-medium text-muted mb-2">Current Image:</p>
@@ -128,7 +128,6 @@
         </div>
       <?php endif; ?>
 
-      <!-- Upload New Image -->
       <div class="form-group mb-4">
         <label for="image" class="form-label fw-medium">Change Image (optional)</label>
         <label for="image" class="file-input-label">📸 Choose a new image</label>
@@ -136,7 +135,7 @@
         <img id="previewImage" class="img-preview d-none" alt="New Image Preview">
       </div>
 
-      <!-- Buttons -->
+      
       <div class="d-flex justify-content-between">
         <a href="<?= base_url('index.php/welcome'); ?>" class="btn btn-secondary">← Back</a>
         <button type="submit" class="btn btn-primary">💾 Update Post</button>
@@ -144,7 +143,7 @@
     </form>
   </div>
 
-  <!-- Modal for Enlarged Current Image -->
+
   <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
       <div class="modal-content bg-transparent border-0">
@@ -155,7 +154,7 @@
     </div>
   </div>
 
-  <!-- JS -->
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
   <script>
