@@ -374,7 +374,7 @@ input[type="file"] {
     height: 120px;
   }
 
-  .portfolio-section {
+  .portfolio-section {  
     padding: 15px;
   }
 }
@@ -445,6 +445,7 @@ textarea {
   position: relative;
   display: inline-block;
   padding-bottom: 45px; 
+}
 
 .reaction-btn {
   border: none;
@@ -464,20 +465,21 @@ textarea {
 
 .reactions-bar {
   position: absolute;
-  bottom: 130%; 
+  bottom: calc(100% + 10px); /* sit right above button */
   left: 50%;
   transform: translateX(-50%) translateY(10px) scale(0.9);
   background: #fff;
-  border-radius: 30px;
-  padding: 8px 12px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+  border-radius: 50px;
+  padding: 10px 16px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
   display: flex;
-  gap: 8px;
+  align-items: center;
+  gap: 10px;
   opacity: 0;
   pointer-events: none;
   transition: all 0.35s ease;
-  transition-delay: 0s; 
-  z-index: 10;
+  transition-delay: 0s;
+  z-index: 20;
 }
 
 
@@ -486,23 +488,42 @@ textarea {
   opacity: 1;
   transform: translateX(-50%) translateY(0) scale(1);
   pointer-events: auto;
-  transition-delay: 0.45s; 
-}
-
-
-.reaction-wrapper .reactions-bar {
-  transition-delay: 0s; 
+  transition-delay: 0.45s; /* delay like Facebook hover */
 }
 
 
 .reaction {
-  font-size: 1.6rem;
+  font-size: 1.8rem;
   cursor: pointer;
-  transition: transform 0.15s ease;
+  transition: transform 0.15s ease, filter 0.15s ease;
 }
 
 .reaction:hover {
   transform: scale(1.5);
+  filter: drop-shadow(0 2px 3px rgba(0,0,0,0.2));
+}
+
+
+.reaction::after {
+  content: attr(data-label);
+  position: absolute;
+  bottom: -28px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(245, 246, 248, 0.95);
+  color: #d6336c;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 10px;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+
+.reaction:hover::after {
+  opacity: 1;
 }
 
 
