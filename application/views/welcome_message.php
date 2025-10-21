@@ -610,34 +610,53 @@ textarea {
 
 
 <div class="container mt-5 mb-5" style="max-width: 600px;">
-  <div class="card shadow-sm">
+  <div class="card shadow-sm border-0 rounded-3">
     <div class="card-body">
       <form action="<?= base_url('index.php/welcome/add_post'); ?>" 
             method="post" enctype="multipart/form-data">
-            
+
         <div class="d-flex align-items-start">
           <?php 
-            // Determine avatar path (from crud table)
-            $avatarPath = !empty($user['avatar']) && file_exists(FCPATH . 'uploads/avatars/' . $user['avatar'])
+            // Fetch current logged-in user's info (from session or model)
+            $user_id = $this->session->userdata('user_id');
+            $user = $this->db->get_where('crud', ['id' => $user_id])->row_array();
+
+            // Determine avatar path
+            $avatarPath = (!empty($user['avatar']) && file_exists(FCPATH . 'uploads/avatars/' . $user['avatar']))
               ? base_url('uploads/avatars/' . $user['avatar'])
               : base_url('assets/default-avatar.png');
           ?>
 
+         
           <img src="<?= $avatarPath; ?>" 
                alt="Profile Picture" 
                class="rounded-circle border shadow-sm me-3" 
                style="width: 45px; height: 45px; object-fit: cover;">
-          
+
+         
           <textarea name="content" 
-                    class="form-control" 
-                    placeholder="What's on your mind, <?= htmlspecialchars($firstname ?? 'User'); ?>?" 
+                    class="form-control border-0 shadow-none" 
+                    placeholder="What's on your mind, <?= htmlspecialchars($user['firstname'] ?? 'User'); ?>?" 
                     rows="3" required></textarea>
         </div>
 
-        <div class="mt-3">
-          <input type="file" name="image" accept="image/*" class="form-control">
+      
+        <div class="mt-3 d-flex align-items-center justify-content-between">
+          <label for="postImage" class="btn btn-outline-secondary btn-sm mb-0">
+            📸 Add Image
+          </label>
+          <input type="file" name="image" id="postImage" accept="image/*" 
+                 class="d-none" onchange="previewPostImage(event)">
         </div>
 
+        
+        <div id="imagePreviewContainer" class="mt-3 d-none">
+          <img id="imagePreview" src="" class="img-fluid rounded shadow-sm" 
+               style="max-height: 300px; object-fit: cover;" alt="Image Preview">
+          <button type="button" class="btn btn-sm btn-outline-danger mt-2" onclick="removePostImage()">Remove Image</button>
+        </div>
+
+       
         <div class="text-end mt-3">
           <button type="submit" class="btn btn-primary px-4">Post</button>
         </div>
@@ -739,81 +758,90 @@ textarea {
   </div>
 
   <!-- ✏️ Edit Post Modal -->
-  <div class="modal fade" id="editPostModal<?= $post['id']; ?>" tabindex="-1"
-       aria-labelledby="editPostModalLabel<?= $post['id']; ?>" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-      <div class="modal-content">
+<div class="modal fade" id="editPostModal<?= $post['id']; ?>" tabindex="-1"
+     aria-labelledby="editPostModalLabel<?= $post['id']; ?>" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
 
-        <div class="modal-header">
-          <h5 class="modal-title" id="editPostModalLabel<?= $post['id']; ?>">✏️ Edit Your Post</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
+      <div class="modal-header">
+        <h5 class="modal-title" id="editPostModalLabel<?= $post['id']; ?>">✏️ Edit Your Post</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
 
-        <div class="modal-body">
-          <div class="edit-container">
-            <form method="post"
-                  action="<?= base_url('index.php/welcome/edit_post/' . $post['id']); ?>"
-                  enctype="multipart/form-data">
+      <div class="modal-body">
+        <div class="edit-container">
+          <form method="post"
+                action="<?= base_url('index.php/welcome/edit_post/' . $post['id']); ?>"
+                enctype="multipart/form-data">
 
-              <!-- Content -->
-              <div class="form-group mb-3">
-                <label for="content<?= $post['id']; ?>" class="form-label fw-medium">Post Content</label>
-                <textarea name="content" id="content<?= $post['id']; ?>" class="form-control" rows="6" required><?= htmlspecialchars($post['content']); ?></textarea>
-              </div>
+            <!-- Content -->
+            <div class="form-group mb-3">
+              <label for="content<?= $post['id']; ?>" class="form-label fw-medium">Post Content</label>
+              <textarea name="content" id="content<?= $post['id']; ?>" class="form-control" rows="6" required><?= htmlspecialchars($post['content']); ?></textarea>
+            </div>
 
-              <!-- Current Image -->
-              <?php if (!empty($post['image'])): ?>
-                <div class="mb-3 text-center">
-                  <p class="fw-medium text-muted mb-2">Current Image:</p>
-                  <img src="<?= base_url('assets/post_image/' . $post['image']); ?>"
-                       alt="Current Image"
-                       class="img-preview"
-                       id="currentImage<?= $post['id']; ?>"
-                       data-bs-toggle="modal"
-                       data-bs-target="#imageModal<?= $post['id']; ?>">
+            <!-- Current Image -->
+            <?php if (!empty($post['image'])): ?>
+              <div class="mb-3 text-center">
+                <p class="fw-medium text-muted mb-2">Current Image:</p>
+                <img src="<?= base_url('assets/post_image/' . $post['image']); ?>"
+                     alt="Current Image"
+                     class="img-preview mb-2"
+                     id="currentImage<?= $post['id']; ?>"
+                     data-bs-toggle="modal"
+                     data-bs-target="#imageModal<?= $post['id']; ?>">
+
+                <!-- 🗑️ Remove Image Option -->
+                <div class="form-check d-flex justify-content-center">
+                  <input class="form-check-input me-2" type="checkbox" name="remove_image" value="1" id="removeImage<?= $post['id']; ?>">
+                  <label class="form-check-label text-danger fw-medium" for="removeImage<?= $post['id']; ?>">
+                    🗑️ Remove current image
+                  </label>
                 </div>
-              <?php endif; ?>
-
-              <!-- Upload New Image -->
-              <div class="form-group mb-4">
-                <label for="image<?= $post['id']; ?>" class="form-label fw-medium">Change Image (optional)</label>
-                <label for="image<?= $post['id']; ?>" class="file-input-label">📸 Choose a new image</label>
-                <input type="file"
-                       name="image"
-                       id="image<?= $post['id']; ?>"
-                       accept="image/*"
-                       onchange="previewNewImage(event, <?= $post['id']; ?>)">
-                <img id="previewImage<?= $post['id']; ?>" class="img-preview d-none" alt="New Image Preview">
               </div>
+            <?php endif; ?>
 
-              <!-- Buttons -->
-              <div class="d-flex justify-content-between">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">← Cancel</button>
-                <button type="submit" class="btn btn-primary">💾 Update Post</button>
-              </div>
+            <!-- Upload New Image -->
+            <div class="form-group mb-4">
+              <label for="image<?= $post['id']; ?>" class="form-label fw-medium">Change Image (optional)</label>
+              <label for="image<?= $post['id']; ?>" class="file-input-label">📸 Choose a new image</label>
+              <input type="file"
+                     name="image"
+                     id="image<?= $post['id']; ?>"
+                     accept="image/*"
+                     onchange="previewNewImage(event, <?= $post['id']; ?>)">
+              <img id="previewImage<?= $post['id']; ?>" class="img-preview d-none" alt="New Image Preview">
+            </div>
 
-            </form>
-          </div>
+            <!-- Buttons -->
+            <div class="d-flex justify-content-between">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">← Cancel</button>
+              <button type="submit" class="btn btn-primary">💾 Update Post</button>
+            </div>
+
+          </form>
         </div>
       </div>
     </div>
   </div>
+</div>
 
-  <!-- 🖼️ Full Image Modal -->
-  <?php if (!empty($post['image'])): ?>
-    <div class="modal fade" id="imageModal<?= $post['id']; ?>" tabindex="-1"
-         aria-labelledby="imageModalLabel<?= $post['id']; ?>" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content bg-transparent border-0">
-          <div class="modal-body text-center">
-            <img src="<?= base_url('assets/post_image/' . $post['image']); ?>"
-                 alt="Full Image"
-                 class="modal-img">
-          </div>
+<!-- 🖼️ Full Image Modal -->
+<?php if (!empty($post['image'])): ?>
+  <div class="modal fade" id="imageModal<?= $post['id']; ?>" tabindex="-1"
+       aria-labelledby="imageModalLabel<?= $post['id']; ?>" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content bg-transparent border-0">
+        <div class="modal-body text-center">
+          <img src="<?= base_url('assets/post_image/' . $post['image']); ?>"
+               alt="Full Image"
+               class="modal-img">
         </div>
       </div>
     </div>
-  <?php endif; ?>
+  </div>
+<?php endif; ?>
+
 
 <?php endif; ?>
 
@@ -886,6 +914,35 @@ textarea {
       imagePreview.src = '#';
       imagePreview.classList.add('d-none');
     }
+
+    function previewPostImage(event) {
+  const input = event.target;
+  const previewContainer = document.getElementById('imagePreviewContainer');
+  const preview = document.getElementById('imagePreview');
+
+  if (input.files && input.files[0]) {
+    const file = input.files[0];
+
+  
+    if (!file.type.startsWith('image/')) {
+      alert('Please select a valid image file.');
+      input.value = '';
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      preview.src = e.target.result;
+      previewContainer.classList.remove('d-none');
+    };
+    reader.readAsDataURL(file);
+  }
+}
+
+function removePostImage() {
+  document.getElementById('postImage').value = '';
+  document.getElementById('imagePreviewContainer').classList.add('d-none');
+}
 
     document.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll('.text-muted[data-time]').forEach(span => {

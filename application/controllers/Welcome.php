@@ -303,70 +303,44 @@ public function delete_post($id)
     redirect('welcome');
 }
 
-public function edit_post($id)
+public function edit_post($post_id)
 {
-    $this->load->model('Post_model'); // make sure naming matches your model filename
+    $this->load->model('Post_model');
 
-    $user_id = $this->session->userdata('user_id');
-    $post = $this->Post_model->get_post_by_id($id);
+    $content = $this->input->post('content');
+    $remove_image = $this->input->post('remove_image') ? true : false;
+    $new_image_name = null;
 
-    if (!$post || $post['user_id'] !== $user_id) {
-        show_404();
-        return;
-    }
+    // Handle new image upload if provided
+    if (!empty($_FILES['image']['name'])) {
+        $config['upload_path']   = './assets/post_image/';
+        $config['allowed_types'] = 'jpg|jpeg|png|gif|webp';
+        $config['max_size']      = 4096;
+        $config['file_name']     = 'post_' . time();
 
-    if ($this->input->server('REQUEST_METHOD') === 'POST') {
+        $this->load->library('upload', $config);
 
-        $content = $this->input->post('content');
-        $image_name = $post['image']; // keep current image by default
-
-       
-        if (!empty($_FILES['image']['name'])) {
-
-        
-            $config['upload_path']   = './assets/post_image/';
-            $config['allowed_types'] = 'jpg|jpeg|png|gif';
-            $config['max_size']      = 6144; // 6MB limit
-            $config['file_name']     = time() . '_' . $_FILES['image']['name'];
-
-            $this->load->library('upload', $config);
-
-            if ($this->upload->do_upload('image')) {
-             
-                if (!empty($post['image']) && file_exists('./assets/post_image/' . $post['image'])) {
-                    unlink('./assets/post_image/' . $post['image']);
-                }
-
-               
-                $upload_data = $this->upload->data();
-                $image_name = $upload_data['file_name'];
-
-            } else {
-            
-                $error = $this->upload->display_errors();
-                $this->session->set_flashdata('error', $error);
-                redirect('welcome/edit_post/' . $id);
-                return;
-            }
+        if ($this->upload->do_upload('image')) {
+            $upload_data = $this->upload->data();
+            $new_image_name = $upload_data['file_name'];
+        } else {
+            // optional: set flash message if upload fails
+            $this->session->set_flashdata('error', $this->upload->display_errors());
+            redirect('welcome');
+            return;
         }
-
-        
-        $update_data = [
-            'content' => $content,
-            'image' => $image_name,
-            'updated_at' => date('Y-m-d H:i:s')
-        ];
-
-        $this->Post_model->update_post($id, $update_data);
-
-        $this->session->set_flashdata('success', 'Post updated successfully!');
-        redirect('welcome');
-
-    } else {
-        $data['post'] = $post;
-        $this->load->view('edit_post', $data);
     }
+
+    // Prepare data for update
+    $data = ['content' => $content, 'updated_at' => date('Y-m-d H:i:s')];
+
+    // Use model to handle all logic (clean)
+    $this->Post_model->update_post($post_id, $data, $remove_image, $new_image_name);
+
+    $this->session->set_flashdata('success', 'Post updated successfully!');
+    redirect('welcome');
 }
+
 
 public function update_post($id)
 {

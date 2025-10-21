@@ -31,11 +31,37 @@ class Post_model extends CI_Model
         return $this->db->get_where('posts', ['id' => $id])->row_array();
     }
 
-   public function update_post($id, $data)
+   public function update_post($post_id, $data, $remove_image = false, $new_image = null)
 {
-    $this->db->where('id', $id);
+    
+    $post = $this->db->get_where('posts', ['id' => $post_id])->row_array();
+
+    if ($remove_image && !empty($post['image'])) {
+  
+        $old_image_path = FCPATH . 'assets/post_image/' . $post['image'];
+        if (file_exists($old_image_path)) {
+            unlink($old_image_path);
+        }
+        $data['image'] = NULL; 
+    }
+
+    
+    if ($new_image !== null) {
+        
+        if (!empty($post['image'])) {
+            $old_image_path = FCPATH . 'assets/post_image/' . $post['image'];
+            if (file_exists($old_image_path)) {
+                unlink($old_image_path);
+            }
+        }
+        $data['image'] = $new_image; 
+    }
+
+    
+    $this->db->where('id', $post_id);
     return $this->db->update('posts', $data);
 }
+
 
 
     public function delete_post($id)
