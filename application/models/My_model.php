@@ -130,6 +130,11 @@ class My_model extends CI_Model
     }
 }
 
+public function get_user_by_id($id)
+{
+    return $this->db->where('id', $id)->get('crud')->row_array();
+}
+
     public function calculate($expression) {
     
     $expression = preg_replace('/[^0-9+\-*\/().]/', '', $expression);

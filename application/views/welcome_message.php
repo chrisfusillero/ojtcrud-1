@@ -119,6 +119,17 @@ body {
   border-radius: 12px;
 }
 
+.modal.fade .modal-dialog {
+  transition: transform 0.25s ease-out, opacity 0.25s ease-out;
+  transform: translateY(-10px);
+}
+
+.modal.show .modal-dialog {
+  transform: none;
+  opacity: 1;
+}
+
+
 .close {
   position: absolute;
   top: 20px;
@@ -276,6 +287,50 @@ body {
   transform: scale(1.3);
 }
 
+.reactions-bar {
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.reaction-wrapper:not(:hover) .reactions-bar {
+  transition-delay: 0s; 
+}
+
+.img-preview {
+  max-width: 100%;
+  max-height: 250px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.img-preview:hover {
+  transform: scale(1.03);
+}
+
+.file-input-label {
+  display: inline-block;
+  background-color: #e9ecef;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s ease;
+}
+
+.file-input-label:hover {
+  background-color: #dee2e6;
+}
+
+input[type="file"] {
+  display: none;
+}
+
+.modal-img {
+  max-width: 100%;
+  border-radius: 10px;
+}
+
+
 
 @media (max-width: 768px) {
   .reactions-bar {
@@ -389,7 +444,7 @@ textarea {
 .reaction-wrapper {
   position: relative;
   display: inline-block;
-}
+  padding-bottom: 45px; 
 
 .reaction-btn {
   border: none;
@@ -397,50 +452,59 @@ textarea {
   border-radius: 20px;
   padding: 6px 14px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.25s ease;
   font-weight: 500;
 }
 
 .reaction-btn:hover {
   background-color: #e9ecef;
-  transform: translateY(-1px);
+  transform: translateY(-2px);
 }
 
 
 .reactions-bar {
   position: absolute;
-  bottom: 120%;
+  bottom: 130%; 
   left: 50%;
-  transform: translateX(-50%) translateY(10px) scale(0.95);
+  transform: translateX(-50%) translateY(10px) scale(0.9);
   background: #fff;
   border-radius: 30px;
-  padding: 6px 10px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 8px 12px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
   display: flex;
-  gap: 6px;
+  gap: 8px;
   opacity: 0;
   pointer-events: none;
-  transition: all 0.25s ease;
+  transition: all 0.35s ease;
+  transition-delay: 0s; 
   z-index: 10;
 }
 
 
 .reaction-wrapper:hover .reactions-bar,
 .reactions-bar:hover {
-  transform: translateX(-50%) scale(1);
   opacity: 1;
+  transform: translateX(-50%) translateY(0) scale(1);
   pointer-events: auto;
+  transition-delay: 0.45s; 
 }
 
+
+.reaction-wrapper .reactions-bar {
+  transition-delay: 0s; 
+}
+
+
 .reaction {
-  font-size: 1.4rem;
+  font-size: 1.6rem;
   cursor: pointer;
   transition: transform 0.15s ease;
 }
 
 .reaction:hover {
-  transform: scale(1.4);
+  transform: scale(1.5);
 }
+
 
 
 </style>
@@ -636,13 +700,16 @@ textarea {
 
     <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="postMenu<?= $post['id']; ?>">
       <li>
-        <button class="dropdown-item text-primary" onclick="enableInlineEdit(<?= $post['id']; ?>)">
-  ✏️ Edit Post
-</button>
-
+        <!-- Trigger edit modal -->
+        <button class="dropdown-item text-primary"
+                data-bs-toggle="modal"
+                data-bs-target="#editPostModal<?= $post['id']; ?>">
+          ✏️ Edit Post
+        </button>
       </li>
       <li>
-        <a class="dropdown-item text-danger" href="<?= base_url('index.php/welcome/delete_post/' . $post['id']); ?>"
+        <a class="dropdown-item text-danger"
+           href="<?= base_url('index.php/welcome/delete_post/' . $post['id']); ?>"
            onclick="return confirm('Are you sure you want to delete this post?');">
           🗑️ Delete Post
         </a>
@@ -650,54 +717,86 @@ textarea {
     </ul>
   </div>
 
-
-<!-- ✏️ EDIT POST MODAL -->
-  <div class="modal fade" id="editPostModal<?= $post['id']; ?>" tabindex="-1" aria-hidden="true">
+  <!-- ✏️ Edit Post Modal -->
+  <div class="modal fade" id="editPostModal<?= $post['id']; ?>" tabindex="-1"
+       aria-labelledby="editPostModalLabel<?= $post['id']; ?>" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
-      <div class="modal-content border-0 shadow">
-        <div class="modal-header bg-primary text-white">
-          <h5 class="modal-title">✏️ Edit Post</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      <div class="modal-content">
+
+        <div class="modal-header">
+          <h5 class="modal-title" id="editPostModalLabel<?= $post['id']; ?>">✏️ Edit Your Post</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
 
-        <form id="editPostForm<?= $post['id']; ?>" enctype="multipart/form-data">
-          <div class="modal-body">
-            <input type="hidden" name="post_id" value="<?= $post['id']; ?>">
+        <div class="modal-body">
+          <div class="edit-container">
+            <form method="post"
+                  action="<?= base_url('index.php/welcome/edit_post/' . $post['id']); ?>"
+                  enctype="multipart/form-data">
 
-            <!-- 📝 Content -->
-            <div class="mb-3">
-              <label for="content<?= $post['id']; ?>" class="form-label fw-semibold">Post Content</label>
-              <textarea class="form-control" id="content<?= $post['id']; ?>" name="content" rows="5" required><?= htmlspecialchars($post['content']); ?></textarea>
-            </div>
-
-            <!-- 🖼 Current Image -->
-            <?php if (!empty($post['image'])): ?>
-              <div class="text-center mb-3">
-                <p class="text-muted mb-1 fw-semibold">Current Image:</p>
-                <img src="<?= base_url('assets/post_image/' . $post['image']); ?>" 
-                     class="img-fluid rounded shadow-sm mb-2"
-                     id="currentImage<?= $post['id']; ?>">
+              <!-- Content -->
+              <div class="form-group mb-3">
+                <label for="content<?= $post['id']; ?>" class="form-label fw-medium">Post Content</label>
+                <textarea name="content" id="content<?= $post['id']; ?>" class="form-control" rows="6" required><?= htmlspecialchars($post['content']); ?></textarea>
               </div>
-            <?php endif; ?>
 
-            <!-- 📸 Upload New Image -->
-            <div class="mb-3">
-              <label class="form-label fw-semibold">Change Image (optional)</label>
-              <input type="file" name="image" class="form-control" accept="image/*"
-                     onchange="previewNewImage(event, <?= $post['id']; ?>)">
-              <img id="previewImage<?= $post['id']; ?>" class="img-fluid rounded mt-2 d-none" alt="Preview">
-            </div>
-          </div>
+              <!-- Current Image -->
+              <?php if (!empty($post['image'])): ?>
+                <div class="mb-3 text-center">
+                  <p class="fw-medium text-muted mb-2">Current Image:</p>
+                  <img src="<?= base_url('assets/post_image/' . $post['image']); ?>"
+                       alt="Current Image"
+                       class="img-preview"
+                       id="currentImage<?= $post['id']; ?>"
+                       data-bs-toggle="modal"
+                       data-bs-target="#imageModal<?= $post['id']; ?>">
+                </div>
+              <?php endif; ?>
 
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-            <button type="submit" class="btn btn-primary">💾 Save Changes</button>
+              <!-- Upload New Image -->
+              <div class="form-group mb-4">
+                <label for="image<?= $post['id']; ?>" class="form-label fw-medium">Change Image (optional)</label>
+                <label for="image<?= $post['id']; ?>" class="file-input-label">📸 Choose a new image</label>
+                <input type="file"
+                       name="image"
+                       id="image<?= $post['id']; ?>"
+                       accept="image/*"
+                       onchange="previewNewImage(event, <?= $post['id']; ?>)">
+                <img id="previewImage<?= $post['id']; ?>" class="img-preview d-none" alt="New Image Preview">
+              </div>
+
+              <!-- Buttons -->
+              <div class="d-flex justify-content-between">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">← Cancel</button>
+                <button type="submit" class="btn btn-primary">💾 Update Post</button>
+              </div>
+
+            </form>
           </div>
-        </form>
+        </div>
       </div>
     </div>
   </div>
+
+  <!-- 🖼️ Full Image Modal -->
+  <?php if (!empty($post['image'])): ?>
+    <div class="modal fade" id="imageModal<?= $post['id']; ?>" tabindex="-1"
+         aria-labelledby="imageModalLabel<?= $post['id']; ?>" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content bg-transparent border-0">
+          <div class="modal-body text-center">
+            <img src="<?= base_url('assets/post_image/' . $post['image']); ?>"
+                 alt="Full Image"
+                 class="modal-img">
+          </div>
+        </div>
+      </div>
+    </div>
+  <?php endif; ?>
+
 <?php endif; ?>
+
+
           </div>
         </div>  
 
@@ -823,27 +922,27 @@ window.toggleReactions = function(button) {
   bar.style.display = (bar.style.display === 'flex') ? 'none' : 'flex';
 };
 
-function previewNewImage(event, id) {
-    const preview = document.getElementById('previewImage' + id);
-    const file = event.target.files[0];
-    if (file) {
-      preview.src = URL.createObjectURL(file);
-      preview.classList.remove('d-none');
-    } else {
-      preview.classList.add('d-none');
-    }
-  }
-function openModal(src) {
-    const modal = document.getElementById('imageModal');
-    const modalImg = document.getElementById('modalImage');
-    modal.style.display = "block";
-    modalImg.src = src;
-  }
+function previewNewImage(event, postId) {
+  const fileInput = event.target;
+  const preview = document.getElementById(`previewImage${postId}`);
 
-  function closeModal() {
-    const modal = document.getElementById('imageModal');
-    modal.style.display = "none";
+  if (fileInput.files && fileInput.files[0]) {
+    const reader = new FileReader();
+    reader.onload = e => {
+      preview.src = e.target.result;
+      preview.classList.remove('d-none');
+    };
+    reader.readAsDataURL(fileInput.files[0]);
   }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+ 
+  const modals = document.querySelectorAll(".modal");
+  modals.forEach(modal => {
+    document.body.appendChild(modal);
+  });
+});
   
 
 
@@ -870,7 +969,6 @@ function openModal(src) {
 
       
 </div>
-
 
 
 

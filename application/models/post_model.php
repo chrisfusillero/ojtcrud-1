@@ -31,10 +31,12 @@ class Post_model extends CI_Model
         return $this->db->get_where('posts', ['id' => $id])->row_array();
     }
 
-    public function update_post($id, $data)
-    {
-        return $this->db->where('id', $id)->update('posts', $data);
-    }
+   public function update_post($id, $data)
+{
+    $this->db->where('id', $id);
+    return $this->db->update('posts', $data);
+}
+
 
     public function delete_post($id)
 {

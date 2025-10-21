@@ -30,6 +30,8 @@ class Welcome extends MY_Controller
     $user_data = $this->Login_model->get_user_data($user_id);
 
     
+    
+
     $posts = $this->Post_model->get_all_posts();
 
  
@@ -37,7 +39,8 @@ class Welcome extends MY_Controller
         $user_data = (array) $user_data;
     }
 
-    
+    $user =$this->My_model->get_user_by_id($user_id);
+
     $data = [
         'firstname' => $user_data['firstname'] ?? '',
         'lastname'  => $user_data['lastname'] ?? '',
@@ -52,6 +55,9 @@ class Welcome extends MY_Controller
     
     $this->template('welcome_message', $data);
 }
+
+
+
 
 
     public function delete($id)
@@ -361,6 +367,15 @@ public function edit_post($id)
         $this->load->view('edit_post', $data);
     }
 }
+
+public function update_post($id)
+{
+    $content = $this->input->post('content');
+    $this->Post_model->update_post($id, ['content' => $content]);
+    redirect('welcome'); 
+}
+
+
 
 
 
