@@ -85,6 +85,7 @@
 }
 
 
+
 h5 {
   font-size: 1.1rem;
 }
@@ -112,7 +113,7 @@ small {
 
     
     <a class="navbar-brand fw-bold text-primary" href="<?= base_url('index.php/welcome'); ?>">
-      DigiCrud101
+      Blogspot101
     </a>
 
     
@@ -196,7 +197,39 @@ small {
 
     <hr>
 
-    <!-- Add more profile info below if needed -->
+    
+            <div class="container mt-5 mb-5">
+  <h3 class="text-center mb-4 text-dark">📸 Image Gallery</h3>
+  <div class="row g-3">
+    <?php 
+      
+      $galleryPath = FCPATH . 'assets/gallery_path/';
+      $galleryURL  = base_url('assets/gallery_path/');
+
+    
+      $galleryImages = glob($galleryPath . '*.{jpg,jpeg,png,gif,JPG,JPEG,PNG,GIF}', GLOB_BRACE);
+
+      if (!empty($galleryImages)):
+        foreach ($galleryImages as $img):
+          $fileName = basename($img); 
+    ?>
+      <div class="col-6 col-md-4 col-lg-3">
+        <div class="gallery-card">
+          <img src="<?= $galleryURL . $fileName; ?>" 
+               alt="Gallery Image" class="img-fluid rounded shadow-sm gallery-img"
+               onclick="openModal(this.src)">
+        </div>
+      </div>
+    <?php 
+        endforeach;
+      else: 
+    ?>
+      <p class="text-center text-muted">No images in gallery yet.</p>
+    <?php endif; ?>
+  </div>
+</div>
+
+
   </div>
 </div>
 

@@ -214,8 +214,8 @@ body {
     <br>
     <br>
  
-<div class="welcome-message">
-    <h4>Hello Admin</h4>
+<div class="welcome-message text-center mt-4">
+    <h2>Hello Admin</h2>
     <p class="text-muted mb-0">This is the admin interface</p>
 </div>
 

@@ -74,30 +74,7 @@ body {
 }
 
 
-.gallery-card {
-  overflow: hidden;
-  border-radius: 12px;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
 
-.gallery-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.25);
-}
-
-.gallery-img {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-  cursor: pointer;
-  border-radius: 12px;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.gallery-img:hover {
-  transform: scale(1.05);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-}
 
 
 .image-modal {
@@ -611,7 +588,7 @@ textarea {
 
 </header>
 
-<div class="welcome-message">
+<div class="welcome-message text-center mt-4">
   <?php if (!empty($firstname)): ?>
     <h4>👋 Welcome, <?= htmlspecialchars($firstname); ?>!</h4>
     <p class="text-muted mb-0">Feel free to post in this blog</p>
@@ -625,6 +602,7 @@ textarea {
 
 
 
+
 <div class="container mt-5 mb-5" style="max-width: 600px;">
   <div class="card shadow-sm border-0 rounded-3">
     <div class="card-body">
@@ -633,11 +611,11 @@ textarea {
 
         <div class="d-flex align-items-start">
           <?php 
-            // Fetch current logged-in user's info (from session or model)
+    
             $user_id = $this->session->userdata('user_id');
             $user = $this->db->get_where('crud', ['id' => $user_id])->row_array();
 
-            // Determine avatar path
+            
             $avatarPath = (!empty($user['avatar']) && file_exists(FCPATH . 'uploads/avatars/' . $user['avatar']))
               ? base_url('uploads/avatars/' . $user['avatar'])
               : base_url('assets/default-avatar.png');
@@ -793,7 +771,7 @@ $sadCount   = (int) ($post['sad_count'] ?? 0);
 
     <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="postMenu<?= $post['id']; ?>">
       <li>
-        
+      
         <button class="dropdown-item text-primary"
                 data-bs-toggle="modal"
                 data-bs-target="#editPostModal<?= $post['id']; ?>">
@@ -810,7 +788,7 @@ $sadCount   = (int) ($post['sad_count'] ?? 0);
     </ul>
   </div>
 
-  <!--Edit Post Modal-->
+  
 <div class="modal fade" id="editPostModal<?= $post['id']; ?>" tabindex="-1"
      aria-labelledby="editPostModalLabel<?= $post['id']; ?>" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -827,13 +805,13 @@ $sadCount   = (int) ($post['sad_count'] ?? 0);
                 action="<?= base_url('index.php/welcome/edit_post/' . $post['id']); ?>"
                 enctype="multipart/form-data">
 
-            <!-- Content -->
+            
             <div class="form-group mb-3">
               <label for="content<?= $post['id']; ?>" class="form-label fw-medium">Post Content</label>
               <textarea name="content" id="content<?= $post['id']; ?>" class="form-control" rows="6" required><?= htmlspecialchars($post['content']); ?></textarea>
             </div>
 
-            <!-- Current Image -->
+            
             <?php if (!empty($post['image'])): ?>
               <div class="mb-3 text-center">
                 <p class="fw-medium text-muted mb-2">Current Image:</p>
@@ -844,7 +822,7 @@ $sadCount   = (int) ($post['sad_count'] ?? 0);
                      data-bs-toggle="modal"
                      data-bs-target="#imageModal<?= $post['id']; ?>">
 
-                <!-- 🗑️ Remove Image Option -->
+               
                 <div class="form-check d-flex justify-content-center">
                   <input class="form-check-input me-2" type="checkbox" name="remove_image" value="1" id="removeImage<?= $post['id']; ?>">
                   <label class="form-check-label text-danger fw-medium" for="removeImage<?= $post['id']; ?>">
@@ -854,7 +832,7 @@ $sadCount   = (int) ($post['sad_count'] ?? 0);
               </div>
             <?php endif; ?>
 
-            <!-- Upload New Image -->
+            
             <div class="form-group mb-4">
               <label for="image<?= $post['id']; ?>" class="form-label fw-medium">Change Image (optional)</label>
               <label for="image<?= $post['id']; ?>" class="file-input-label">📸 Choose a new image</label>
@@ -866,7 +844,7 @@ $sadCount   = (int) ($post['sad_count'] ?? 0);
               <img id="previewImage<?= $post['id']; ?>" class="img-preview d-none" alt="New Image Preview">
             </div>
 
-            <!-- Buttons -->
+            
             <div class="d-flex justify-content-between">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">← Cancel</button>
               <button type="submit" class="btn btn-primary">💾 Update Post</button>
@@ -879,7 +857,7 @@ $sadCount   = (int) ($post['sad_count'] ?? 0);
   </div>
 </div>
 
-<!-- 🖼️ Full Image Modal -->
+
 <?php if (!empty($post['image'])): ?>
   <div class="modal fade" id="imageModal<?= $post['id']; ?>" tabindex="-1"
        aria-labelledby="imageModalLabel<?= $post['id']; ?>" aria-hidden="true">
@@ -911,42 +889,9 @@ $sadCount   = (int) ($post['sad_count'] ?? 0);
 
 
 
-<div class="container mt-5 mb-5">
-  <h3 class="text-center mb-4 text-light">📸 Image Gallery</h3>
-  <div class="row g-3">
-    <?php 
-      
-      $galleryPath = FCPATH . 'assets/gallery_path/';
-      $galleryURL  = base_url('assets/gallery_path/');
-
-    
-      $galleryImages = glob($galleryPath . '*.{jpg,jpeg,png,gif,JPG,JPEG,PNG,GIF}', GLOB_BRACE);
-
-      if (!empty($galleryImages)):
-        foreach ($galleryImages as $img):
-          $fileName = basename($img); 
-    ?>
-      <div class="col-6 col-md-4 col-lg-3">
-        <div class="gallery-card">
-          <img src="<?= $galleryURL . $fileName; ?>" 
-               alt="Gallery Image" class="img-fluid rounded shadow-sm gallery-img"
-               onclick="openModal(this.src)">
-        </div>
-      </div>
-    <?php 
-        endforeach;
-      else: 
-    ?>
-      <p class="text-center text-muted">No images in gallery yet.</p>
-    <?php endif; ?>
-  </div>
-</div>
 
 
-<div id="imageModal" class="image-modal" onclick="closeModal()">
-  <span class="close">&times;</span>
-  <img class="modal-content" id="modalImage">
-</div>
+
 
 
 
