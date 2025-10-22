@@ -390,6 +390,15 @@ public function react($post_id, $reaction_type)
     redirect('welcome');
 }
 
+public function get_total_reactions($post_id)
+{
+    $this->db->select('total_reactions');
+    $this->db->where('id', $post_id);
+    $query = $this->db->get('posts');
+    $row = $query->row();
+
+    return $row ? (int)$row->total_reactions : 0;
+}
 
 
     

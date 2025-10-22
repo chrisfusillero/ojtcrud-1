@@ -526,6 +526,22 @@ textarea {
   opacity: 1;
 }
 
+.reaction-icons span {
+  margin-right: 4px;
+  font-size: 1.1rem;
+  transition: transform 0.2s ease;
+}
+
+.reaction-icons span:hover {
+  transform: scale(1.2);
+}
+
+.reaction-btn.active-like { background-color: #e7f1ff; color: #0d6efd; }
+.reaction-btn.active-heart { background-color: #ffe5e9; color: #e63946; }
+.reaction-btn.active-laugh { background-color: #fff3cd; color: #d97706; }
+.reaction-btn.active-sad { background-color: #e3f2fd; color: #495057; }
+
+
 
 
 </style>
@@ -700,7 +716,7 @@ textarea {
             
 <div class="reaction-wrapper mt-3">
 
-  <!-- Main button showing the user's current reaction -->
+  <!-- Reaction Button -->
   <button type="button" 
           class="reaction-btn <?= $userLiked ? 'active-'.$userLiked : ''; ?>" 
           onclick="toggleReactions(this)">
@@ -714,9 +730,9 @@ textarea {
         default:      echo '👍 Like'; break;
       }
     ?>
-  </button> 
+  </button>
 
-
+  <!-- Reaction Bar -->
   <div class="reactions-bar shadow-sm">
     <a href="<?= base_url('index.php/welcome/react/'.$post['id'].'/like'); ?>" 
        class="reaction <?= ($userLiked === 'like') ? 'active' : ''; ?>">👍</a>
@@ -727,7 +743,44 @@ textarea {
     <a href="<?= base_url('index.php/welcome/react/'.$post['id'].'/sad'); ?>" 
        class="reaction <?= ($userLiked === 'sad') ? 'active' : ''; ?>">😢</a>
   </div>
+
+  <!-- Reaction Count Display -->
+  <div class="mt-2 small text-muted d-flex align-items-center gap-1">
+    <?php
+      // Retrieve reaction counts for this post (assuming $reactionsCount array from controller)
+      $likeCount  = $reactionsCount[$post['id']]['like']  ?? 0;
+      $heartCount = $reactionsCount[$post['id']]['heart'] ?? 0;
+      $laughCount = $reactionsCount[$post['id']]['laugh'] ?? 0;
+      $sadCount   = $reactionsCount[$post['id']]['sad']   ?? 0;
+
+      // Calculate total
+      $totalReactions = $likeCount + $heartCount + $laughCount + $sadCount;
+    ?>
+
+   <?php 
+$totalReactions = (int) ($post['total_reactions'] ?? 0);
+$likeCount  = (int) ($post['like_count'] ?? 0);
+$heartCount = (int) ($post['heart_count'] ?? 0);
+$laughCount = (int) ($post['laugh_count'] ?? 0);
+$sadCount   = (int) ($post['sad_count'] ?? 0);
+?>
+
+<div class="reaction-summary mt-2">
+  <?php if ($totalReactions > 0): ?>
+    <span class="fw-semibold me-1"> <?= $totalReactions; ?></span>
+    <span class="reaction-icons">
+      <?php if ($likeCount > 0): ?><span title="Like">👍</span><?php endif; ?>
+      <?php if ($heartCount > 0): ?><span title="Love">❤️</span><?php endif; ?>
+      <?php if ($laughCount > 0): ?><span title="Haha">😂</span><?php endif; ?>
+      <?php if ($sadCount > 0): ?><span title="Sad">😢</span><?php endif; ?>
+    </span>
+  <?php else: ?>
+    <span class="text-muted">No reactions yet</span>
+  <?php endif; ?>
 </div>
+  </div>
+</div>
+
 
 
 
@@ -740,7 +793,7 @@ textarea {
 
     <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="postMenu<?= $post['id']; ?>">
       <li>
-        <!-- Trigger edit modal -->
+        
         <button class="dropdown-item text-primary"
                 data-bs-toggle="modal"
                 data-bs-target="#editPostModal<?= $post['id']; ?>">
@@ -757,7 +810,7 @@ textarea {
     </ul>
   </div>
 
-  <!-- ✏️ Edit Post Modal -->
+  <!--Edit Post Modal-->
 <div class="modal fade" id="editPostModal<?= $post['id']; ?>" tabindex="-1"
      aria-labelledby="editPostModalLabel<?= $post['id']; ?>" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg">

@@ -72,23 +72,23 @@ class Post_model extends CI_Model
 }
 
 
-   public function toggle_reaction($post_id, $user_id, $reaction_type)
+  public function toggle_reaction($post_id, $user_id, $reaction_type)
 {
     $columns = [
-        'like' => 'like_count',
+        'like'  => 'like_count',
         'heart' => 'heart_count',
         'laugh' => 'laugh_count',
-        'sad' => 'sad_count'
+        'sad'   => 'sad_count'
     ];
 
-    // check if user already reacted
+    // Check if user already reacted
     $existing = $this->db->get_where('post_reactions', [
         'post_id' => $post_id,
         'user_id' => $user_id
     ])->row();
 
     if ($existing) {
-        // same reaction clicked again → remove it
+        // 🔁 Same reaction clicked again → remove it
         if ($existing->reaction_type === $reaction_type) {
             $this->db->where('id', $existing->id)->delete('post_reactions');
 
@@ -99,9 +99,13 @@ class Post_model extends CI_Model
                          ->update('posts');
             }
 
+            // Update total count
+            $this->update_total_reactions($post_id);
+
             return 'removed';
         } 
-        else { // different reaction → update
+        else {
+            // 🔄 Different reaction → update it
             if (isset($columns[$existing->reaction_type])) {
                 $oldCol = $columns[$existing->reaction_type];
                 $this->db->set($oldCol, "$oldCol - 1", FALSE)
@@ -119,10 +123,15 @@ class Post_model extends CI_Model
             $this->db->where('id', $existing->id)->update('post_reactions', [
                 'reaction_type' => $reaction_type
             ]);
+
+            // Update total count
+            $this->update_total_reactions($post_id);
+
             return 'updated';
         }
     } 
-    else { // new reaction → insert
+    else {
+        // 🆕 New reaction → insert
         $this->db->insert('post_reactions', [
             'post_id' => $post_id,
             'user_id' => $user_id,
@@ -137,9 +146,28 @@ class Post_model extends CI_Model
                      ->update('posts');
         }
 
+        // Update total count
+        $this->update_total_reactions($post_id);
+
         return 'added';
     }
 }
+
+public function update_total_reactions($post_id)
+{
+    // Count total reactions from post_reactions table
+    $this->db->where('post_id', $post_id);
+    $this->db->from('post_reactions');
+    $total = $this->db->count_all_results();
+
+    // Update total_reactions field in posts table
+    $this->db->set('total_reactions', $total)
+             ->where('id', $post_id)
+             ->update('posts');
+
+    return $total; // Return total so you can call it if needed
+}
+
 
 
     
@@ -150,9 +178,17 @@ class Post_model extends CI_Model
     $this->db->group_by('reaction_type');
     $query = $this->db->get('post_reactions');
 
-    $counts = ['like' => 0, 'heart' => 0, 'laugh' => 0, 'sad' => 0];
+    $counts = ['like' => 0, 
+                'heart' => 0, 
+                'laugh' => 0, 
+                'sad' => 0,
+                'total' => 0
+               ];
     foreach ($query->result() as $row) {
-        $counts[$row->reaction_type] = $row->count;
+        if (isset($counts[$row->reaction_type])) {
+            $counts[$row->reaction_type] = (int)$row->count;
+            $counts['total'] += (int)$row->count;
+        }
     }
 
     return $counts;
