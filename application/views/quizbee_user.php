@@ -1,20 +1,22 @@
 <style>
-
 body {
-  background-image: url('<?php echo base_url("assets/portfolio_image/emeraldgreen.jpg"); ?>');
-  background-size: cover;         
-  background-position: center;    
-  background-repeat: no-repeat;   
-  background-attachment: fixed;   
+    background-image: url('<?php echo base_url("assets/portfolio_image/skyblue.jpg"); ?>');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
   font-size: 16px;
   margin: 0;
-  padding-top: 70px; 
+  padding-top: 70px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .header {
   background-color: #fff;
   color: #222;
-  font-family: 'Poppins', sans-serif; 
+  font-family: 'Poppins', sans-serif;
   padding: 10px 0;
   text-align: center;
   position: fixed;
@@ -24,26 +26,26 @@ body {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
-
 .table {
   width: 100%;
   margin: 20px auto;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
-.table td, .table th {
+
+.table td,
+.table th {
   word-wrap: break-word;
   white-space: normal;
   padding: 12px;
   vertical-align: middle;
 }
 
-
 .hero-section {
   position: relative;
   color: white;
   padding: 80px 20px;
   text-align: center;
-  min-height: 80vh;   
+  min-height: 80vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -55,17 +57,19 @@ body {
 }
 
 .navbar-toggler:hover {
-  transform: scale(1.1); 
-  transition: transform 0.2s ease-in-out; 
+  transform: scale(1.1);
+  transition: transform 0.2s ease-in-out;
 }
 
 @keyframes pulse {
   0% {
     transform: scale(1);
   }
+
   50% {
     transform: scale(1.1);
   }
+
   100% {
     transform: scale(1);
   }
@@ -76,16 +80,63 @@ body {
 }
 
 .col-md-4 {
-  margin-bottom: 30px; 
+  margin-bottom: 30px;
 }
-
 
 .footer {
   background-color: #f8f9fa;
   padding: 20px;
   text-align: center;
   font-size: 1em;
-  margin-top: 50px;
+  margin-top: auto; 
+}
+
+
+.container.my-5 {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; 
+  align-items: center; 
+}
+
+
+.intro-card {
+  text-align: center;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: white;
+  width: 80%; 
+  max-width: 600px; 
+}
+
+.intro-card h2 {
+  font-size: 2.5em;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.intro-card p {
+  font-size: 1.1em;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.intro-card .btn-primary {
+  padding: 12px 24px;
+  font-size: 1.2em;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.intro-card .btn-primary:hover {
+  background-color: #0056b3;
 }
 
 
@@ -94,9 +145,11 @@ body {
     min-height: 60vh;
     padding: 60px 15px;
   }
+
   .hero-section h1 {
     font-size: 2rem;
   }
+
   .hero-section p {
     font-size: 1rem;
   }
@@ -106,16 +159,20 @@ body {
   body {
     font-size: 14px;
   }
+
   .navbar-brand {
     font-size: 1.2rem;
   }
+
   .navbar-nav .nav-link {
     font-size: 0.9rem;
   }
+
   .profile-img {
     width: 120px;
     height: 120px;
   }
+
   .portfolio-section {
     padding: 15px;
   }
@@ -125,37 +182,48 @@ body {
   .hero-section h1 {
     font-size: 1.5rem;
   }
+
   .hero-section p {
     font-size: 0.9rem;
   }
+
   .footer {
     font-size: 0.9rem;
   }
 
-
   .project-tile {
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-  cursor: pointer;
-  border-radius: 12px;
-  overflow: hidden;
-}
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    cursor: pointer;
+    border-radius: 12px;
+    overflow: hidden;
+  }
 
-.project-tile:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
-}
+  .project-tile:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  }
 
-.project-tile img {
-  height: 160px;
-  object-fit: cover;
-}
+  .project-tile img {
+    height: 160px;
+    object-fit: cover;
+  }
 
-}
+  .quiz-box {
+    background: #fff;
+    border: 1px solid #e3e3e3;
+  }
 
-</style>  
+  @media (max-width: 768px) {
+    .quiz-box {
+      padding: 20px;
+    }
+  }
+}
+</style>
 </head>
 
-<title>Projects</title>
+<title>Quiz Bee</title>
+
 
 <body onload="noBack();" onpageshow="if (event.persisted) noBack();" onunload="">
 
@@ -164,8 +232,8 @@ body {
   <div class="container">
 
     
-    <a class="navbar-brand fw-bold text-primary" href="<?= base_url('index.php/admin_Main'); ?>">
-      DigiCrud101
+    <a class="navbar-brand fw-bold text-primary" href="<?= base_url('index.php/welcome'); ?>">
+      Blogspot101
     </a>
 
     
@@ -180,18 +248,11 @@ body {
 
         
         <li class="nav-item me-2">
-          <a class="nav-link fw-medium ms-2" href="<?= base_url('index.php/admin_Main'); ?>">Home</a>
+          <a class="nav-link fw-medium ms-2" href="<?= base_url('index.php/welcome'); ?>">Home</a>
         </li>
 
         
-        <li class="nav-item me-2">
-          <a class="nav-link fw-medium ms-2" href="<?= base_url('index.php/admin_Main/admin_crud'); ?>">Accounts</a>
-        </li>
-
         
-        <li class="nav-item me-2">
-          <a class="nav-link fw-medium ms-2" href="<?= base_url('index.php/admin_Main/admin_projects'); ?>">Projects</a>
-        </li>
 
         
         <li class="nav-item me-2">
@@ -207,7 +268,7 @@ body {
           </button>
           <ul class="dropdown-menu dropdown-menu-end">
             <li>
-              <a class="dropdown-item" href="<?= base_url('index.php/admin_Main/admin_settings'); ?>">Settings</a>
+              <a class="dropdown-item" href="<?= base_url('index.php/welcome/settings'); ?>">Settings</a>
             </li>
             <li>
               <a class="dropdown-item text-danger" href="<?= base_url('index.php/AuthLogin'); ?>">
@@ -225,54 +286,29 @@ body {
 
 </header>
 
+ <div class="container my-5">
 
-<div class="container py-5">
-  <div class="card shadow-lg border-0 p-4" style="max-width: 900px; margin: 0 auto; background-color: white;">
-    <div class="text-center mb-4">
-      <h3 class="fw-bold text-primary">Our Projects</h3>
-      <p class="text-muted">Click a project to view details</p>
-    </div>
+
+  <div class="intro-card">
+    <h2 class="fw-bold">🎓 Welcome to Quiz Bee</h2>
+    <p class="text-muted">Test your knowledge with fun and dynamic quizzes delivered to you!</p>
+
+   <a href="<?= base_url('index.php/welcome/quizbee_proper'); ?>" class="btn btn-primary btn-lg mt-3">
+        Start Quiz
+      </a>
+
 
     
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
-      
-      
-      <div class="col">
-        <a href="<?= base_url('index.php/admin_Main/admin_calculator'); ?>" class="text-decoration-none text-dark">
-          <div class="card h-100 shadow-sm border-0 project-tile">
-            <img src="<?= base_url('assets/projects/calculator-1.jpg'); ?>" class="card-img-top" alt="Project 1">
-            <div class="card-body text-center">
-              <h6 class="fw-semibold">Calculator</h6>
-            </div>
-          </div>
-        </a>
-      </div>
 
-     
-      <div class="col">
-        <a href="<?= base_url('index.php/admin_Main/quizbee'); ?>" class="text-decoration-none text-dark">
-          <div class="card h-100 shadow-sm border-0 project-tile">
-            <img src="<?= base_url('assets/projects/quizbee25.jpg'); ?>" class="card-img-top" alt="Project 2">
-            <div class="card-body text-center">
-              <h6 class="fw-semibold">Quiz Bee </h6>
-            </div>
-          </div>
-        </a>
-      </div>
-
-
-      <div class="col">
-        <a href="project3.html" class="text-decoration-none text-dark">
-          <div class="card h-100 shadow-sm border-0 project-tile">
-            <img src="assets/projects/project3.jpg" class="card-img-top" alt="Project 3">
-            <div class="card-body text-center">
-              <h6 class="fw-semibold"> </h6>
-            </div>
-          </div>
-        </a>
-      </div>
-
-    </div>
+  
   </div>
+
+
+ 
+
+  
 </div>
+
+  
+</body>
 

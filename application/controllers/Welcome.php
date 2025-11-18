@@ -391,6 +391,41 @@ public function react($post_id, $reaction_type)
 }
 
 
+public function quizbee_user()
+{
+    if (!$this->session->userdata('user_id')) {
+        redirect('AuthLogin');
+        return;
+    }
+
+    $user_id = $this->session->userdata('user_id');
+    $user = $this->My_model->get_single_data($user_id);
+
+    $data = [
+        'firstname' => $user['firstname'] ?? 'Guest',
+        'lastname'  => $user['lastname'] ?? ''
+    ];
+
+    $this->template('quizbee_user', $data);
+}
+
+public function quizbee_proper()
+{
+
+
+    $data = [
+        'firstname' => $user['firstname'] ?? 'Guest',
+        'lastname'  => $user['lastname'] ?? ''
+    ];
+
+    $this->load->model('quiz_model');
+
+    // get all quizzes
+    $data['quizzes'] = $this->quiz_model->get_all_quizzes();
+
+    // Load view
+    $this->template('quizbee_proper', $data);
+}
 
     
 

@@ -229,4 +229,137 @@ class admin_Main extends MY_Controller
         $this->session->sess_destroy();
         redirect('index.php/AuthLogin');
     }
+
+    public function quizbee($quiz_id = null)
+{
+    $this->load->model('Quiz_model');
+
+   
+    if ($quiz_id === null) {
+        $quiz = null;
+    } else {
+        $quiz = $this->Quiz_model->get_quiz($quiz_id);
+        if (!$quiz) {
+            show_404();
+            return;
+        }
+    }
+
+    $user_id = $this->session->userdata('user_id');
+    $user = $this->Login_model->get_user_data($user_id);
+
+    $data = [
+        'quiz'      => $quiz,
+        'firstname' => $user['firstname'] ?? 'Admin',
+        'lastname'  => $user['lastname'] ?? '',
+        'title'     => $quiz ? ($quiz['title'] . " — Quiz Bee") : "Quiz Bee"
+    ];
+
+    $this->template('quizbee', $data);
+}
+
+
+	public function add_quiz() {
+        
+    
+
+        $data = [
+            'title' => 'Add New Quiz',
+            'firstname' => $user['firstname'] ?? 'Admin',
+            'lastname'  => $user['lastname'] ?? ''
+        ];
+
+        $this->template('add_quiz', $data);
+
+    }
+
+    public function save_quiz()
+{
+    $this->load->model('Quiz_model');
+
+    $choices = $this->input->post('choices');
+    
+    $data = [
+        'title'   => $this->input->post('title', true),
+        'question' => $this->input->post('question', true),
+        'choices' => json_encode($choices),
+        'answer'  => $this->input->post('answer', true),
+    ];
+
+    $this->Quiz_model->createQuiz($data);
+
+    redirect('admin_Main/quiz_list');
+}
+    public function quiz_list()
+{
+    $this->load->model('Quiz_model');
+
+    $quizzes = $this->Quiz_model->get_all_quizzes();
+
+    $user_id = $this->session->userdata('user_id');
+    $user = $this->Login_model->get_user_data($user_id);
+
+    $data = [
+        'quizzes'   => $quizzes,
+        'firstname' => $user['firstname'] ?? 'Admin',
+        'lastname'  => $user['lastname'] ?? '',
+        'title'     => 'Quiz List'
+    ];
+
+    $this->template('quiz_list', $data);
+}
+
+public function get_quiz($id)
+{
+    return $this->db->get_where('quizzes', ['id' => $id])->row_array();
+}
+
+
+public function edit_quiz($id = null)
+{
+    if ($id === null) {
+        show_404();
+        return;
+    }
+
+    $this->load->model('quiz_model');
+
+    $data['quiz'] = $this->quiz_model->get_quiz($id);
+
+    if (empty($data['quiz'])) {
+        show_404();
+        return;
+    }
+
+    $this->load->view('admin_Main/edit_quiz', $data);
+}
+
+
+public function update_quiz($id)
+{
+    $this->load->model('quiz_model');
+
+    $choices = $this->input->post('choices');
+
+    $data = [
+        'title'   => $this->input->post('title', true),
+        'question' => $this->input->post('question', true),
+        'choices' => json_encode($choices),
+        'answer'  => $this->input->post('answer', true),
+        
+    ];
+    $this->Quiz_model->updateQuiz($id, $data);
+
+    redirect('admin_Main/quiz_list');
+}
+
+public function delete_quiz($id)
+{
+    $this->load->model('Quiz_model');
+
+    $this->Quiz_model->deleteQuiz($id);
+
+    redirect('admin_Main/quiz_list');
+
+}
 }

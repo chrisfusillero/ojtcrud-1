@@ -41,14 +41,15 @@ class Login_model extends CI_Model
 
     public function create_user($data)
 {
-    $insert_data = array(
+    
+    $insert_data = array( 
         'firstname' => $data['firstname'],
         'lastname'  => $data['lastname'],
         'username'  => $data['username'],
         'address'   => $data['address'],
         'email'     => $data['email'],
         'password'  => password_hash($data['password'], PASSWORD_DEFAULT),
-        'user'      => $data['role'],   
+        'user'      => $data['user'],   
         'valid'     => 1
     );
 

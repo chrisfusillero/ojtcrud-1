@@ -553,6 +553,11 @@ textarea {
           <a class="nav-link fw-medium ms-2" href="<?= base_url('index.php/welcome'); ?>">Home</a>
         </li>
 
+
+        <li class="nav-item me-2">
+          <a class="nav-link fw-medium ms-2" href="<?= base_url('index.php/welcome/quizbee_user'); ?>">Quiz Bee</a>
+        </li>
+
         
         
 
