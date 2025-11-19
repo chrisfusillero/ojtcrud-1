@@ -294,36 +294,48 @@ body {
 
     <?php if (!empty($quizzes)): ?>
         <div id="quizContainer">
-            <?php 
-            $questionCount = count($quizzes);
-            $i = 0;
-            foreach ($quizzes as $q): 
-            $i++;
-            ?>
-                <div class="card mb-4 quizQuestion" id="question_<?php echo $q['id']; ?>" style="display: none;">
+
+            <?php foreach ($quizzes as $q): ?>
+                <div class="card mb-4">
                     <div class="card-body">
                         <h5><?php echo $q['question']; ?></h5>
+
                         <input type="hidden" name="question_id[]" value="<?php echo $q['id']; ?>">
+
                         <?php $choices = json_decode($q['choices'], true); ?>
-                        <?php foreach ($choices as $c): ?>
-                            <div class="form-check">
-                                <input class="form-check-input answerRadio"
-                                       type="radio"
-                                       name="answer[<?php echo $q['id']; ?>]"
-                                       value="<?php echo htmlspecialchars($c); ?>"
-                                       required
-                                       data-question-id="<?php echo $q['id']; ?>">
-                                <label class="form-check-label">
-                                    <?php echo htmlspecialchars($c); ?>
-                                </label>
+
+                        <?php if (is_array($choices) && count($choices) > 0): ?>
+                            <?php foreach ($choices as $c): ?>
+                                <div class="form-check">
+                                    <input class="form-check-input answerRadio"
+                                           type="radio"
+                                           name="answer[<?php echo $q['id']; ?>]"
+                                           value="<?php echo htmlspecialchars($c); ?>"
+                                           data-question-id="<?php echo $q['id']; ?>">
+                                    <label class="form-check-label">
+                                        <?php echo htmlspecialchars($c); ?>
+                                    </label>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <div class="alert alert-warning">
+                                No choices available for this question.
                             </div>
-                        <?php endforeach; ?>
+                        <?php endif; ?>
+
                     </div>
                 </div>
             <?php endforeach; ?>
+
         </div>
 
-        <button type="submit" class="btn btn-primary btn-lg" id="submitButton" style="display: none;">Submit</button>
+        <button type="submit" class="btn btn-primary btn-lg" id="submitButton" disabled>
+            Submit
+        </button>
+
+        <button type="button" class="btn btn-secondary btn-lg ms-2" onclick="window.location.href='<?= base_url('index.php/welcome/quizbee_user'); ?>'">
+            Back to Dashboard
+        </button>
 
     <?php else: ?>
         <div class="alert alert-warning">No questions available.</div>
@@ -332,51 +344,34 @@ body {
     <?php echo form_close(); ?>
 </div>
 
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
 $(document).ready(function() {
-    var questionCounter = 0;
-    var questionCount = <?php echo $questionCount; ?>;
-    var quizzes = <?php echo json_encode($quizzes); ?>;
 
-    
-    function showQuestion(index) {
-        if (index < questionCount) {
-            $('.quizQuestion').hide();
-            $('#question_' + quizzes[index].id).show();
+    function checkAllAnswered() {
+        let totalQuestions = <?php echo count($quizzes); ?>;
+        let answeredCount = 0;
+
+        $('input.answerRadio:checked').each(function() {
+            answeredCount++;
+        });
+
+        if (answeredCount === totalQuestions) {
+            $('#submitButton').prop('disabled', false);
         } else {
-            
-            $('#submitButton').show();
+            $('#submitButton').prop('disabled', true);
         }
     }
 
-    
-    showQuestion(questionCounter);
-
-
-    $('.answerRadio').click(function() {
-        var questionId = $(this).data('question-id');
-        
-        questionCounter++;
-        showQuestion(questionCounter);
+      
+    $('.answerRadio').on('change', function() {
+        checkAllAnswered();
     });
 
-    
-    $('#quizForm').submit(function(e) {
-        if (questionCounter < questionCount) {
-            e.preventDefault();
-            alert('Please answer all questions before submitting.');
-        }
-    });
-
-    
-    $('.quizQuestion').hide();
-    
-    if (questionCount > 0) {
-        $('#question_' + quizzes[0].id).show();
-    }
 });
 </script>
+
 
 
 </body>

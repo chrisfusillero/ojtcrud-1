@@ -299,11 +299,13 @@ body {
     <h2 class="mb-4">Quiz List</h2>
 
     <a href="<?= base_url('index.php/admin_Main/add_quiz'); ?>" class="btn btn-success mb-3">Add New Quiz</a>
+    <a href="<?= base_url('index.php/admin_Main/quizbee'); ?>" class="btn btn-secondary mb-3 ms-2">Back to Dashboard</a>
 
     <table class="table table-bordered table-striped">
         <thead>
             <tr>
                 <th>Question</th>
+                <th>Type</th>
                 <th>Action</th>
             </tr>
         </thead>
@@ -311,10 +313,9 @@ body {
             <?php foreach ($quizzes as $q): ?>
                 <tr>
                     <td><?= $q['question']; ?></td>
+                    <td><?= ucfirst(str_replace('_', ' ', $q['type'])); ?></td>
                     <td>
                         <a href="<?= base_url('index.php/admin_Main/edit_quiz/' . $q['id']); ?>" class="btn btn-primary btn-sm">Edit</a>
-                        <a href="<?= base_url('index.php/admin_Main/delete_quiz/' . $q['id']); ?>" class="btn btn-danger btn-sm"
-                           onclick="return confirm('Delete this quiz?')">Delete</a>
                     </td>
                 </tr>
             <?php endforeach; ?>

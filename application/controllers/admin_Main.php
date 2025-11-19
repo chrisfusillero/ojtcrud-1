@@ -277,19 +277,54 @@ class admin_Main extends MY_Controller
 {
     $this->load->model('Quiz_model');
 
-    $choices = $this->input->post('choices');
+    
+    $type = $this->input->post('quiz_type', true);
+
     
     $data = [
-        'title'   => $this->input->post('title', true),
+        'type'     => $type,
         'question' => $this->input->post('question', true),
-        'choices' => json_encode($choices),
-        'answer'  => $this->input->post('answer', true),
     ];
 
+    
+    if ($type == 'multiple_choice') {
+
+        $choices = $this->input->post('choices');
+        $answer  = $this->input->post('answer', true);
+
+        $data['choices'] = json_encode($choices);
+        $data['answer']  = $answer;
+
+    } elseif ($type == 'identification') {
+
+        $idAnswer = $this->input->post('identification_answer', true);
+
+        $data['choices'] = null;
+        $data['answer']  = $idAnswer;
+
+    } elseif ($type == 'enumeration') {
+
+        $enumAnswers = $this->input->post('enumeration_answers');
+
+        $data['choices'] = null;
+        $data['answer']  = $enumAnswers;
+
+    } elseif ($type == 'true_false') {
+
+        $tfAnswer = $this->input->post('tf_answer', true); 
+
+        $data['choices'] = json_encode(["True", "False"]); 
+        $data['answer']  = $tfAnswer;
+
+    }
+
+    
     $this->Quiz_model->createQuiz($data);
 
     redirect('admin_Main/quiz_list');
 }
+
+
     public function quiz_list()
 {
     $this->load->model('Quiz_model');

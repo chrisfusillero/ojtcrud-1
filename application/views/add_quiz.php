@@ -211,39 +211,105 @@ body {
     <h2>Add New Quiz</h2>
 
     <?php echo form_open('admin_Main/save_quiz'); ?>
-    
+
+        <!-- Quiz Type -->
+        <div class="form-group">
+            <label for="quiz_type">Quiz Type</label>
+            <select class="form-control" id="quiz_type" name="quiz_type" required>
+                <option value="multiple_choice">Multiple Choice</option>
+                <option value="identification">Identification</option>
+                <option value="enumeration">Enumeration</option>
+                <option value="true_false">True or False</option>
+            </select>
+        </div>
+
+        <!-- Question -->
         <div class="form-group">
             <label for="question">Question</label>
             <textarea class="form-control" id="question" name="question" required rows="3"></textarea>
         </div>
 
-        <div class="form-group">
-            <label>Choices</label>
-            <?php for ($i = 0; $i < 4; $i++): ?>
-                <input type="text" 
-                       class="form-control mt-2" 
-                       name="choices[]" 
-                       placeholder="Choice <?php echo $i + 1; ?>" 
-                       required>
-            <?php endfor; ?>
+        <!-- MULTIPLE CHOICE -->
+        <div id="multiple_choice_section">
+            <div class="form-group">
+                <label>Choices</label>
+                <?php for ($i = 0; $i < 4; $i++): ?>
+                    <input type="text"
+                           class="form-control mt-2"
+                           name="choices[]"
+                           placeholder="Choice <?php echo $i + 1; ?>">
+                <?php endfor; ?>
+
+                <label class="mt-3">Correct Answer</label>
+                <input type="text" class="form-control" name="answer">
+            </div>
         </div>
 
-        <div class="form-group">
-            <label for="answer">Correct Answer</label>
-            <input type="text" class="form-control" id="answer" name="answer" required>
+        <!-- TRUE OR FALSE -->
+        <div id="true_false_section" style="display: none;">
+            <label>Correct Answer</label>
+            <select class="form-control" name="tf_answer">
+                <option value="True">True</option>
+                <option value="False">False</option>
+            </select>
         </div>
 
-       
+        <!-- IDENTIFICATION -->
+        <div id="identification_section" style="display: none;">
+            <div class="form-group">
+                <label for="identification_answer">Correct Answer</label>
+                <input type="text" class="form-control" name="identification_answer">
+            </div>
+        </div>
+
+        <!-- ENUMERATION -->
+        <div id="enumeration_section" style="display: none;">
+            <label>Enumeration Answers</label>
+            <div id="enum_container">
+                <input type="text" class="form-control mt-2" name="enumeration_answers[]" placeholder="Answer 1">
+            </div>
+            <button type="button" id="add_enum" class="btn btn-secondary btn-sm mt-2">Add Answer</button>
+        </div>
 
         <!-- Buttons -->
-        <button type="submit" class="btn btn-primary">Save Quiz</button>
+        <button type="submit" class="btn btn-primary mt-3">Save Quiz</button>
 
         <a href="<?= base_url('index.php/admin_Main/quizbee'); ?>" 
-           class="btn btn-secondary ml-2">
+           class="btn btn-secondary mt-3 ml-2">
            Cancel
         </a>
 
     <?php echo form_close(); ?>
 </div>
 
-</body>
+
+<!-- JavaScript to switch question types -->
+<script>
+    const quizType = document.getElementById('quiz_type');
+    const mcSection = document.getElementById('multiple_choice_section');
+    const idSection = document.getElementById('identification_section');
+    const enumSection = document.getElementById('enumeration_section');
+    const tfSection = document.getElementById('true_false_section');
+
+    quizType.addEventListener('change', function() {
+        mcSection.style.display   = (this.value === 'multiple_choice') ? 'block' : 'none';
+        idSection.style.display   = (this.value === 'identification') ? 'block' : 'none';
+        enumSection.style.display = (this.value === 'enumeration') ? 'block' : 'none';
+        tfSection.style.display   = (this.value === 'true_false') ? 'block' : 'none';
+    });
+
+    // Add more enumeration fields
+    document.getElementById('add_enum').addEventListener('click', function() {
+        let container = document.getElementById('enum_container');
+        let newField = document.createElement('input');
+        newField.type = 'text';
+        newField.classList.add('form-control', 'mt-2');
+        newField.name = 'enumeration_answers[]';
+        newField.placeholder = "Another Answer";
+        container.appendChild(newField);
+    });
+</script>
+
+
+
+</body> 
