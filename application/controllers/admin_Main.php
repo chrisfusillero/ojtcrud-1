@@ -273,57 +273,52 @@ class admin_Main extends MY_Controller
 
     }
 
-    public function save_quiz()
+   public function save_quiz()
 {
     $this->load->model('Quiz_model');
 
-    
     $type = $this->input->post('quiz_type', true);
 
-    
     $data = [
         'type'     => $type,
         'question' => $this->input->post('question', true),
     ];
 
-    
-    if ($type == 'multiple_choice') {
-
+    if ($type == 'multiple choice') {
         $choices = $this->input->post('choices');
         $answer  = $this->input->post('answer', true);
 
-        $data['choices'] = json_encode($choices);
+       
+        if (is_array($choices)) {
+            $choices = json_encode($choices, JSON_UNESCAPED_SLASHES);
+        }
+
+        $data['choices'] = $choices;
         $data['answer']  = $answer;
-
     } elseif ($type == 'identification') {
-
         $idAnswer = $this->input->post('identification_answer', true);
 
         $data['choices'] = null;
         $data['answer']  = $idAnswer;
-
     } elseif ($type == 'enumeration') {
-
         $enumAnswers = $this->input->post('enumeration_answers');
 
         $data['choices'] = null;
         $data['answer']  = $enumAnswers;
-
     } elseif ($type == 'true_false') {
+        $tfAnswer = $this->input->post('tf_answer', true);
 
-        $tfAnswer = $this->input->post('tf_answer', true); 
-
-        $data['choices'] = json_encode(["True", "False"]); 
+        $data['choices'] = json_encode(["True", "False"], JSON_UNESCAPED_SLASHES);
         $data['answer']  = $tfAnswer;
-
     }
 
-    
+ 
+    $data['answer'] = stripslashes($data['answer']);
+
     $this->Quiz_model->createQuiz($data);
 
     redirect('admin_Main/quiz_list');
 }
-
 
     public function quiz_list()
 {

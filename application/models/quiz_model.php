@@ -9,41 +9,41 @@ class Quiz_model extends CI_Model {
         'question' => $data['question']
     ];
 
-    
     switch ($data['type']) {
-
-        case 'multiple_choice':
+        case 'multiple choice':
+            $choices = $data['choices'];
+           
+            if (!is_string($choices)) {
+                $choices = json_encode($choices, JSON_UNESCAPED_SLASHES);
+            }
             $insertData = array_merge($common, [
-                'choices' => json_encode($data['choices']),
-                'answer'  => $data['answer'] 
+                'choices' => $choices,
+                'answer'  => $data['answer']
             ]);
             break;
 
         case 'true_false':
             $insertData = array_merge($common, [
-                'choices' => json_encode(['True', 'False']),
-                'answer'  => $data['answer'] 
+                'choices' => json_encode(['True', 'False'], JSON_UNESCAPED_SLASHES),
+                'answer'  => $data['answer']
             ]);
             break;
 
         case 'identification':
-            $insertData = array_merge($common, [
-                'choices' => null,
-                'answer'  => $data['answer'] 
-            ]);
-            break;
         case 'enumeration':
             $insertData = array_merge($common, [
                 'choices' => null,
-                'answer'  => $data['answer'] 
+                'answer'  => $data['answer']
             ]);
             break;
 
         default:
-            
             $insertData = $common;
             break;
     }
+
+  
+    $insertData['answer'] = stripslashes($insertData['answer']);
 
     return $this->db->insert('quizzes', $insertData);
 }

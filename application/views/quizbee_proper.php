@@ -295,32 +295,84 @@ body {
     <?php if (!empty($quizzes)): ?>
         <div id="quizContainer">
 
-            <?php foreach ($quizzes as $q): ?>
+            <?php foreach ($quizzes as $q): 
+                // Normalize question type
+                $type = strtolower(trim($q['type']));
+            ?>
                 <div class="card mb-4">
                     <div class="card-body">
                         <h5><?php echo $q['question']; ?></h5>
 
                         <input type="hidden" name="question_id[]" value="<?php echo $q['id']; ?>">
 
-                        <?php $choices = json_decode($q['choices'], true); ?>
+                        <!-- MULTIPLE CHOICE -->
+                        <?php if (in_array($type, ['multiple_choice','multiple choice','multiple-choice'])): ?>
 
-                        <?php if (is_array($choices) && count($choices) > 0): ?>
-                            <?php foreach ($choices as $c): ?>
-                                <div class="form-check">
-                                    <input class="form-check-input answerRadio"
-                                           type="radio"
-                                           name="answer[<?php echo $q['id']; ?>]"
-                                           value="<?php echo htmlspecialchars($c); ?>"
-                                           data-question-id="<?php echo $q['id']; ?>">
-                                    <label class="form-check-label">
-                                        <?php echo htmlspecialchars($c); ?>
-                                    </label>
+                            <?php $choices = json_decode($q['choices'], true); ?>
+
+                            <?php if (is_array($choices) && count($choices) > 0): ?>
+                                <?php foreach ($choices as $c): ?>
+                                    <div class="form-check">
+                                        <input class="form-check-input answerRadio"
+                                               type="radio"
+                                               name="answer[<?php echo $q['id']; ?>]"
+                                               value="<?php echo htmlspecialchars($c); ?>">
+                                        <label class="form-check-label">
+                                            <?php echo htmlspecialchars($c); ?>
+                                        </label>
+                                    </div>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <div class="alert alert-warning">
+                                    No choices available for this question.
                                 </div>
-                            <?php endforeach; ?>
-                        <?php else: ?>
-                            <div class="alert alert-warning">
-                                No choices available for this question.
+                            <?php endif; ?>
+
+
+                        <!-- TRUE or FALSE -->
+                        <?php elseif (in_array($type, ['true_false','true or false','true-false'])): ?>
+
+                            <div class="form-check">
+                                <input class="form-check-input answerRadio"
+                                       type="radio"
+                                       name="answer[<?php echo $q['id']; ?>]"
+                                       value="True">
+                                <label class="form-check-label">True</label>
                             </div>
+
+                            <div class="form-check">
+                                <input class="form-check-input answerRadio"
+                                       type="radio"
+                                       name="answer[<?php echo $q['id']; ?>]"
+                                       value="False">
+                                <label class="form-check-label">False</label>
+                            </div>
+
+
+                        <!-- IDENTIFICATION -->
+                        <?php elseif ($type == 'identification'): ?>
+
+                            <input type="text"
+                                   class="form-control"
+                                   name="answer[<?php echo $q['id']; ?>]"
+                                   placeholder="Your Answer">
+
+
+                        <!-- ENUMERATION -->
+                        <?php elseif ($type == 'enumeration'): ?>
+
+                            <textarea class="form-control"
+                                      name="answer[<?php echo $q['id']; ?>]"
+                                      rows="3"
+                                      placeholder="Separate each item with a comma"></textarea>
+
+
+                        <!-- UNSUPPORTED -->
+                        <?php else: ?>
+                            <div class="alert alert-info">
+                                This question type is not yet supported. (Type: <?= $q['type']; ?>)
+                            </div>
+
                         <?php endif; ?>
 
                     </div>
@@ -329,13 +381,17 @@ body {
 
         </div>
 
-        <button type="submit" class="btn btn-primary btn-lg" id="submitButton" disabled>
-            Submit
-        </button>
+       <button type="submit" class="btn btn-primary btn-lg" id="submitButton" disabled>
+    Submit
+</button>
 
-        <button type="button" class="btn btn-secondary btn-lg ms-2" onclick="window.location.href='<?= base_url('index.php/welcome/quizbee_user'); ?>'">
-            Back to Dashboard
-        </button>
+
+<button type="button" class="btn btn-secondary btn-lg ms-2"
+        onclick="window.location.href='<?= base_url('index.php/welcome/quizbee_user'); ?>'">
+    Back to Dashboard
+</button>
+
+
 
     <?php else: ?>
         <div class="alert alert-warning">No questions available.</div>
@@ -343,6 +399,7 @@ body {
 
     <?php echo form_close(); ?>
 </div>
+
 
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
