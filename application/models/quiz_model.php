@@ -73,4 +73,24 @@ class Quiz_model extends CI_Model {
     {
         return $this->db->delete('quizzes', ['id' => $id]);
     }
+
+
+    public function create_quiz_group($data)
+{
+    $data['question_count'] = 0; // default
+    return $this->db->insert('quizgroup', $data);
+}
+
+public function get_all_quiz_groups()
+{
+    return $this->db->get('quizgroup')->result_array();
+}
+
+public function increment_question_count($group_id)
+{
+    $this->db->set('question_count', 'question_count + 1', FALSE);
+    $this->db->where('id', $group_id);
+    return $this->db->update('quizgroup');
+}
+
 }

@@ -305,10 +305,10 @@ body {
     <!-- Admin buttons -->
     <div class="admin-buttons">
       <a href="<?= base_url('index.php/admin_Main/add_quiz'); ?>" class="btn btn-success me-2">
-        Add Quiz
+        Create Quiz
       </a>
       <a href="<?= base_url('index.php/admin_Main/quiz_list'); ?>" class="btn btn-warning">
-        Edit Quiz
+        Quiz List
       </a>
     </div>
 

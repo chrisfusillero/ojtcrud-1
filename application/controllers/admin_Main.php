@@ -275,20 +275,22 @@ class admin_Main extends MY_Controller
 
    public function save_quiz()
 {
+    
     $this->load->model('Quiz_model');
 
     $type = $this->input->post('quiz_type', true);
+    $group_id = $this->input->post('group_id', true);
 
     $data = [
         'type'     => $type,
         'question' => $this->input->post('question', true),
+        'group_id' => $group_id
     ];
 
     if ($type == 'multiple choice') {
         $choices = $this->input->post('choices');
         $answer  = $this->input->post('answer', true);
 
-       
         if (is_array($choices)) {
             $choices = json_encode($choices, JSON_UNESCAPED_SLASHES);
         }
@@ -296,29 +298,27 @@ class admin_Main extends MY_Controller
         $data['choices'] = $choices;
         $data['answer']  = $answer;
     } elseif ($type == 'identification') {
-        $idAnswer = $this->input->post('identification_answer', true);
-
         $data['choices'] = null;
-        $data['answer']  = $idAnswer;
+        $data['answer']  = $this->input->post('identification_answer', true);
     } elseif ($type == 'enumeration') {
-        $enumAnswers = $this->input->post('enumeration_answers');
-
         $data['choices'] = null;
-        $data['answer']  = $enumAnswers;
+        $data['answer']  = $this->input->post('enumeration_answers');
     } elseif ($type == 'true_false') {
-        $tfAnswer = $this->input->post('tf_answer', true);
-
         $data['choices'] = json_encode(["True", "False"], JSON_UNESCAPED_SLASHES);
-        $data['answer']  = $tfAnswer;
+        $data['answer']  = $this->input->post('tf_answer', true);
     }
 
- 
-    $data['answer'] = stripslashes($data['answer']);
-
+    
     $this->Quiz_model->createQuiz($data);
+
+ 
+    if (!empty($group_id)) {
+        $this->Quiz_model->increment_question_count($group_id);
+    }
 
     redirect('admin_Main/quiz_list');
 }
+
 
     public function quiz_list()
 {
@@ -392,4 +392,48 @@ public function delete_quiz($id)
     redirect('admin_Main/quiz_list');
 
 }
+
+public function add_quiz_group()
+{
+    $user_id = $this->session->userdata('user_id');
+    $user = $this->Login_model->get_user_data($user_id);
+
+    $data = [
+        'title'     => 'Create Quiz Group',
+        'firstname' => $user['firstname'] ?? 'Admin',
+        'lastname'  => $user['lastname'] ?? ''
+    ];
+
+    $this->template('add_quiz_group', $data);
+}
+
+public function save_quiz_group()
+{
+    $this->load->model('Quiz_model');
+
+    $data = [
+        'group_title' => $this->input->post('group_title', true),
+        'description' => $this->input->post('description', true)
+    ];
+
+    $this->Quiz_model->create_quiz_group($data);
+
+    redirect('admin_Main/quiz_group_list');
+}
+
+public function quiz_group_list()
+{
+    $this->load->model('Quiz_model');
+
+    $groups = $this->Quiz_model->get_all_quiz_groups();
+
+    $data = [
+        'groups' => $groups,
+        'title'  => 'Quiz Groups'
+    ];
+
+    $this->template('quiz_group_list', $data);
+}
+
+
 }

@@ -298,7 +298,7 @@ body {
 <div class="container my-5">
     <h2 class="mb-4">Quiz List</h2>
 
-    <a href="<?= base_url('index.php/admin_Main/add_quiz'); ?>" class="btn btn-success mb-3">Add New Quiz</a>
+    <a href="<?= base_url('index.php/admin_Main/add_quiz'); ?>" class="btn btn-success mb-3">Create Quiz</a>
     <a href="<?= base_url('index.php/admin_Main/quizbee'); ?>" class="btn btn-secondary mb-3 ms-2">Back to Dashboard</a>
 
     <div class="row">
