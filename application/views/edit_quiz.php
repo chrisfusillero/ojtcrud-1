@@ -207,26 +207,230 @@ body {
 </header>
 
 
-<div class="container my-5">
-    <h2>Edit Quiz</h2>
-    <?php echo form_open('admin_Main/save_quiz'); ?>
-        <div class="form-group">
-            <label for="question">Question</label>
-            <textarea class="form-control" id="question" name="question" required rows="3"></textarea>
+<div class="container my-4">
+
+    <div class="row">
+
+        <!-- LEFT SIDE — EDIT QUIZ GROUP -->
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Edit Quiz Group</h5>
+                </div>
+                <div class="card-body">
+
+                    <?php echo form_open('admin_Main/update_quiz_group/' . $groups['id']); ?>
+
+                        <!-- Group Title -->
+                        <div class="form-group">
+                            <label>Group Title</label>
+                            <input type="text" name="group_title" class="form-control" 
+                                   value="<?= htmlentities($groups['group_title']) ?>" required>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="form-group mt-3">
+                            <label>Description</label>
+                            <textarea name="description" class="form-control" rows="3"><?= htmlentities($groups['description']) ?></textarea>
+                        </div>
+
+                        <!-- TIMER FIELDS -->
+                        <div class="form-group mt-3">
+                            <label>Time Limit</label>
+
+                            <div class="row">
+                                <div class="col-6">
+                                    <input type="number" 
+                                           name="time_limit_hours" 
+                                           class="form-control"
+                                           min="0"
+                                           value="<?= $groups['time_hours'] ?>"
+                                           placeholder="Hours">
+                                </div>
+
+                                <div class="col-6">
+                                    <input type="number" 
+                                           name="time_limit_minutes" 
+                                           class="form-control"
+                                           min="0"
+                                           value="<?= $groups['time_minutes'] ?>"
+                                           placeholder="Minutes">
+                                </div>
+                            </div>
+
+                            <small class="text-muted">Set both to 0 for no time limit.</small>
+                        </div>
+
+                        <button class="btn btn-success btn-block mt-3">Update Quiz Group</button>
+
+                    <?php echo form_close(); ?>
+
+                </div>
+            </div>
+
+            <!-- LIST OF EXISTING QUESTIONS -->
+            <div class="card shadow-sm mt-4">
+                <div class="card-header bg-secondary text-white">
+                    <h6 class="mb-0">Questions in This Group</h6>
+                </div>
+
+                <div class="card-body" id="questionList">
+                    <?php if (empty($quizzes)): ?>
+                        <p class="text-muted">No questions added yet.</p>
+                    <?php else: ?>
+                        <?php foreach ($quizzes as $q): ?>
+                            <div class="alert alert-primary">
+                                <strong><?= htmlentities($q['question']) ?></strong>
+                                <br>
+                                <span class="text-muted">
+                                    Type: <?= ucfirst(str_replace('_', ' ', $q['type'])) ?>
+                                </span>
+
+                                <div class="mt-2">
+                                    <a href="<?= base_url('index.php/admin_Main/edit_question/' . $q['id']); ?>" 
+                                       class="btn btn-sm btn-info">Edit</a>
+
+                                    <a href="<?= base_url('index.php/admin_Main/delete_question/' . $q['id']); ?>" 
+                                       class="btn btn-sm btn-danger"
+                                       onclick="return confirm('Delete this question?');">Delete</a>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </div>
+            </div>
+
         </div>
-        <div class="form-group">
-            <label>Choices</label>
-            <?php for ($i = 0; $i < 4; $i++): ?>
-                <input type="text" class="form-control mt-2" name="choices[]" placeholder="Choice <?php echo $i + 1; ?>" required>
-            <?php endfor; ?>
+
+        <!-- RIGHT SIDE — EDIT SPECIFIC QUESTION -->
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">Edit Question</h5>
+                </div>
+
+                <div class="card-body">
+
+                    <?php echo form_open('admin_Main/update_question/' . $question['id']); ?>
+
+                        <!-- Type -->
+                        <div class="form-group">
+                            <label>Question Type</label>
+                            <select class="form-control" id="quiz_type" name="quiz_type">
+                                <option value="multiple_choice"  <?= $question['type']=='multiple_choice'?'selected':'' ?>>Multiple Choice</option>
+                                <option value="true_false"       <?= $question['type']=='true_false'?'selected':'' ?>>True or False</option>
+                                <option value="identification"   <?= $question['type']=='identification'?'selected':'' ?>>Identification</option>
+                                <option value="enumeration"      <?= $question['type']=='enumeration'?'selected':'' ?>>Enumeration</option>
+                            </select>
+                        </div>
+
+                        <!-- Question Text -->
+                        <div class="form-group mt-3">
+                            <label>Question</label>
+                            <textarea class="form-control" name="question" rows="2"><?= $question['question'] ?></textarea>
+                        </div>
+
+                        <!-- MULTIPLE CHOICE -->
+                        <div id="multiple_choice_section" style="<?= $question['type']=='multiple_choice'?'':'display:none' ?>">
+
+                            <label>Choices</label>
+                            <div id="choices_container">
+                                <?php foreach ($question['choices'] as $i => $choice): ?>
+                                    <div class="input-group mt-2">
+                                        <span class="input-group-text">
+                                            <input type="radio" name="mc_correct" value="<?= $i ?>" <?= ($choice == $question['answer'])?'checked':'' ?>>
+                                        </span>
+                                        <input type="text" class="form-control" name="choices[]" value="<?= htmlentities($choice) ?>">
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+
+                            <button type="button" class="btn btn-sm btn-secondary mt-2" id="add_choice_btn">
+                                + Add Another Choice
+                            </button>
+                        </div>
+
+                        <!-- TRUE / FALSE -->
+                        <div id="true_false_section" style="<?= $question['type']=='true_false'?'':'display:none' ?>">
+
+                            <label>Correct Answer</label>
+
+                            <div class="form-check mt-2">
+                                <input type="radio" name="tf_answer" value="True" class="form-check-input" 
+                                       <?= $question['answer']=='True'?'checked':'' ?>>
+                                <label class="form-check-label">True</label>
+                            </div>
+
+                            <div class="form-check mt-2">
+                                <input type="radio" name="tf_answer" value="False" class="form-check-input" 
+                                       <?= $question['answer']=='False'?'checked':'' ?>>
+                                <label class="form-check-label">False</label>
+                            </div>
+                        </div>
+
+                        <!-- IDENTIFICATION -->
+                        <div id="identification_section" style="<?= $question['type']=='identification'?'':'display:none' ?>">
+                            <label>Correct Answer</label>
+                            <input type="text" class="form-control" name="identification_answer" 
+                                   value="<?= htmlentities($question['answer']) ?>">
+                        </div>
+
+                        <!-- ENUMERATION -->
+                        <div id="enumeration_section" style="<?= $question['type']=='enumeration'?'':'display:none' ?>">
+                            <label>Enumeration Answers</label>
+                            <div id="enum_container">
+                                <?php foreach ($question['choices'] as $ans): ?>
+                                    <input type="text" class="form-control mt-2" name="enumeration_answers[]" value="<?= htmlentities($ans) ?>">
+                                <?php endforeach; ?>
+                            </div>
+
+                            <button type="button" id="add_enum" class="btn btn-sm btn-secondary mt-2">Add More</button>
+                        </div>
+
+                        <button class="btn btn-primary btn-block mt-3">Update Question</button>
+
+                    <?php echo form_close(); ?>
+
+                </div>
+            </div>
         </div>
-        <div class="form-group">
-            <label for="answer">Correct Answer</label>
-            <input type="text" class="form-control" id="answer" name="answer" required>
-        </div>
-    
-        
-        <button type="submit" class="btn btn-primary">Save Quiz</button>
-    <?php echo form_close(); ?>
+
+    </div>
+
 </div>
+
+<script>
+
+document.getElementById('quiz_type').addEventListener('change', function() {
+    document.getElementById('multiple_choice_section').style.display = this.value === 'multiple_choice' ? 'block' : 'none';
+    document.getElementById('true_false_section').style.display      = this.value === 'true_false' ? 'block' : 'none';
+    document.getElementById('identification_section').style.display = this.value === 'identification' ? 'block' : 'none';
+    document.getElementById('enumeration_section').style.display    = this.value === 'enumeration' ? 'block' : 'none';
+});
+
+document.getElementById('add_choice_btn').onclick = () => {
+    let c = document.getElementById('choices_container');
+    let div = document.createElement('div');
+    div.classList.add('input-group','mt-2');
+    div.innerHTML = `
+        <span class="input-group-text">
+            <input type="radio" name="mc_correct">
+        </span>
+        <input type="text" class="form-control" name="choices[]" placeholder="New Choice">
+    `;
+    c.appendChild(div);
+};
+
+document.getElementById('add_enum').onclick = () => {
+    let c = document.getElementById('enum_container');
+    let f = document.createElement('input');
+    f.type = "text";
+    f.classList.add("form-control", "mt-2");
+    f.name = "enumeration_answers[]";
+    f.placeholder = "Another Answer";
+    c.appendChild(f);
+};
+</script>
+
 </body>

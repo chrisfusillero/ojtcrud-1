@@ -299,8 +299,8 @@ body {
 
 
   <div class="intro-card">
-    <h2 class="fw-bold">🎓 Welcome to Quiz Bee</h2>
-    <p class="text-muted">Test your knowledge with fun and dynamic quizzes delivered to you!</p>
+    <h2 class="fw-bold">Quiz Bee Access for Admin</h2>
+    <p class="text-muted"> </p>
 
     <!-- Admin buttons -->
     <div class="admin-buttons">

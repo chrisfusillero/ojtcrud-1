@@ -59,6 +59,13 @@ body {
   transition: transform 0.2s ease-in-out; 
 }
 
+.option-selected {
+  background-color: rgba(0, 123, 255, 0.15);
+  border-radius: 8px;
+  padding: 8px;
+  transition: 0.4s;
+}
+
 @keyframes pulse {
   0% {
     transform: scale(1);
@@ -85,7 +92,7 @@ body {
   padding: 20px;
   text-align: center;
   font-size: 1em;
-  margin-top: 50px;
+  margin-top: auto; 
 }
 
 
@@ -211,50 +218,84 @@ body {
 
     <div class="row">
 
-        <!-- quiz group info (left) -->
-        <div class="col-md-4">
-            <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">Create Quiz Group</h5>
-                </div>
-                <div class="card-body">
-
-                    <?php echo form_open('admin_Main/save_quiz_group'); ?>
-
-                        <div class="form-group">
-                            <label>Group Title</label>
-                            <input type="text" name="group_title" class="form-control" required>
-                        </div>
-
-                        <div class="form-group mt-3">
-                            <label>Description</label>
-                            <textarea name="description" class="form-control" rows="3"></textarea>
-                        </div>
-
-                        <input type="hidden" name="question_count" value="0">
-
-                        <button class="btn btn-success btn-block mt-3">Save Quiz Group</button>
-
-                    <?php echo form_close(); ?>
-
-                </div>
-            </div>
-
-            <!-- added questions list -->
-            <div class="card shadow-sm mt-4">
-                <div class="card-header bg-secondary text-white">
-                    <h6 class="mb-0">Questions in This Group</h6>
-                </div>
-                <div class="card-body" id="questionList">
-
-                    <p class="text-muted">No questions added yet.</p>
-
-                </div>
-            </div>
-
+     
+<div class="col-md-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Create Quiz Group</h5>
         </div>
+        <div class="card-body">
 
-        <!-- add questions (right) -->
+            <?php echo form_open('admin_Main/quiz_list'); ?>
+
+              
+                <div class="form-group">
+                    <label>Group Title</label>
+                    <input type="text" name="group_title" class="form-control" required>
+                </div>
+
+          
+                <div class="form-group mt-3">
+                    <label>Description</label>
+                    <textarea name="description" class="form-control" rows="3"></textarea>
+                </div>
+
+                
+                      <div class="form-group mt-3">
+                      <label>Time Limit</label>
+
+                            <div class="row">
+       
+                              <div class="col-6">
+                                  <input type="number" 
+                                        name="time_limit_hours" 
+                                        class="form-control"
+                                        min="0" 
+                                        placeholder="Hours (e.g., 1)">
+                              </div>
+
+                    
+                      <div class="col-6">
+                          <input type="number" 
+                                name="time_limit_minutes" 
+                                class="form-control"
+                                min="0" 
+                                placeholder="Minutes (e.g., 30)">
+                              </div>
+                          </div>
+
+                              <small class="text-muted">
+                                  Leave both fields empty or set to 0 for no time limit.
+                              </small>
+                          </div>
+
+
+                
+                <input type="hidden" name="question_count" value="0">
+
+                <button class="btn btn-success btn-block mt-3">Save Quiz Group</button>
+
+            <?php echo form_close(); ?>
+
+                </div>
+            </div>
+
+              
+              <div class="card shadow-sm mt-4">
+                  <div class="card-header bg-secondary text-white">
+                      <h6 class="mb-0">Questions in This Group</h6>
+                  </div>
+                  <div class="card-body" id="questionList">
+
+                      <p class="text-muted">No questions added yet.</p>
+
+                  </div>
+              </div>
+
+          </div>
+  
+
+        
         <div class="col-md-8">
             <div class="card shadow-sm">
                 <div class="card-header bg-info text-white">
@@ -265,7 +306,7 @@ body {
 
                     <?php echo form_open('#', ['id' => 'addQuestionForm']); ?>
 
-                        <!-- Quiz Type -->
+                        
                         <div class="form-group">
                             <label for="quiz_type">Question Type</label>
                             <select class="form-control" id="quiz_type" name="quiz_type" required>
@@ -276,54 +317,66 @@ body {
                             </select>
                         </div>
 
-                        <!-- Question -->
+                        
                         <div class="form-group mt-3">
                             <label>Question</label>
                             <textarea class="form-control" name="question" required rows="2"></textarea>
                         </div>
 
-                        <!-- MULTIPLE CHOICE -->
+                        
                         <div id="multiple_choice_section">
 
-                            <label>Choices</label>
+                              <label>Choices</label>
 
-                            <div id="choices_container">
-                                <?php for ($i = 0; $i < 4; $i++): ?>
-                                    <input type="text"
-                                        class="form-control mt-2"
-                                        name="choices[]"
-                                        placeholder="Choice <?php echo $i + 1; ?>">
-                                <?php endfor; ?>
-                            </div>
+                              <div id="choices_container">
+                                  <?php for ($i = 0; $i < 4; $i++): ?>
+                                      <div class="d-flex align-items-center mt-2 mc-choice-row">
+                                          
+                                        
+                                          <input type="radio" 
+                                                name="mc_correct_choice" 
+                                                value="<?= $i ?>" 
+                                                class="form-check-input me-2">
 
-                            
-                            <button type="button" class="btn btn-sm btn-secondary mt-2" id="add_choice_btn">
-                                + Add Another Choice
-                            </button>
+                                          
+                                          <input type="text"
+                                              class="form-control"
+                                              name="choices[]"
+                                              placeholder="Choice <?= $i + 1 ?>">
+                                      </div>
+                                  <?php endfor; ?>
+                              </div>
 
-                            <br>
+                              <button type="button" class="btn btn-sm btn-secondary mt-2" id="add_choice_btn">
+                                  + Add Another Choice
+                              </button>
 
-                            <label class="mt-3">Correct Answer</label>
-                            <input type="text" class="form-control" name="answer">
+                          </div>
 
-                        </div>
 
-                        <!-- TRUE or FALSE -->
+                        
                         <div id="true_false_section" style="display:none;">
-                            <label>Correct Answer</label>
-                            <select class="form-control" name="tf_answer">
-                                <option value="True">True</option>
-                                <option value="False">False</option>
-                            </select>
+                          <label>Correct Answer</label>
+
+                          <div class="form-check mt-2">
+                              <input type="radio" name="tf_answer" value="True" class="form-check-input">
+                              <label class="form-check-label">True</label>
+                          </div>
+
+                          <div class="form-check mt-2">
+                              <input type="radio" name="tf_answer" value="False" class="form-check-input">
+                              <label class="form-check-label">False</label>
+                          </div>
                         </div>
 
-                        <!-- IDENTIFICATION -->
+
+                       
                         <div id="identification_section" style="display:none;">
                             <label>Correct Answer</label>
                             <input type="text" class="form-control" name="identification_answer">
                         </div>
 
-                        <!-- ENUMERATION -->
+                        
                         <div id="enumeration_section" style="display:none;">
                             <label>Enumeration Answers</label>
                             <div id="enum_container">
@@ -342,9 +395,13 @@ body {
             </div>
         </div>
 
+        <br />
+        <br />
+
+              <a href="<?= base_url('index.php/admin_Main/quizbee'); ?>" class="btn btn-secondary mb-3 ms-2">Back to Dashboard</a>
     </div>
 
-    <a href="<?= base_url('index.php/admin_Main/quizbee'); ?>" class="btn btn-secondary mb-3 ms-2">Back to Dashboard</a>
+
 
 </div>
 
@@ -391,15 +448,41 @@ document.getElementById('addQuestionBtn').onclick = () => {
 document.getElementById('add_choice_btn').onclick = () => {
     let container = document.getElementById('choices_container');
 
-    let input = document.createElement('input');
-    input.type = "text";
-    input.classList.add("form-control", "mt-2");
-    input.name = "choices[]";
-    input.placeholder = "Additional Choice";
+    let index = container.querySelectorAll(".mc-choice-row").length;
 
-    container.appendChild(input);
+    let row = document.createElement('div');
+    row.classList.add("d-flex", "align-items-center", "mt-2", "mc-choice-row");
+
+    row.innerHTML = `
+        <input type="radio" name="mc_correct_choice" value="${index}" class="form-check-input me-2">
+        <input type="text" class="form-control" name="choices[]" placeholder="Additional Choice">
+    `;
+
+    container.appendChild(row);
 };
+
+
+document.addEventListener("change", function(event) {
+
+   
+    if (!event.target.classList.contains("highlight-radio")) return;
+
+    let radio = event.target;
+
+   
+    let parentCard = radio.closest(".answer-block");
+    if (!parentCard) return;
+
+    
+    parentCard.querySelectorAll(".option-selected")
+        .forEach(el => el.classList.remove("option-selected"));
+
+ 
+    radio.parentElement.classList.add("option-selected");
+
+});
 </script>
+
 
 
 

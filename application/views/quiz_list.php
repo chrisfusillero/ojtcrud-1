@@ -296,31 +296,53 @@ body {
   </header>
 
 <div class="container my-5">
-    <h2 class="mb-4">Quiz List</h2>
+    <h2 class="mb-4">Quiz Groups</h2>
 
-    <a href="<?= base_url('index.php/admin_Main/add_quiz'); ?>" class="btn btn-success mb-3">Create Quiz</a>
+    <a href="<?= base_url('index.php/admin_Main/add_quiz'); ?>" class="btn btn-success mb-3">Create Quiz Group</a>
     <a href="<?= base_url('index.php/admin_Main/quizbee'); ?>" class="btn btn-secondary mb-3 ms-2">Back to Dashboard</a>
 
     <div class="row">
-        <?php foreach ($quizzes as $q): ?>
+        <?php foreach ($groups as $g): ?>
             <div class="col-md-4 mb-4">
                 <div class="card shadow-sm h-100">
                     <div class="card-body">
+                        
+                       
                         <h5 class="card-title">
-                            <?= htmlentities($q['question']); ?>
+                            <?= htmlentities($g['group_name']); ?>
                         </h5>
-                        <p class="card-text text-muted">
-                            <strong>Type:</strong> <?= ucfirst(str_replace('_', ' ', $q['type'])); ?>
-                        </p>
 
-                        <a href="<?= base_url('index.php/admin_Main/edit_quiz/' . $q['id']); ?>" 
+                       
+                        <?php if (!empty($g['description'])): ?>
+                            <p class="card-text text-muted">
+                                <?= htmlentities($g['description']); ?>
+                            </p>
+                        <?php endif; ?>
+
+                        
+                        <?php if (isset($g['created_at'])): ?>
+                            <p class="card-text">
+                                <small class="text-muted">Created: <?= htmlentities($g['created_at']); ?></small>
+                            </p>
+                        <?php endif; ?>
+
+                       
+                        <a href="<?= base_url('index.php/admin_Main/edit_quiz/' . $g['id']); ?>" 
                            class="btn btn-primary btn-sm">
                             Edit
                         </a>
+
+                        
+                        <a href="<?= base_url('index.php/admin_Main/view_questions/' . $g['id']); ?>" 
+                           class="btn btn-outline-secondary btn-sm ms-2">
+                            View Questions
+                        </a>
+
                     </div>
                 </div>
             </div>
         <?php endforeach; ?>
     </div>
 </div>
+
 </body>

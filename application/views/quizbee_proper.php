@@ -295,103 +295,95 @@ body {
     <?php if (!empty($quizzes)): ?>
         <div id="quizContainer">
 
-            <?php foreach ($quizzes as $q): 
-                // Normalize question type
-                $type = strtolower(trim($q['type']));
-            ?>
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <h5><?php echo $q['question']; ?></h5>
+            <?php $index = 0; ?>
+            <?php foreach ($quizzes as $q): ?>
+                <?php 
+                    $type = strtolower(trim($q['type']));
+                    $choices = isset($q['choices']) ? json_decode($q['choices'], true) : [];
+                ?>
 
+                <div class="question-card card mb-4" 
+                     data-question-index="<?php echo $index; ?>"
+                     style="<?php echo $index === 0 ? '' : 'display:none;' ?>">
+
+                    <div class="card-body">
+
+                        <h5 class="mb-3"><strong>Question <?php echo $index + 1; ?></strong></h5>
+
+                        <p><?php echo $q['question']; ?></p>
                         <input type="hidden" name="question_id[]" value="<?php echo $q['id']; ?>">
 
                         <!-- MULTIPLE CHOICE -->
-                        <?php if (in_array($type, ['multiple_choice','multiple choice','multiple-choice'])): ?>
-
-                            <?php $choices = json_decode($q['choices'], true); ?>
-
-                            <?php if (is_array($choices) && count($choices) > 0): ?>
-                                <?php foreach ($choices as $c): ?>
+                        <?php if ($type === 'multiple_choice' || $type === 'multiple choice'): ?>
+                            
+                            <?php if (!empty($choices)): ?>
+                                <?php foreach ($choices as $choice): ?>
                                     <div class="form-check">
-                                        <input class="form-check-input answerRadio"
+                                        <input class="form-check-input answer-input"
                                                type="radio"
-                                               name="answer[<?php echo $q['id']; ?>]"
-                                               value="<?php echo htmlspecialchars($c); ?>">
-                                        <label class="form-check-label">
-                                            <?php echo htmlspecialchars($c); ?>
-                                        </label>
+                                               name="answer[<?= $q['id'] ?>]"
+                                               value="<?= htmlspecialchars($choice) ?>">
+                                        <label class="form-check-label"><?= htmlspecialchars($choice) ?></label>
                                     </div>
                                 <?php endforeach; ?>
-                            <?php else: ?>
-                                <div class="alert alert-warning">
-                                    No choices available for this question.
-                                </div>
                             <?php endif; ?>
 
 
-                        <!-- TRUE or FALSE -->
-                        <?php elseif (in_array($type, ['true_false','true or false','true-false'])): ?>
+                        <!-- TRUE/FALSE -->
+                        <?php elseif ($type === 'true_false'): ?>
 
                             <div class="form-check">
-                                <input class="form-check-input answerRadio"
+                                <input class="form-check-input answer-input"
                                        type="radio"
-                                       name="answer[<?php echo $q['id']; ?>]"
+                                       name="answer[<?= $q['id'] ?>]"
                                        value="True">
                                 <label class="form-check-label">True</label>
                             </div>
 
                             <div class="form-check">
-                                <input class="form-check-input answerRadio"
+                                <input class="form-check-input answer-input"
                                        type="radio"
-                                       name="answer[<?php echo $q['id']; ?>]"
+                                       name="answer[<?= $q['id'] ?>]"
                                        value="False">
                                 <label class="form-check-label">False</label>
                             </div>
 
 
                         <!-- IDENTIFICATION -->
-                        <?php elseif ($type == 'identification'): ?>
+                        <?php elseif ($type === 'identification'): ?>
 
                             <input type="text"
-                                   class="form-control"
-                                   name="answer[<?php echo $q['id']; ?>]"
-                                   placeholder="Your Answer">
+                                   class="form-control answer-input"
+                                   name="answer[<?= $q['id'] ?>]"
+                                   placeholder="Your answer">
 
 
                         <!-- ENUMERATION -->
-                        <?php elseif ($type == 'enumeration'): ?>
+                        <?php elseif ($type === 'enumeration'): ?>
 
-                            <textarea class="form-control"
-                                      name="answer[<?php echo $q['id']; ?>]"
-                                      rows="3"
-                                      placeholder="Separate each item with a comma"></textarea>
+                            <textarea class="form-control answer-input"
+                                      name="answer[<?= $q['id'] ?>]"
+                                      placeholder="Separate with commas"></textarea>
 
-
-                        <!-- UNSUPPORTED -->
-                        <?php else: ?>
-                            <div class="alert alert-info">
-                                This question type is not yet supported. (Type: <?= $q['type']; ?>)
-                            </div>
 
                         <?php endif; ?>
-
                     </div>
                 </div>
+
+                <?php $index++; ?>
             <?php endforeach; ?>
 
         </div>
 
-       <button type="submit" class="btn btn-primary btn-lg" id="submitButton" disabled>
-    Submit
-</button>
+     
+        <button type="submit" class="btn btn-primary btn-lg" id="submitButton" style="display:none;">
+            Submit Answers
+        </button>
 
-
-<button type="button" class="btn btn-secondary btn-lg ms-2"
-        onclick="window.location.href='<?= base_url('index.php/welcome/quizbee_user'); ?>'">
-    Back to Dashboard
-</button>
-
-
+        <button type="button" class="btn btn-secondary btn-lg ms-2"
+                onclick="window.location.href='<?= base_url('index.php/welcome/quizbee_user'); ?>'">
+            Back to Dashboard
+        </button>
 
     <?php else: ?>
         <div class="alert alert-warning">No questions available.</div>
@@ -402,32 +394,34 @@ body {
 
 
 
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
 $(document).ready(function() {
 
-    function checkAllAnswered() {
-        let totalQuestions = <?php echo count($quizzes); ?>;
-        let answeredCount = 0;
+    let current = 0;
+    const total = $('.question-card').length;
 
-        $('input.answerRadio:checked').each(function() {
-            answeredCount++;
-        });
+    function showQuestion(index) {
+        $('.question-card').hide();
+        $(`.question-card[data-question-index="${index}"]`).show();
 
-        if (answeredCount === totalQuestions) {
-            $('#submitButton').prop('disabled', false);
-        } else {
-            $('#submitButton').prop('disabled', true);
+        if (index === total - 1) {
+            $('#submitButton').show();
         }
     }
 
-      
-    $('.answerRadio').on('change', function() {
-        checkAllAnswered();
+    
+    $(document).on('change', '.answer-input', function() {
+        if (current < total - 1) {
+            current++;
+            showQuestion(current);
+        }
     });
 
 });
 </script>
+
 
 
 

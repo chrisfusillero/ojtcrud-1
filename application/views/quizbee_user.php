@@ -290,8 +290,8 @@ body {
 
 
   <div class="intro-card">
-    <h2 class="fw-bold">🎓 Welcome to Quiz Bee</h2>
-    <p class="text-muted">Test your knowledge with fun and dynamic quizzes delivered to you!</p>
+    <h2 class="fw-bold">Welcome to this Quiz Bee!!</h2>
+    <p class="text-muted">Enjoy, Learn, and Have Fun!!</p>
 
    <a href="<?= base_url('index.php/welcome/quizbee_proper'); ?>" class="btn btn-primary btn-lg mt-3">
         Start Quiz
