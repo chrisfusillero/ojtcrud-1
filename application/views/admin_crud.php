@@ -71,73 +71,7 @@ body {
 
 <title>Profiles and Info</title>
 
-<body onload="noBack();" onpageshow="if (event.persisted) noBack();" onunload="">
 
- <header class="header">
-<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top">
-  <div class="container">
-
-    
-    <a class="navbar-brand fw-bold text-primary" href="<?= base_url('index.php/admin_Main'); ?>">
-      DigiCrud101
-    </a>
-
-    
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
-      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-
-    
-    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-      <ul class="navbar-nav align-items-center">
-
-        
-        <li class="nav-item me-2">
-          <a class="nav-link fw-medium ms-2" href="<?= base_url('index.php/admin_Main'); ?>">Home</a>
-        </li>
-
-        
-        <li class="nav-item me-2">
-          <a class="nav-link fw-medium ms-2" href="<?= base_url('index.php/admin_Main/admin_crud'); ?>">Accounts</a>
-        </li>
-
-        
-        <li class="nav-item me-2">
-          <a class="nav-link fw-medium ms-2" href="<?= base_url('index.php/admin_Main/admin_projects'); ?>">Projects</a>
-        </li>
-
-        
-        <li class="nav-item me-2">
-          <span class="navbar-text me-2">
-            👤 <strong><?= isset($firstname) || isset($lastname) ? ($firstname ?? '') . ' ' . ($lastname ?? '') : 'Guest'; ?></strong>
-          </span>
-        </li>
-
-       
-        <li class="nav-item dropdown">
-          <button class="btn btn-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-            Menu
-          </button>
-          <ul class="dropdown-menu dropdown-menu-end">
-            <li>
-              <a class="dropdown-item" href="<?= base_url('index.php/admin_Main/admin_settings'); ?>">Settings</a>
-            </li>
-            <li>
-              <a class="dropdown-item text-danger" href="<?= base_url('index.php/AuthLogin'); ?>">
-                Log Out
-              </a>
-            </li>
-          </ul>
-        </li>
-
-      </ul>
-    </div>
-
-  </div>
-</nav>
-
-</header>
 
   <div class="container mt-5">
   <div class="table-responsive">

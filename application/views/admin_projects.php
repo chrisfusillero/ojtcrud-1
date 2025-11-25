@@ -159,71 +159,7 @@ body {
 
 <body onload="noBack();" onpageshow="if (event.persisted) noBack();" onunload="">
 
- <header class="header">
-<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top">
-  <div class="container">
-
-    
-    <a class="navbar-brand fw-bold text-primary" href="<?= base_url('index.php/admin_Main'); ?>">
-      DigiCrud101
-    </a>
-
-    
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
-      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-
-    
-    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-      <ul class="navbar-nav align-items-center">
-
-        
-        <li class="nav-item me-2">
-          <a class="nav-link fw-medium ms-2" href="<?= base_url('index.php/admin_Main'); ?>">Home</a>
-        </li>
-
-        
-        <li class="nav-item me-2">
-          <a class="nav-link fw-medium ms-2" href="<?= base_url('index.php/admin_Main/admin_crud'); ?>">Accounts</a>
-        </li>
-
-        
-        <li class="nav-item me-2">
-          <a class="nav-link fw-medium ms-2" href="<?= base_url('index.php/admin_Main/admin_projects'); ?>">Projects</a>
-        </li>
-
-        
-        <li class="nav-item me-2">
-          <span class="navbar-text me-2">
-            👤 <strong><?= isset($firstname) || isset($lastname) ? ($firstname ?? '') . ' ' . ($lastname ?? '') : 'Guest'; ?></strong>
-          </span>
-        </li>
-
-       
-        <li class="nav-item dropdown">
-          <button class="btn btn-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-            Menu
-          </button>
-          <ul class="dropdown-menu dropdown-menu-end">
-            <li>
-              <a class="dropdown-item" href="<?= base_url('index.php/admin_Main/admin_settings'); ?>">Settings</a>
-            </li>
-            <li>
-              <a class="dropdown-item text-danger" href="<?= base_url('index.php/AuthLogin'); ?>">
-                Log Out
-              </a>
-            </li>
-          </ul>
-        </li>
-
-      </ul>
-    </div>
-
-  </div>
-</nav>
-
-</header>
+ 
 
 
 <div class="container py-5">
@@ -234,7 +170,7 @@ body {
     </div>
 
     
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-2 g-4">
       
       
       <div class="col">
@@ -252,21 +188,9 @@ body {
       <div class="col">
         <a href="<?= base_url('index.php/admin_Main/quizbee'); ?>" class="text-decoration-none text-dark">
           <div class="card h-100 shadow-sm border-0 project-tile">
-            <img src="<?= base_url('assets/projects/quizbee25.jpg'); ?>" class="card-img-top" alt="Project 2">
+            <img src="<?= base_url('assets/projects/quizbee-new.png'); ?>" class="card-img-top" alt="Project 2">
             <div class="card-body text-center">
               <h6 class="fw-semibold">Quiz Bee </h6>
-            </div>
-          </div>
-        </a>
-      </div>
-
-
-      <div class="col">
-        <a href="project3.html" class="text-decoration-none text-dark">
-          <div class="card h-100 shadow-sm border-0 project-tile">
-            <img src="assets/projects/project3.jpg" class="card-img-top" alt="Project 3">
-            <div class="card-body text-center">
-              <h6 class="fw-semibold"> </h6>
             </div>
           </div>
         </a>

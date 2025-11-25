@@ -420,10 +420,10 @@ public function quizbee_proper()
 
     $this->load->model('quiz_model');
 
-    // get all quizzes
-    $data['quizzes'] = $this->quiz_model->get_all_quizzes();
+   
+    $data['quizgroup'] = $this->quiz_model->get_all_quizzes();
 
-    // Load view
+    
     $this->template('quizbee_proper', $data);
 }
 

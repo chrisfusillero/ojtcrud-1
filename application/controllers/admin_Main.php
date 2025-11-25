@@ -259,7 +259,7 @@ class admin_Main extends MY_Controller
 }
 
 
-	public function add_quiz() 
+	public function add_quiz($group_id = null) 
 {
     $this->load->model('Login_model');
 
@@ -269,7 +269,8 @@ class admin_Main extends MY_Controller
     $data = [
         'title'     => 'Add New Quiz',
         'firstname' => $user['firstname'] ?? 'Admin',
-        'lastname'  => $user['lastname']  ?? ''
+        'lastname'  => $user['lastname']  ?? '',
+        'group_id'  => $group_id
     ];
 
     $this->template('add_quiz', $data);
@@ -284,50 +285,70 @@ public function save_quiz()
     $type      = $this->input->post('quiz_type', true);
     $group_id  = $this->input->post('group_id', true);
 
-  
+
     $data = [
-        'type'          => $type,
-        'question'      => $this->input->post('question', true),
-        'quizgroup_id' => $group_id      
+        'type'         => $type,
+        'question'     => $this->input->post('question', true),
+        'quizgroup_id' => $group_id
     ];
 
+
+   
     switch ($type) {
+
         case 'multiple_choice':
 
-            $choices = $this->input->post('choices');
-            $answer  = $this->input->post('answer', true);
+            $choices        = $this->input->post('choices');
+            $correct_index  = $this->input->post('mc_correct_choice');
 
-            $data['choices'] = is_array($choices)
-                ? json_encode($choices, JSON_UNESCAPED_SLASHES)
-                : $choices;
+            $data['choices'] = $choices; 
+            $data['answer']  = $choices[$correct_index];
 
-            $data['answer']  = $answer;
             break;
 
 
         case 'true_false':
-            $data['choices'] = json_encode(["True", "False"], JSON_UNESCAPED_SLASHES);
-            $data['answer']  = $this->input->post('tf_answer', true);
+
+            $data['answer'] = $this->input->post('tf_answer', true);
             break;
 
 
         case 'identification':
-            $data['choices'] = null;
-            $data['answer']  = $this->input->post('identification_answer', true);
+
+            $data['answer'] = $this->input->post('identification_answer', true);
             break;
 
 
         case 'enumeration':
-            $data['choices'] = null;
-            $data['answer']  = json_encode($this->input->post('enumeration_answers'), JSON_UNESCAPED_SLASHES);
+
+            $answers = $this->input->post('enumeration_answers');
+            $data['answer'] = $answers;  // pass array; model encodes if needed
+
             break;
     }
 
 
-    $this->Quiz_model->createQuiz($data);
+
+    $this->Quiz_model->createQuizQuestion($data);
 
     redirect('admin_Main/quiz_list');
 }
+
+public function save_quiz_group()
+{
+    $this->load->model('Quiz_model');
+
+    $data = [
+        'group_title' => $this->input->post('group_title', true),
+        'description' => $this->input->post('description', true)
+    ];
+
+    $this->Quiz_model->createQuizGroup($data);
+
+    echo $this->db->insert_id();   
+}
+
+
 
 
 

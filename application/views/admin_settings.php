@@ -36,6 +36,14 @@
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
+.footer {
+  background-color: #e1e1e1;
+  padding: 15px;
+  text-align: center;
+  width: 100%;
+  font-size: 1em;
+}
+
   .profile-card {
   width: 100%;              
   max-width: 700px;          
@@ -103,6 +111,15 @@ small {
         <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
           <ul class="navbar-nav align-items-center">
            <li class="nav-item me-2">
+
+
+            <li class="nav-item me-2">
+          <form class="d-flex" action="<?= base_url('index.php/admin_Main/search'); ?>" method="get">
+            <input class="form-control form-control-sm me-2" type="search" name="q" placeholder="Search" aria-label="Search">
+            <button class="btn btn-sm btn-primary" type="submit">Go</button>
+          </form>
+        </li>
+
           <a class="nav-link fw-medium ms-2" href="<?= base_url('index.php/admin_Main'); ?>">Home</a>
         </li>
 
@@ -118,10 +135,11 @@ small {
 
         
         <li class="nav-item me-2">
-          <span class="navbar-text me-2">
-            👤 <strong><?= isset($firstname) || isset($lastname) ? ($firstname ?? '') . ' ' . ($lastname ?? '') : 'Guest'; ?></strong>
-          </span>
+          <a class="nav-link fw-medium" href="<?= base_url('index.php/admin_Main/admin_settings'); ?>">
+              👤 <strong><?= isset($firstname) || isset($lastname) ? ($firstname ?? '') . ' ' . ($lastname ?? '') : 'Guest'; ?></strong>
+          </a>
         </li>
+
 
             <li class="nav-item dropdown">
               <button class="btn btn-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Menu</button>
@@ -137,17 +155,33 @@ small {
   </header>
 
   <div class="container mt-5">
-    <div class="profile-card">
-      <div class="profile-header">
-        <div class="d-flex align-items-center">
-          <div class="profile-avatar">
-            <?= strtoupper(substr($firstname ?? 'G', 0, 1)); ?>
-          </div>
-          <div class="ms-3">
-            <h5 class="mb-0"><?= $firstname ?? 'Guest'; ?> <?= $lastname ?? ''; ?></h5>
-            <small class="text-muted"><?= htmlspecialchars($email ?? 'No email available', ENT_QUOTES, 'UTF-8'); ?></small>
-          </div>
+  <div class="profile-card p-4 shadow-sm rounded">
+    <div class="profile-header d-flex align-items-center justify-content-between">
+      
+      <div class="d-flex align-items-center">
+        <div class="profile-avatar rounded-circle bg-primary text-white d-flex justify-content-center align-items-center" 
+             style="width:60px; height:60px; font-size:24px;">
+          <?= strtoupper(substr($firstname ?? 'G', 0, 1)); ?>
         </div>
+        <div class="ms-3">
+          <h5 class="mb-1"><?= $firstname ?? 'Guest'; ?> <?= $lastname ?? ''; ?></h5>
+          <small class="text-muted"><?= htmlspecialchars($email ?? 'No email available', ENT_QUOTES, 'UTF-8'); ?></small>
+        </div>
+      </div>
+
+      <!-- ===== Edit Profile Button ===== -->
+      <div>
+        <a href="<?= base_url('index.php/admin_Main/admin_edit_profile'); ?>" class="btn btn-sm btn-primary">
+          Edit Profile
+        </a>
+      </div>
+
+    </div>
+
+    <!-- Optional: Additional profile content can go here -->
+  </div>
+</div>
+
 
        
     </div>

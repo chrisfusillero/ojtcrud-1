@@ -126,6 +126,13 @@ small {
     <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
       <ul class="navbar-nav align-items-center">
 
+      <li class="nav-item me-2">
+          <form class="d-flex" action="<?= base_url('index.php/welcome/search'); ?>" method="get">
+            <input class="form-control form-control-sm me-2" type="search" name="q" placeholder="Search" aria-label="Search">
+            <button class="btn btn-sm btn-primary" type="submit">Go</button>
+          </form>
+          </li>
+
         
         <li class="nav-item me-2">
           <a class="nav-link fw-medium ms-2" href="<?= base_url('index.php/welcome'); ?>">Home</a>
@@ -135,9 +142,9 @@ small {
         
         
         <li class="nav-item me-2">
-          <span class="navbar-text me-2">
-            👤 <strong><?= isset($firstname) || isset($lastname) ? ($firstname ?? '') . ' ' . ($lastname ?? '') : 'Guest'; ?></strong>
-          </span>
+          <a class="nav-link fw-medium" href="<?= base_url('index.php/welcome/settings'); ?>">
+              👤 <strong><?= isset($firstname) || isset($lastname) ? ($firstname ?? '') . ' ' . ($lastname ?? '') : 'Guest'; ?></strong>
+          </a>
         </li>
   
        

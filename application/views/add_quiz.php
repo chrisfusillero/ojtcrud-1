@@ -228,6 +228,9 @@ body {
 
             <?php echo form_open('admin_Main/quiz_list'); ?>
 
+
+                <form id="quizgroupform">
+
               
                 <div class="form-group">
                     <label>Group Title</label>
@@ -242,32 +245,55 @@ body {
 
                 
                       <div class="form-group mt-3">
-                      <label>Time Limit</label>
+                        <label class="fw-bold">Time Limit</label>
 
-                            <div class="row">
-       
-                              <div class="col-6">
-                                  <input type="number" 
-                                        name="time_limit_hours" 
-                                        class="form-control"
-                                        min="0" 
-                                        placeholder="Hours (e.g., 1)">
-                              </div>
+                        <div class="row g-2">
 
-                    
-                      <div class="col-6">
-                          <input type="number" 
-                                name="time_limit_minutes" 
-                                class="form-control"
-                                min="0" 
-                                placeholder="Minutes (e.g., 30)">
-                              </div>
-                          </div>
+                            <!-- Hours -->
+                            <div class="col-4">
+                                <div class="input-group">
+                                    <input type="number"
+                                          name="time_limit_hours"
+                                          class="form-control"
+                                          min="0"
+                                          placeholder="0">
+                                    <span class="input-group-text">Hrs</span>
+                                </div>
+                            </div>
 
-                              <small class="text-muted">
-                                  Leave both fields empty or set to 0 for no time limit.
-                              </small>
-                          </div>
+                            <!-- Minutes -->
+                            <div class="col-4">
+                                <div class="input-group">
+                                    <input type="number"
+                                          name="time_limit_minutes"
+                                          class="form-control"
+                                          min="0"
+                                          max="59"
+                                          placeholder="0">
+                                    <span class="input-group-text">Min</span>
+                                </div>
+                            </div>
+
+                            <!-- Seconds -->
+                            <div class="col-4">
+                                <div class="input-group">
+                                    <input type="number"
+                                          name="time_limit_seconds"
+                                          class="form-control"
+                                          min="0"
+                                          max="59"
+                                          placeholder="0">
+                                    <span class="input-group-text">Sec</span>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <small class="text-muted">
+                            Leave all fields empty or set to 0 for no time limit.
+                        </small>
+                    </div>
+
 
 
                 
@@ -297,16 +323,23 @@ body {
 
         
         <div class="col-md-8">
-            <div class="card shadow-sm">
-                <div class="card-header bg-info text-white">
-                    <h5 class="mb-0">Add Question to Group</h5>
+
+        <div id="quizCardsContainer">
+
+        <div class="card shadow-sm quiz-card">
+        <div class="card-header bg-info text-white">
+
+		    <h5 class="mb-0">Add Question to Group</h5>
                 </div>
 
                 <div class="card-body">
+                  
 
-                    <?php echo form_open('#', ['id' => 'addQuestionForm']); ?>
 
-                        
+                    <?php echo form_open('admin_Main/quiz_list', ['id' => 'addQuestionForm']); ?>
+
+                        <input type="hidden" name="group_id" value="<?= $group_id ?>">
+
                         <div class="form-group">
                             <label for="quiz_type">Question Type</label>
                             <select class="form-control" id="quiz_type" name="quiz_type" required>
@@ -391,9 +424,12 @@ body {
 
                     <?php echo form_close(); ?>
 
-                </div>
-            </div>
         </div>
+
+    </div>
+
+</div>
+
 
         <br />
         <br />
@@ -433,17 +469,29 @@ document.getElementById('add_enum').onclick = () => {
 };
 
 
-document.getElementById('addQuestionBtn').onclick = () => {
 
-    const list = document.getElementById('questionList');
+document.getElementById("addQuestionBtn").addEventListener("click", function () {
 
-    let item = document.createElement('div');
-    item.classList.add("alert", "alert-primary", "mt-2");
-    item.innerHTML = "Question added to group";
+    let form = document.getElementById("addQuestionForm");
+    let formData = new FormData(form);
 
-    list.appendChild(item);
+    fetch("<?= base_url('admin_Main/quiz_list'); ?>", {
+        method: "POST",
+        body: formData
+    })
+    .then(response => response.text())
+    .then(data => {
+        alert("Question Saved!");
+        location.reload(); 
+    })
+    .catch(error => {
+        console.error("Error:", error);
+        alert("Failed to save question.");
+    });
 
-};
+});
+
+
 
 document.getElementById('add_choice_btn').onclick = () => {
     let container = document.getElementById('choices_container');
@@ -481,6 +529,7 @@ document.addEventListener("change", function(event) {
     radio.parentElement.classList.add("option-selected");
 
 });
+
 </script>
 
 

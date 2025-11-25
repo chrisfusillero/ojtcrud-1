@@ -2,80 +2,76 @@
 
 class Quiz_model extends CI_Model {
 
-    public function createQuiz($data)
-{
+   public function createQuizGroup($data)
+    {
+        $insertData = [
+            'group_title'           => $data['group_title'],
+            'description'     => $data['description'] ?? null,
+            'question_count'  => 0,  
+            'date_created'    => date("Y-m-d H:i:s")
+        ];
 
-    $common = [
-        'type'          => $data['type'],
-        'question'      => $data['question'],
-        'quizgroup_id' => $data['quizgroup_id'] ?? null   
-    ];
+        return $this->db->insert('quizgroup', $insertData);
+    }
 
-    switch ($data['type']) {
+    public function createQuizQuestion($data)
+    {
+        
+        $common = [
+            'type'         => $data['type'],
+            'question'     => $data['question'],
+            'quizgroup_id' => $data['quizgroup_id'] ?? null
+        ];
 
-      
-        case 'multiple_choice':
+        switch ($data['type']) {
 
-            $choices = $data['choices'];
+            case 'multiple_choice':
+                $insertData = array_merge($common, [
+                    'choices' => json_encode($data['choices'], JSON_UNESCAPED_SLASHES),
+                    'answer'  => $data['answer']
+                ]);
+                break;
 
-            if (!is_string($choices)) {
-                $choices = json_encode($choices, JSON_UNESCAPED_SLASHES);
-            }
+            case 'true_false':
+                $insertData = array_merge($common, [
+                    'choices' => json_encode(['True', 'False'], JSON_UNESCAPED_SLASHES),
+                    'answer'  => $data['answer']
+                ]);
+                break;
 
-            $insertData = array_merge($common, [
-                'choices' => $choices,
-                'answer'  => $data['answer']
-            ]);
+            case 'identification':
+            case 'enumeration':
+                $insertData = array_merge($common, [
+                    'choices' => null,
+                    'answer'  => $data['answer']
+                ]);
+                break;
 
-            break;
-
-
-    
-        case 'true_false':
-
-            $insertData = array_merge($common, [
-                'choices' => json_encode(['True', 'False'], JSON_UNESCAPED_SLASHES),
-                'answer'  => $data['answer']
-            ]);
-
-            break;
-
+            default:
+                $insertData = $common;
+                break;
+        }
 
         
-        case 'identification':
-        case 'enumeration':
-
-            $insertData = array_merge($common, [
-                'choices' => null,
-                'answer'  => $data['answer']
-            ]);
-
-            break;
-
+        if (isset($insertData['answer'])) {
+            $insertData['answer'] = stripslashes($insertData['answer']);
+        }
 
       
-        default:
-            $insertData = $common;
-            break;
+        $result = $this->db->insert('quizzes', $insertData);
+
+      
+        if (!empty($data['quizgroup_id'])) {
+            $this->db->set('question_count', 'question_count + 1', FALSE)
+                     ->where('id', $data['quizgroup_id'])
+                     ->update('quizgroup');
+        }
+
+        return $result;
     }
 
- 
-    if (isset($insertData['answer'])) {
-        $insertData['answer'] = stripslashes($insertData['answer']);
-    }
 
-  
-    $result = $this->db->insert('quizzes', $insertData);
 
-    
-    if (!empty($data['quiz_group_id'])) {
-        $this->db->set('question_count', 'question_count + 1', FALSE)
-                 ->where('id', $data['quiz_group_id'])
-                 ->update('quizgroup');
-    }
-
-    return $result;
-}
 
 
 
