@@ -2,108 +2,90 @@
 
 class Quiz_model extends CI_Model {
 
-   public function createQuizGroup($data)
+    
+    public function createQuizGroup($data)
     {
         $insertData = [
-            'group_title'           => $data['group_title'],
-            'description'     => $data['description'] ?? null,
-            'question_count'  => 0,  
-            'date_created'    => date("Y-m-d H:i:s")
+            'group_title'       => $data['group_title'],
+            'description'      => $data['description'] ?? null,
+            'date_created'     => date("Y-m-d H:i:s"),
+            'duration_minutes' => $data['duration_minutes'] ?? 0
         ];
 
-        return $this->db->insert('quizgroup', $insertData);
+        $this->db->insert('quiz_groups', $insertData);
+        return $this->db->insert_id();
     }
 
+    
     public function createQuizQuestion($data)
     {
         
-        $common = [
-            'type'         => $data['type'],
-            'question'     => $data['question'],
-            'quizgroup_id' => $data['quizgroup_id'] ?? null
+        $insertQuestion = [
+            'question_type' => $data['type'],
+            'question'      => $data['question'],
+            'choices'       => $data['choices'] ?? null,
+            'answer'        => $data['answer']
         ];
 
-        switch ($data['type']) {
+        $this->db->insert('quiz_questions', $insertQuestion);
+        $question_id = $this->db->insert_id();
 
-            case 'multiple_choice':
-                $insertData = array_merge($common, [
-                    'choices' => json_encode($data['choices'], JSON_UNESCAPED_SLASHES),
-                    'answer'  => $data['answer']
-                ]);
-                break;
+    
+        $this->db->insert('quiz_group_questions', [
+            'group_id'    => $data['group_id'],
+            'question_id' => $question_id
+        ]);
 
-            case 'true_false':
-                $insertData = array_merge($common, [
-                    'choices' => json_encode(['True', 'False'], JSON_UNESCAPED_SLASHES),
-                    'answer'  => $data['answer']
-                ]);
-                break;
-
-            case 'identification':
-            case 'enumeration':
-                $insertData = array_merge($common, [
-                    'choices' => null,
-                    'answer'  => $data['answer']
-                ]);
-                break;
-
-            default:
-                $insertData = $common;
-                break;
-        }
-
-        
-        if (isset($insertData['answer'])) {
-            $insertData['answer'] = stripslashes($insertData['answer']);
-        }
-
-      
-        $result = $this->db->insert('quizzes', $insertData);
-
-      
-        if (!empty($data['quizgroup_id'])) {
-            $this->db->set('question_count', 'question_count + 1', FALSE)
-                     ->where('id', $data['quizgroup_id'])
-                     ->update('quizgroup');
-        }
-
-        return $result;
+        return $question_id;
     }
 
-
-
-
-
-
-
-   public function get_quiz($id)
+   
+    public function get_quiz($id)
     {
         return $this->db
                     ->where('id', $id)
-                    ->get('quizzes')
+                    ->get('quiz_questions')
                     ->row_array();
     }
 
     
     public function get_all_quizzes()
     {
-        return $this->db->get('quizzes')->result_array();
+        $this->db->select('quiz_questions.*, quiz_groups.group_title');
+        $this->db->from('quiz_questions');
+        $this->db->join('quiz_group_questions', 'quiz_group_questions.question_id = quiz_questions.id', 'left');
+        $this->db->join('quiz_groups', 'quiz_groups.id = quiz_group_questions.group_id', 'left');
+        $this->db->order_by('quiz_questions.id', 'DESC');
+
+return $this->db->get()->result_array();
+
     }
 
+    
     public function updateQuiz($id, $data)
     {
-        return $this->db->where('id', $id)->update('quizzes', $data);
+        return $this->db
+            ->where('id', $id)
+            ->update('quiz_questions', $data);
     }
 
+    
     public function deleteQuiz($id)
     {
-        return $this->db->delete('quizzes', ['id' => $id]);
+    
+        $this->db->delete('quiz_group_questions', ['question_id' => $id]);
+
+        
+        return $this->db->delete('quiz_questions', ['id' => $id]);
     }
 
+   
     public function get_all_quiz_groups()
-{
-    return $this->db->get('quizgroup')->result_array();
-}
-
+    {
+        return $this->db
+            ->order_by('id', 'DESC')
+            ->get('quiz_groups')
+            ->result_array();
+    }
 
 }

@@ -549,12 +549,7 @@ textarea {
       <ul class="navbar-nav align-items-center">
 
 
-      <li class="nav-item me-2">
-          <form class="d-flex" action="<?= base_url('index.php/welcome/search'); ?>" method="get">
-            <input class="form-control form-control-sm me-2" type="search" name="q" placeholder="Search" aria-label="Search">
-            <button class="btn btn-sm btn-primary" type="submit">Go</button>
-          </form>
-        </li>
+      
 
         
         <li class="nav-item me-2">

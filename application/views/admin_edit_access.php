@@ -205,7 +205,7 @@
 
         <div class="d-flex justify-content-center mt-4 flex-wrap">
           <button type="submit" class="btn btn-success me-2 mb-2">Update</button>
-          <a href="<?= base_url('index.php/admin_Main/admin_settings'); ?>" class="btn btn-danger ms-2 mb-2">Cancel</a>
+          <a href="<?= base_url('index.php/admin_Main/admin_crud'); ?>" class="btn btn-danger ms-2 mb-2">Cancel</a>
         </div>
       </form> 
 

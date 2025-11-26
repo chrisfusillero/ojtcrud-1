@@ -113,12 +113,6 @@ small {
            <li class="nav-item me-2">
 
 
-            <li class="nav-item me-2">
-          <form class="d-flex" action="<?= base_url('index.php/admin_Main/search'); ?>" method="get">
-            <input class="form-control form-control-sm me-2" type="search" name="q" placeholder="Search" aria-label="Search">
-            <button class="btn btn-sm btn-primary" type="submit">Go</button>
-          </form>
-        </li>
 
           <a class="nav-link fw-medium ms-2" href="<?= base_url('index.php/admin_Main'); ?>">Home</a>
         </li>

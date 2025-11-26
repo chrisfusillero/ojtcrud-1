@@ -215,322 +215,289 @@ body {
 
 
 <div class="container my-4">
-
     <div class="row">
 
-     
-<div class="col-md-4">
-    <div class="card shadow-sm">
-        <div class="card-header bg-primary text-white">
-            <h5 class="mb-0">Create Quiz Group</h5>
-        </div>
-        <div class="card-body">
-
-            <?php echo form_open('admin_Main/quiz_list'); ?>
-
-
-                <form id="quizgroupform">
-
-              
-                <div class="form-group">
-                    <label>Group Title</label>
-                    <input type="text" name="group_title" class="form-control" required>
+        <!-- LEFT COLUMN — CREATE GROUP -->
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Create Quiz Group</h5>
                 </div>
+                <div class="card-body">
 
-          
-                <div class="form-group mt-3">
-                    <label>Description</label>
-                    <textarea name="description" class="form-control" rows="3"></textarea>
-                </div>
+                    <form id="quizgroupform">
 
-                
-                      <div class="form-group mt-3">
-                        <label class="fw-bold">Time Limit</label>
-
-                        <div class="row g-2">
-
-                            <!-- Hours -->
-                            <div class="col-4">
-                                <div class="input-group">
-                                    <input type="number"
-                                          name="time_limit_hours"
-                                          class="form-control"
-                                          min="0"
-                                          placeholder="0">
-                                    <span class="input-group-text">Hrs</span>
-                                </div>
-                            </div>
-
-                            <!-- Minutes -->
-                            <div class="col-4">
-                                <div class="input-group">
-                                    <input type="number"
-                                          name="time_limit_minutes"
-                                          class="form-control"
-                                          min="0"
-                                          max="59"
-                                          placeholder="0">
-                                    <span class="input-group-text">Min</span>
-                                </div>
-                            </div>
-
-                            <!-- Seconds -->
-                            <div class="col-4">
-                                <div class="input-group">
-                                    <input type="number"
-                                          name="time_limit_seconds"
-                                          class="form-control"
-                                          min="0"
-                                          max="59"
-                                          placeholder="0">
-                                    <span class="input-group-text">Sec</span>
-                                </div>
-                            </div>
-
+                        <div class="form-group">
+                            <label>Group Title</label>
+                            <input type="text" name="group_title" class="form-control" required>
                         </div>
 
-                        <small class="text-muted">
-                            Leave all fields empty or set to 0 for no time limit.
-                        </small>
-                    </div>
+                        <div class="form-group mt-3">
+                            <label>Description</label>
+                            <textarea name="description" class="form-control" rows="3"></textarea>
+                        </div>
+
+                        <!-- TIME LIMIT -->
+                        <div class="form-group mt-3">
+                            <label class="fw-bold">Time Limit</label>
+
+                            <div class="input-group">
+                                <input type="number"
+                                      name="time_limit_minutes_total"
+                                      class="form-control"
+                                      min="0"
+                                      placeholder="Enter total minutes (e.g. 90)">
+                                <span class="input-group-text">Minutes</span>
+                            </div>
+
+                            <small class="text-muted">
+                                Enter total minutes only. Leave empty or zero for no time limit.
+                            </small>
+                        </div>
 
 
+                        <button type="button" id="saveGroupBtn" class="btn btn-success btn-block mt-3">
+                            Save Quiz Group
+                        </button>
 
-                
-                <input type="hidden" name="question_count" value="0">
-
-                <button class="btn btn-success btn-block mt-3">Save Quiz Group</button>
-
-            <?php echo form_close(); ?>
+                    </form>
 
                 </div>
             </div>
 
-              
-              <div class="card shadow-sm mt-4">
-                  <div class="card-header bg-secondary text-white">
-                      <h6 class="mb-0">Questions in This Group</h6>
-                  </div>
-                  <div class="card-body" id="questionList">
+            <!-- GROUP QUESTIONS PREVIEW -->
+            <div class="card shadow-sm mt-4">
+                <div class="card-header bg-secondary text-white">
+                    <h6 class="mb-0">Questions in This Group</h6>
+                </div>
+                <div class="card-body" id="questionList">
+                    <p class="text-muted">No group created yet.</p>
+                </div>
+            </div>
+        </div>
 
-                      <p class="text-muted">No questions added yet.</p>
-
-                  </div>
-              </div>
-
-          </div>
-  
-
-        
+        <!-- RIGHT COLUMN — ADD QUESTION -->
         <div class="col-md-8">
 
-        <div id="quizCardsContainer">
+            <div id="quizCardsContainer">
 
-        <div class="card shadow-sm quiz-card">
-        <div class="card-header bg-info text-white">
+                <div class="card shadow-sm quiz-card">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0">Add Question to Group</h5>
+                    </div>
 
-		    <h5 class="mb-0">Add Question to Group</h5>
+                    <div class="card-body">
+
+                        <form id="addQuestionForm">
+
+                            <input type="hidden" name="group_id" id="group_id" value="<?= $group_id ?>">
+
+                            <div class="form-group">
+                                <label>Question Type</label>
+                                <select class="form-control" id="quiz_type" name="quiz_type">
+                                    <option value="multiple_choice">Multiple Choice</option>
+                                    <option value="true_false">True or False</option>
+                                    <option value="identification">Identification</option>
+                                    <option value="enumeration">Enumeration</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group mt-3">
+                                <label>Question</label>
+                                <textarea class="form-control" name="question" required rows="2"></textarea>
+                            </div>
+
+                            <!-- MCQ -->
+                            <div id="multiple_choice_section">
+                                <label>Choices</label>
+
+                                <div id="choices_container">
+                                    <?php for ($i = 0; $i < 4; $i++): ?>
+                                        <div class="d-flex align-items-center mt-2 mc-choice-row">
+                                            <input type="radio" name="mc_correct_choice"
+                                                value="<?= $i ?>" class="form-check-input me-2">
+
+                                            <input type="text" class="form-control"
+                                                name="choices[]" placeholder="Choice <?= $i + 1 ?>">
+                                        </div>
+                                    <?php endfor; ?>
+                                </div>
+
+                                <button type="button" id="add_choice_btn"
+                                        class="btn btn-sm btn-secondary mt-2">
+                                    + Add Another Choice
+                                </button>
+                            </div>
+
+                            <!-- TRUE/FALSE -->
+                            <div id="true_false_section" style="display:none;">
+                                <label>Correct Answer</label>
+                                <div class="form-check mt-2">
+                                    <input type="radio" name="tf_answer" value="True" class="form-check-input">
+                                    <label class="form-check-label">True</label>
+                                </div>
+                                <div class="form-check mt-2">
+                                    <input type="radio" name="tf_answer" value="False" class="form-check-input">
+                                    <label class="form-check-label">False</label>
+                                </div>
+                            </div>
+
+                            <!-- IDENTIFICATION -->
+                            <div id="identification_section" style="display:none;">
+                                <label>Correct Answer</label>
+                                <input type="text" class="form-control" name="identification_answer">
+                            </div>
+
+                            <!-- ENUMERATION -->
+                            <div id="enumeration_section" style="display:none;">
+                                <label>Enumeration Answers</label>
+                                <div id="enum_container">
+                                    <input type="text" class="form-control mt-2" name="enumeration_answers[]" placeholder="Answer 1">
+                                </div>
+                                <button type="button" id="add_enum" class="btn btn-sm btn-secondary mt-2">
+                                    Add More
+                                </button>
+                            </div>
+
+                            <button type="button" id="addQuestionBtn"
+                                    class="btn btn-primary btn-block mt-3">
+                                Add Question to Group
+                            </button>
+
+                        </form>
+
+                    </div>
+
                 </div>
 
-                <div class="card-body">
-                  
-
-
-                    <?php echo form_open('admin_Main/quiz_list', ['id' => 'addQuestionForm']); ?>
-
-                        <input type="hidden" name="group_id" value="<?= $group_id ?>">
-
-                        <div class="form-group">
-                            <label for="quiz_type">Question Type</label>
-                            <select class="form-control" id="quiz_type" name="quiz_type" required>
-                                <option value="multiple_choice">Multiple Choice</option>
-                                <option value="true_false">True or False</option>
-                                <option value="identification">Identification</option>
-                                <option value="enumeration">Enumeration</option>
-                            </select>
-                        </div>
-
-                        
-                        <div class="form-group mt-3">
-                            <label>Question</label>
-                            <textarea class="form-control" name="question" required rows="2"></textarea>
-                        </div>
-
-                        
-                        <div id="multiple_choice_section">
-
-                              <label>Choices</label>
-
-                              <div id="choices_container">
-                                  <?php for ($i = 0; $i < 4; $i++): ?>
-                                      <div class="d-flex align-items-center mt-2 mc-choice-row">
-                                          
-                                        
-                                          <input type="radio" 
-                                                name="mc_correct_choice" 
-                                                value="<?= $i ?>" 
-                                                class="form-check-input me-2">
-
-                                          
-                                          <input type="text"
-                                              class="form-control"
-                                              name="choices[]"
-                                              placeholder="Choice <?= $i + 1 ?>">
-                                      </div>
-                                  <?php endfor; ?>
-                              </div>
-
-                              <button type="button" class="btn btn-sm btn-secondary mt-2" id="add_choice_btn">
-                                  + Add Another Choice
-                              </button>
-
-                          </div>
-
-
-                        
-                        <div id="true_false_section" style="display:none;">
-                          <label>Correct Answer</label>
-
-                          <div class="form-check mt-2">
-                              <input type="radio" name="tf_answer" value="True" class="form-check-input">
-                              <label class="form-check-label">True</label>
-                          </div>
-
-                          <div class="form-check mt-2">
-                              <input type="radio" name="tf_answer" value="False" class="form-check-input">
-                              <label class="form-check-label">False</label>
-                          </div>
-                        </div>
-
-
-                       
-                        <div id="identification_section" style="display:none;">
-                            <label>Correct Answer</label>
-                            <input type="text" class="form-control" name="identification_answer">
-                        </div>
-
-                        
-                        <div id="enumeration_section" style="display:none;">
-                            <label>Enumeration Answers</label>
-                            <div id="enum_container">
-                                <input type="text" class="form-control mt-2" name="enumeration_answers[]" placeholder="Answer 1">
-                            </div>
-                            <button type="button" id="add_enum" class="btn btn-sm btn-secondary mt-2">Add More</button>
-                        </div>
-
-                        <button type="button" class="btn btn-primary btn-block mt-3" id="addQuestionBtn">
-                            Add Question to Group
-                        </button>
-
-                    <?php echo form_close(); ?>
+            </div>
 
         </div>
 
     </div>
-
-</div>
-
-
-        <br />
-        <br />
-
-              <a href="<?= base_url('index.php/admin_Main/quizbee'); ?>" class="btn btn-secondary mb-3 ms-2">Back to Dashboard</a>
-    </div>
-
-
-
 </div>
 
 
 <script>
+let groupID = "<?= $group_id ?>";
 
-const quizType = document.getElementById('quiz_type');
-const mc = document.getElementById('multiple_choice_section');
-const idf = document.getElementById('identification_section');
-const enu = document.getElementById('enumeration_section');
-const tf = document.getElementById('true_false_section');
 
-quizType.addEventListener('change', () => {
-    mc.style.display  = quizType.value === 'multiple_choice' ? 'block' : 'none';
-    tf.style.display  = quizType.value === 'true_false' ? 'block' : 'none';
-    idf.style.display = quizType.value === 'identification' ? 'block' : 'none';
-    enu.style.display = quizType.value === 'enumeration' ? 'block' : 'none';
+document.getElementById("saveGroupBtn").onclick = function () {
+    let form = document.getElementById("quizgroupform");
+    let data = new FormData(form);
+
+    fetch("<?= base_url('index.php/admin_Main/save_quiz_group'); ?>", {
+        method: "POST",
+        body: data
+    })
+    .then(res => res.text())
+    .then(id => {
+
+        if (!id || isNaN(id)) {
+            alert("Failed to create group");
+            return;
+        }
+
+        groupID = id;
+        document.getElementById("group_id").value = id;
+
+        loadQuestions(id);
+
+        alert("Quiz group created!");
+    });
+};
+
+
+function loadQuestions(gid) {
+    fetch("<?= base_url('index.php/admin_Main/get_questions_by_group/'); ?>" + gid)
+        .then(res => res.json())
+        .then(data => {
+            let box = document.getElementById("questionList");
+
+            if (data.length === 0) {
+                box.innerHTML = `<p class='text-muted'>No questions added yet.</p>`;
+                return;
+            }
+
+            let html = "";
+            data.forEach(q => {
+                html += `
+                    <div class="border p-2 mb-2">
+                        <strong>${q.question}</strong><br>
+                        <small class="text-muted">${q.type}</small>
+                    </div>
+                `;
+            });
+
+            box.innerHTML = html;
+        });
+}
+
+
+if (groupID) loadQuestions(groupID);
+
+
+document.getElementById("addQuestionBtn").onclick = function () {
+
+    if (!groupID || groupID === "null") {
+        alert("Please create a quiz group first.");
+        return;
+    }
+
+    let form = document.getElementById("addQuestionForm");
+    let data = new FormData(form);
+
+    fetch("<?= base_url('index.php/admin_Main/save_quiz'); ?>", {
+        method: "POST",
+        body: data
+    })
+    .then(res => res.text())
+    .then(() => {
+        alert("Question added!");
+        form.reset();
+        loadQuestions(groupID);
+    });
+};
+
+document.getElementById("quiz_type").addEventListener("change", function () {
+    document.getElementById("multiple_choice_section").style.display =
+        this.value === "multiple_choice" ? "block" : "none";
+
+    document.getElementById("true_false_section").style.display =
+        this.value === "true_false" ? "block" : "none";
+
+    document.getElementById("identification_section").style.display =
+        this.value === "identification" ? "block" : "none";
+
+    document.getElementById("enumeration_section").style.display =
+        this.value === "enumeration" ? "block" : "none";
 });
 
-
-document.getElementById('add_enum').onclick = () => {
-    let c = document.getElementById('enum_container');
-    let f = document.createElement('input');
+document.getElementById("add_enum").onclick = () => {
+    let f = document.createElement("input");
     f.type = "text";
     f.classList.add("form-control", "mt-2");
     f.name = "enumeration_answers[]";
     f.placeholder = "Another Answer";
-    c.appendChild(f);
+    enum_container.appendChild(f);
 };
 
-
-
-document.getElementById("addQuestionBtn").addEventListener("click", function () {
-
-    let form = document.getElementById("addQuestionForm");
-    let formData = new FormData(form);
-
-    fetch("<?= base_url('admin_Main/quiz_list'); ?>", {
-        method: "POST",
-        body: formData
-    })
-    .then(response => response.text())
-    .then(data => {
-        alert("Question Saved!");
-        location.reload(); 
-    })
-    .catch(error => {
-        console.error("Error:", error);
-        alert("Failed to save question.");
-    });
-
-});
-
-
-
-document.getElementById('add_choice_btn').onclick = () => {
-    let container = document.getElementById('choices_container');
-
+document.getElementById("add_choice_btn").onclick = () => {
+    let container = document.getElementById("choices_container");
     let index = container.querySelectorAll(".mc-choice-row").length;
 
-    let row = document.createElement('div');
-    row.classList.add("d-flex", "align-items-center", "mt-2", "mc-choice-row");
+    let row = document.createElement("div");
+    row.className = "d-flex align-items-center mt-2 mc-choice-row";
 
     row.innerHTML = `
         <input type="radio" name="mc_correct_choice" value="${index}" class="form-check-input me-2">
-        <input type="text" class="form-control" name="choices[]" placeholder="Additional Choice">
+        <input type="text" class="form-control" name="choices[]" placeholder="New Choice">
     `;
 
     container.appendChild(row);
 };
-
-
-document.addEventListener("change", function(event) {
-
-   
-    if (!event.target.classList.contains("highlight-radio")) return;
-
-    let radio = event.target;
-
-   
-    let parentCard = radio.closest(".answer-block");
-    if (!parentCard) return;
-
-    
-    parentCard.querySelectorAll(".option-selected")
-        .forEach(el => el.classList.remove("option-selected"));
-
- 
-    radio.parentElement.classList.add("option-selected");
-
-});
-
 </script>
+
 
 
 

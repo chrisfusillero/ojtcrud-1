@@ -41,7 +41,7 @@ class admin_Main extends MY_Controller
             'message'   => 'Welcome to the admin dashboard'
         ];
 
-        $this->template('admin_welcome', $data);
+        $this->load->view('admin_welcome', $data);
     }
 
     public function admin_crud()
@@ -59,7 +59,7 @@ class admin_Main extends MY_Controller
             'valid_records'  => $this->My_model->get_valid_records()
         ];
 
-        $this->template('admin_crud', $data);
+        $this->load->view('admin_crud', $data);
     }
 
    public function admin_edit_access($username = null) {
@@ -92,6 +92,46 @@ class admin_Main extends MY_Controller
 
      $this->load->view('admin_edit_access', $data);
    }
+
+   public function admin_edit_profile()
+{
+    $user_id = $this->session->userdata('user_id');
+    $user = $this->admin_model->get_data_by_id($user_id);
+
+    $data = [
+        'firstname' => $user['firstname'],
+        'lastname'  => $user['lastname'],
+        'username'  => $user['username'],
+        'email'     => $user['email'],
+        'address'   => $user['address'],
+    ];
+
+    $this->load->view('admin_edit_profile', $data);
+}
+
+public function update_admin_profile()
+{
+    $user_id = $this->session->userdata('user_id');
+
+    $data = [
+        'firstname' => $this->input->post('firstname'),
+        'lastname'  => $this->input->post('lastname'),
+        'username'  => $this->input->post('username'),
+        'email'     => $this->input->post('email'),
+        'address'   => $this->input->post('address')
+    ];
+
+    $this->My_model->update_admin_profile($user_id, $data);
+
+    $this->session->set_flashdata('kyre', [
+        'type' => 'success',
+        'message' => 'Admin profile updated successfully!'
+    ]);
+
+    redirect('index.php/admin_Main/admin_settings');
+}
+
+
 
 
     public function update($username)
@@ -207,7 +247,7 @@ class admin_Main extends MY_Controller
             $data['expression'] = $expression;
         }
 
-        $this->template('admin_calculator', $data);
+        $this->load->view('admin_calculator', $data);
     }
 
     public function admin_projects()
@@ -278,75 +318,89 @@ class admin_Main extends MY_Controller
 
 
 
+
 public function save_quiz()
 {
     $this->load->model('Quiz_model');
 
-    $type      = $this->input->post('quiz_type', true);
-    $group_id  = $this->input->post('group_id', true);
+    $type     = $this->input->post('quiz_type');
+    $group_id = $this->input->post('group_id');
+    $question = $this->input->post('question');
 
+    $choices_json = null;
+    $answer = "";
 
-    $data = [
-        'type'         => $type,
-        'question'     => $this->input->post('question', true),
-        'quizgroup_id' => $group_id
-    ];
+    
+    if ($type == 'multiple_choice') {
 
+        $choices = $this->input->post('choices'); // array
+        $correct = $this->input->post('mc_correct_choice');
 
-   
-    switch ($type) {
+        $choices_json = json_encode($choices);
+        $answer = $choices[$correct];
+    }
 
-        case 'multiple_choice':
+    
+    else if ($type == 'true_false') {
 
-            $choices        = $this->input->post('choices');
-            $correct_index  = $this->input->post('mc_correct_choice');
-
-            $data['choices'] = $choices; 
-            $data['answer']  = $choices[$correct_index];
-
-            break;
-
-
-        case 'true_false':
-
-            $data['answer'] = $this->input->post('tf_answer', true);
-            break;
-
-
-        case 'identification':
-
-            $data['answer'] = $this->input->post('identification_answer', true);
-            break;
-
-
-        case 'enumeration':
-
-            $answers = $this->input->post('enumeration_answers');
-            $data['answer'] = $answers;  // pass array; model encodes if needed
-
-            break;
+        $choices_json = json_encode(["True", "False"]);
+        $answer = $this->input->post('tf_answer');
     }
 
 
+    else if ($type == 'identification') {
 
-    $this->Quiz_model->createQuizQuestion($data);
+        $answer = $this->input->post('identification_answer');
+    }
+
+    
+    else if ($type == 'enumeration') {
+
+        $enum_answers = $this->input->post('enumeration_answers'); // array
+        $choices_json = json_encode($enum_answers);
+        $answer = json_encode($enum_answers); // stored as JSON
+    }
+
+    
+    $question_data = [
+        'question_type' => $type,
+        'question'      => $question,
+        'choices'       => $choices_json,
+        'answer'        => $answer
+    ];
+
+    $this->db->insert('quiz_questions', $question_data);
+    $question_id = $this->db->insert_id();
+
+    
+    $this->db->insert('quiz_group_questions', [
+        'group_id'    => $group_id,
+        'question_id' => $question_id
+    ]);
 
     redirect('admin_Main/quiz_list');
 }
+
 
 public function save_quiz_group()
 {
     $this->load->model('Quiz_model');
 
+    
+    $total_minutes = (int)$this->input->post('time_limit_minutes_total');
+
     $data = [
-        'group_title' => $this->input->post('group_title', true),
-        'description' => $this->input->post('description', true)
+        'group_title'      => $this->input->post('group_title'),   
+        'description'      => $this->input->post('description'),
+        'date_created'     => date("Y-m-d H:i:s"),
+        'duration_minutes' => $total_minutes
     ];
 
-    $this->Quiz_model->createQuizGroup($data);
+    $this->db->insert('quiz_groups', $data);
 
-    echo $this->db->insert_id();   
+    echo $this->db->insert_id();
 }
+
 
 
 
@@ -357,27 +411,23 @@ public function save_quiz_group()
     $this->load->model('Quiz_model');
     $this->load->model('Login_model');
 
-    
     $quizzes = $this->Quiz_model->get_all_quizzes();
+    $groups  = $this->Quiz_model->get_all_quiz_groups();
 
-   
-    $groups = $this->Quiz_model->get_all_quiz_groups(); 
-
-   
     $user_id = $this->session->userdata('user_id');
-    $user = $this->Login_model->get_user_data($user_id);
+    $user    = $this->Login_model->get_user_data($user_id);
 
     $data = [
         'quizzes'   => $quizzes,
-        'groups'    => $groups,    
+        'groups'    => $groups,
         'firstname' => $user['firstname'] ?? 'Admin',
         'lastname'  => $user['lastname'] ?? '',
         'title'     => 'Quiz List'
     ];
 
-    
     $this->template('quiz_list', $data);
 }
+
 
 
 public function get_quiz($id)

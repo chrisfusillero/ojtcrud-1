@@ -3,11 +3,42 @@
 <head>
     
     <title>Calculator</title>
+
+<meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+
+  <link rel="stylesheet" href="<?php echo base_url('assets/css/bootstrap.min.css'); ?>">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/izitoast@1.4.0/dist/css/iziToast.min.css">
+
+
+  <script src="<?php echo base_url("assets/js/jquery-3.7.1.min.js"); ?>"></script>
+
+
+  <script type="text/javascript" src="<?php echo base_url("assets/js/bootstrap.min.js"); ?>"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/izitoast@1.4.0/dist/js/iziToast.min.js"></script>
+
+  
+  <script type="text/javascript">
+    window.history.forward();
+    function noBack() { 
+      window.history.forward(); 
+    }
+  </script>
     
 <style>
 
 body {
-  background-image: url('<?php echo base_url("assets/portfolio_image/emerald-2.jpg"); ?>');
+  background-image: url('<?php echo base_url("assets/portfolio_image/emeraldgreen.jpg"); ?>');
   background-size: cover;         
   background-position: center;    
   background-repeat: no-repeat;   

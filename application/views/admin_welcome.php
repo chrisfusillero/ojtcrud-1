@@ -1,86 +1,193 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+
+  <link rel="stylesheet" href="<?php echo base_url('assets/css/bootstrap.min.css'); ?>">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/izitoast@1.4.0/dist/css/iziToast.min.css">
+
+
+  <script src="<?php echo base_url("assets/js/jquery-3.7.1.min.js"); ?>"></script>
+
+
+  <script type="text/javascript" src="<?php echo base_url("assets/js/bootstrap.min.js"); ?>"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/izitoast@1.4.0/dist/js/iziToast.min.js"></script>
+
+  
+  <script type="text/javascript">
+    window.history.forward();
+    function noBack() { 
+      window.history.forward(); 
+    }
+  </script>
+
+  
+</head>
+
 <title>Admin Interface</title>
+<body onload="noBack();" onpageshow="if(event.persisted) noBack();" onunload="">
+
+
+<header class="header">
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top">
+  <div class="container">
+
+    <a class="navbar-brand fw-bold text-primary" href="<?= base_url('index.php/admin_Main'); ?>">
+      DigiCrud101
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" 
+            data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+      <ul class="navbar-nav align-items-center me-3">
+
+
+        <li class="nav-item me-2">
+          <a class="nav-link fw-medium" href="<?= base_url('index.php/admin_Main'); ?>">Home</a>
+        </li>
+
+        <li class="nav-item me-2">
+          <a class="nav-link fw-medium" href="<?= base_url('index.php/admin_Main/admin_crud'); ?>">Accounts</a>
+        </li>
+
+        <li class="nav-item me-2">
+          <a class="nav-link fw-medium" href="<?= base_url('index.php/admin_Main/admin_projects'); ?>">Projects</a>
+        </li>
+
+        <li class="nav-item me-2">
+          <a class="nav-link fw-medium" href="<?= base_url('index.php/admin_Main/admin_settings'); ?>">
+              👤 <strong><?= isset($firstname) || isset($lastname) ? ($firstname ?? '') . ' ' . ($lastname ?? '') : 'Guest'; ?></strong>
+          </a>
+        </li>
+
+
+        
+        <li class="nav-item dropdown">
+          <button class="btn btn-light dropdown-toggle" data-bs-toggle="dropdown">
+            Menu
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="dropdown-item" href="<?= base_url('index.php/admin_Main/admin_settings'); ?>">Settings</a></li>
+            <li><a class="dropdown-item text-danger" href="<?= base_url('index.php/AuthLogin'); ?>">Log Out</a></li>
+          </ul>
+        </li>
+
+      </ul>
+    </div>
+
+  </div>
+</nav>
+</header>
+
 
 <style>
 
-/* ===== GENERAL ===== */
+
 body {
-  background-image: url('<?php echo base_url("assets/portfolio_image/emeraldgreen.jpg"); ?>');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  font-size: 16px;
-  margin: 0;
-  padding-top: 80px; /* Adjusted to match navbar height */
+    background: #b3b3b3ff;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    margin: 0;
+    padding-top: 90px;
+    font-family: 'Poppins', sans-serif;
 }
 
-.welcome-message {
-  text-align: left;
-  margin-top: 0;
-  margin-left: 0;
-  width: auto;
+
+.profile-container {
+    max-width: 1100px;
+    margin: auto;
+    text-align: center;
+    padding: 20px;
 }
 
-/* ===== NAVBAR HEADER ===== */
-.header {
-  background-color: #fff;
-  color: #222;
-  font-family: 'Poppins', sans-serif;
-  padding: 0;
-  text-align: center;
-  position: fixed;
-  top: 0;
-  width: 100%;
-  z-index: 100;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+
+.profile-container h1 {
+    font-size: 2.5rem;
+    font-weight: 600;
 }
 
-/* ===== TABLE ===== */
-.table {
-  width: 100%;
-  margin: 20px auto;
-  box-shadow: 0 0 10px rgba(0,0,0,0.5);
-}
-.table td, .table th {
-  word-wrap: break-word;
-  white-space: normal;
-  padding: 12px;
-  vertical-align: middle;
+.profile-container p.subtitle {
+    margin-top: -10px;
+    color: #666;
+    font-size: 1.1rem;
 }
 
-/* ===== HERO SECTION ===== */
-.hero-section {
-  color: white;
-  padding: 80px 20px;
-  text-align: center;
-  min-height: 80vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
-  background-size: cover;
-  background-position: center;
+
+.profile-grid {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 40px;
+    margin-top: 40px;
 }
 
-/* ===== NAVBAR TOGGLER ANIMATION ===== */
-@keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.1); }
-  100% { transform: scale(1); }
-}
-.navbar-toggler:hover { animation: pulse 1s infinite; }
 
-/* Sidebar column spacing */
-.col-md-4 {
-  margin-bottom: 30px;
+.about-box {
+    text-align: left;
 }
 
-/* Footer */
+
+.profile-photo img {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid #ddd;
+}
+
+
+.details-box {
+    text-align: left;
+}
+
+.details-box strong {
+    font-weight: 600;
+}
+
+.social-icons i {
+    font-size: 22px;
+    margin-right: 15px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.social-icons i:hover {
+    opacity: 0.6;
+}
+
+.portfolio-section {
+    position: relative;
+    padding-bottom: 70px; /* gives space for sticky nav */
+}
+
+.section-nav {
+    position: sticky;
+    bottom: 0;
+    background: #fff;
+    padding: 10px 0;
+    margin-top: 30px;
+    border-top: 1px solid #ddd;
+    z-index: 5;
+}
+
+
+
 .footer {
   background-color: #f8f9fa;
   padding: 20px;
@@ -89,21 +196,15 @@ body {
   margin-top: 50px;
 }
 
-/* ===== RESPONSIVE DESIGN ===== */
-@media (max-width: 991px) {
-  .hero-section { min-height: 60vh; padding: 60px 15px; }
-  .hero-section h1 { font-size: 2rem; }
-}
 
-@media (max-width: 768px) {
-  body { font-size: 14px; }
-  .navbar-brand { font-size: 1.2rem; }
-  .navbar-nav .nav-link { font-size: 0.9rem; }
-}
-
-@media (max-width: 576px) {
-  .hero-section h1 { font-size: 1.5rem; }
-  .footer { font-size: 0.9rem; }
+@media(max-width: 768px) {
+    .profile-grid {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+    .about-box, .details-box {
+        text-align: center;
+    }
 }
 
 </style>
@@ -130,13 +231,7 @@ body {
     <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
       <ul class="navbar-nav align-items-center me-3">
 
-           <!-- ===== SEARCH INPUT ===== -->
-        <li class="nav-item me-2">
-          <form class="d-flex" action="<?= base_url('index.php/admin_Main/search'); ?>" method="get">
-            <input class="form-control form-control-sm me-2" type="search" name="q" placeholder="Search" aria-label="Search">
-            <button class="btn btn-sm btn-primary" type="submit">Go</button>
-          </form>
-        </li>
+     
 
         <li class="nav-item me-2">
           <a class="nav-link fw-medium" href="<?= base_url('index.php/admin_Main'); ?>">Home</a>
@@ -156,7 +251,7 @@ body {
           </a>
         </li>
 
-        <!-- ===== MENU DROPDOWN ===== -->
+       
         <li class="nav-item dropdown">
           <button class="btn btn-light dropdown-toggle" data-bs-toggle="dropdown">
             Menu
@@ -176,78 +271,156 @@ body {
 
 
 
-<!-- SECTION: WELCOME MESSAGE -->
-<div class="welcome-message">
-    <h2>Hello Admin</h2>
-    <p class="text-muted">This is the admin interface</p>
-</div>
+<div class="profile-container">
+
+    <h1>Profile</h1>
+    <p class="subtitle"></p>
+
+    <div class="profile-grid">
+
+        <!-- LEFT -->
+         <div class="details-box">
+            <h3>Details</h3>
+
+            <p><strong>Name:</strong><br>
+            Christian Fusillero</p>
+
+            <p><strong>Age:</strong><br>
+            22 years</p>
+
+            <p><strong>Location:</strong><br>
+            Cavite, Philippines</p>
+        
+
+         
+        </div>
+        
+
+        <!-- CENTER — PROFILE PHOTO -->
+        <div class="profile-photo">
+            <img src="<?= base_url('assets/portfolio_image/pic-1.png'); ?>" alt="Profile">
+        </div>
+
+        <!-- RIGHT -->
+        <div class="about-box">
 
 
-
-<!-- MAIN CONTAINER -->
-<div class="container mt-4">
-  <div class="row">
-
-    <!-- LEFT SIDEBAR -->
-    <div class="col-md-4 bg-light shadow-sm rounded p-4 text-center">
-
-      <img src="<?php echo base_url('assets/portfolio_image/pic-1.png'); ?>" 
-           alt="Profile Image"
-           class="rounded-circle border border-3 border-primary mb-3"
-           width="150" height="150">
-
-      <h3 class="fw-bold">Christian Fusillero</h3>
-      <p class="text-muted">Novice Programmer • Web Developer</p>
-
-      <ul class="nav flex-column mt-4">
-        <li class="nav-item"><a class="nav-link active" data-section="home">Home</a></li>
-        <li class="nav-item"><a class="nav-link" data-section="about">About</a></li>
-        <li class="nav-item"><a class="nav-link" data-section="skills">Skills</a></li>
-        <li class="nav-item"><a class="nav-link" data-section="education">Education</a></li>
-        <li class="nav-item"><a class="nav-link" data-section="hobbies">Hobbies</a></li>
-        <li class="nav-item"><a class="nav-link" data-section="contact">Contact</a></li>
-      </ul>
-
-    </div>
-
-    <!-- RIGHT CONTENT -->
-    <div class="col-md-8">
-
-      <section id="home" class="portfolio-section p-4 mb-4">
+         <section id="home" class="portfolio-section p-4 mb-4">
         <h2>Welcome!</h2>
         <p>This is my personal portfolio where I showcase my skills, projects, and experiences.</p>
-      </section>
 
-      <section id="about" class="portfolio-section p-4 mb-4">
+      
+        <ul class="nav justify-content-center section-nav">
+            <li class="nav-item"><a class="nav-link active" data-section="home">Home</a></li>
+            <li class="nav-item"><a class="nav-link" data-section="about">About</a></li>
+            <li class="nav-item"><a class="nav-link" data-section="skills">Skills</a></li>
+            <li class="nav-item"><a class="nav-link" data-section="education">Education</a></li>
+            <li class="nav-item"><a class="nav-link" data-section="hobbies">Hobbies</a></li>
+            <li class="nav-item"><a class="nav-link" data-section="contact">Contact</a></li>
+        </ul>
+    </section>
+
+        <section id="about" class="portfolio-section p-4 mb-4">
         <h2>About Me</h2>
-        <p>
-          I'm Chris, a novice programmer passionate about web development...
+        <p>I'm Chris, a novice programmer passionate about web development...
+
+        <br>
         </p>
-      </section>
 
-      <section id="skills" class="portfolio-section p-4 mb-4">
+        <ul class="nav justify-content-center section-nav">
+            <li class="nav-item"><a class="nav-link" data-section="home">Home</a></li>
+            <li class="nav-item"><a class="nav-link active" data-section="about">About</a></li>
+            <li class="nav-item"><a class="nav-link" data-section="skills">Skills</a></li>
+            <li class="nav-item"><a class="nav-link" data-section="education">Education</a></li>
+            <li class="nav-item"><a class="nav-link" data-section="hobbies">Hobbies</a></li>
+            <li class="nav-item"><a class="nav-link" data-section="contact">Contact</a></li>
+        </ul>
+    </section>
+
+    <section id="skills" class="portfolio-section p-4 mb-4">
         <h2>Skills</h2>
-        <p>HTML, CSS, JavaScript, PHP, MySQL, CodeIgniter, Bootstrap</p>
-      </section>
+        <p>HTML, CSS, JavaScript, PHP, MySQL, CodeIgniter, Bootstrap
 
-      <section id="education" class="portfolio-section p-4 mb-4">
+        <br>
+        
+        </p>
+
+        <ul class="nav justify-content-center section-nav">
+            <li class="nav-item"><a class="nav-link" data-section="home">Home</a></li>
+            <li class="nav-item"><a class="nav-link" data-section="about">About</a></li>
+            <li class="nav-item"><a class="nav-link active" data-section="skills">Skills</a></li>
+            <li class="nav-item"><a class="nav-link" data-section="education">Education</a></li>
+            <li class="nav-item"><a class="nav-link" data-section="hobbies">Hobbies</a></li>
+            <li class="nav-item"><a class="nav-link" data-section="contact">Contact</a></li>
+        </ul>
+    </section>
+
+    <section id="education" class="portfolio-section p-4 mb-4">
         <h2>Education</h2>
-        <p>Currently 4th year BSIT – St. Dominic College of Asia</p>
-      </section>
+        <p>Currently 4th year BSIT – St. Dominic College of Asia
 
-      <section id="hobbies" class="portfolio-section p-4 mb-4">
+        </p>
+
+        <ul class="nav justify-content-center section-nav">
+            <li class="nav-item"><a class="nav-link" data-section="home">Home</a></li>
+            <li class="nav-item"><a class="nav-link" data-section="about">About</a></li>
+            <li class="nav-item"><a class="nav-link" data-section="skills">Skills</a></li>
+            <li class="nav-item"><a class="nav-link active" data-section="education">Education</a></li>
+            <li class="nav-item"><a class="nav-link" data-section="hobbies">Hobbies</a></li>
+            <li class="nav-item"><a class="nav-link" data-section="contact">Contact</a></li>
+        </ul>
+    </section>
+
+    <section id="hobbies" class="portfolio-section p-4 mb-4">
         <h2>Hobbies</h2>
-        <p>Gaming, DJing, music production, reading tech articles...</p>
-      </section>
+        <p>Gaming, DJing, music production, reading articles, listening music,
+          browsing the internet
+          <br>
+          <br>
+        </p>
 
-      <section id="contact" class="portfolio-section p-4 mb-4">
+        <ul class="nav justify-content-center section-nav">
+            <li class="nav-item"><a class="nav-link" data-section="home">Home</a></li>
+            <li class="nav-item"><a class="nav-link" data-section="about">About</a></li>
+            <li class="nav-item"><a class="nav-link" data-section="skills">Skills</a></li>
+            <li class="nav-item"><a class="nav-link" data-section="education">Education</a></li>
+            <li class="nav-item"><a class="nav-link active" data-section="hobbies">Hobbies</a></li>
+            <li class="nav-item"><a class="nav-link" data-section="contact">Contact</a></li>
+        </ul>
+    </section>
+
+    <section id="contact" class="portfolio-section p-4 mb-4">
         <h2>Contact</h2>
-        <p>Email: fusillerochristian@gmail.com</p>
-      </section>
+        <p>Email: fusillerochristian@gmail.com 
+          <br>
+          <br>
+        </p>
+
+        <ul class="nav justify-content-center section-nav">
+            <li class="nav-item"><a class="nav-link" data-section="home">Home</a></li>
+            <li class="nav-item"><a class="nav-link" data-section="about">About</a></li>
+            <li class="nav-item"><a class="nav-link" data-section="skills">Skills</a></li>
+            <li class="nav-item"><a class="nav-link" data-section="education">Education</a></li>
+            <li class="nav-item"><a class="nav-link" data-section="hobbies">Hobbies</a></li>
+            <li class="nav-item"><a class="nav-link active" data-section="contact">Contact</a></li>
+        </ul>
+    </section>
+
+
+      </div>
+
+       
+
+    
+
+      
 
     </div>
-  </div>
+
+    </div>
+
 </div>
+
 
 
 <script>
@@ -271,7 +444,44 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
 });
+
+const sections = document.querySelectorAll('.portfolio-section');
+const navLinks = document.querySelectorAll('.nav-link');
+
+window.addEventListener('scroll', () => {
+    let current = "";
+
+    sections.forEach(sec => {
+        const rect = sec.getBoundingClientRect();
+
+        if (rect.top <= 150 && rect.bottom >= 150) {
+            current = sec.id;
+        }
+    });
+
+    navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.dataset.section === current) {
+            link.classList.add('active');
+        }
+    });
+});
+
+document.querySelectorAll('.nav-link').forEach(link => {
+    link.addEventListener('click', () => {
+        const section = document.getElementById(link.dataset.section);
+        if (section) {
+            section.scrollIntoView({ behavior: "smooth" });
+        }
+    });
+});
 </script>
 
+<div class="footer">
+<p>&copy; <?php echo date("Y"); ?> Admin Site. All Rights Reserved.</p>
+</div>
+
+
 </body>
+
 </html>

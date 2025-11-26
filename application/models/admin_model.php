@@ -81,5 +81,27 @@ class admin_model extends CI_Model
     }
 }
 
+    public function get_admin_by_id($id) {
+
+        return $this->$db->where('id', $id)->row_array();
+    }
+
+    public function update_admin_profile($id, $data) {
+
+        $update_fields = [
+            'firstname' => $data['firstname'] ?? null,
+            'lastname'  => $data['lastname'] ?? null,
+            'username'  => $data['username'] ?? null,
+            'email'     => $data['email'] ?? null,
+            'address'   => $data['address'] ?? null
+        ];
+
+        $this->db->where('id', $id);
+        $this->db->update('crud', $update_fields);
+
+        return ($this->db->affected_rows() >= 1);
+    }
+    
+
  
 }
