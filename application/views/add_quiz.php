@@ -93,8 +93,9 @@ body {
   text-align: center;
   font-size: 1em;
   margin-top: auto; 
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
 }
-
 
 @media (max-width: 991px) {
   .hero-section {
@@ -243,7 +244,7 @@ body {
 
                             <div class="input-group">
                                 <input type="number"
-                                      name="time_limit_minutes_total"
+                                      name="duration_minutes"
                                       class="form-control"
                                       min="0"
                                       placeholder="Enter total minutes (e.g. 90)">
@@ -251,12 +252,15 @@ body {
                             </div>
 
                             <small class="text-muted">
-                                Enter total minutes only. Leave empty or zero for no time limit.
+                                Leave empty or zero for no time limit.
                             </small>
                         </div>
 
+                        <button type="button" id="createGroupBtn" class="btn btn-primary btn-block mt-3">
+                            Create Quiz Group
+                        </button>
 
-                        <button type="button" id="saveGroupBtn" class="btn btn-success btn-block mt-3">
+                        <button type="button" id="finalSaveGroupBtn" class="btn btn-success btn-block mt-2" disabled>
                             Save Quiz Group
                         </button>
 
@@ -271,7 +275,7 @@ body {
                     <h6 class="mb-0">Questions in This Group</h6>
                 </div>
                 <div class="card-body" id="questionList">
-                    <p class="text-muted">No group created yet.</p>
+                    <p class="text-muted">Create a group first.</p>
                 </div>
             </div>
         </div>
@@ -290,85 +294,100 @@ body {
 
                         <form id="addQuestionForm">
 
-                            <input type="hidden" name="group_id" id="group_id" value="<?= $group_id ?>">
+                            <!-- GROUP ID injected AFTER saving group -->
+                            <input type="hidden" name="group_id" id="group_id" value="">
 
-                            <div class="form-group">
-                                <label>Question Type</label>
-                                <select class="form-control" id="quiz_type" name="quiz_type">
-                                    <option value="multiple_choice">Multiple Choice</option>
-                                    <option value="true_false">True or False</option>
-                                    <option value="identification">Identification</option>
-                                    <option value="enumeration">Enumeration</option>
-                                </select>
+                            <div class="alert alert-warning" id="noGroupWarning">
+                                You must create and save a quiz group before adding questions.
                             </div>
 
-                            <div class="form-group mt-3">
-                                <label>Question</label>
-                                <textarea class="form-control" name="question" required rows="2"></textarea>
-                            </div>
+                            <fieldset id="questionFieldset" disabled>
 
-                            <!-- MCQ -->
-                            <div id="multiple_choice_section">
-                                <label>Choices</label>
-
-                                <div id="choices_container">
-                                    <?php for ($i = 0; $i < 4; $i++): ?>
-                                        <div class="d-flex align-items-center mt-2 mc-choice-row">
-                                            <input type="radio" name="mc_correct_choice"
-                                                value="<?= $i ?>" class="form-check-input me-2">
-
-                                            <input type="text" class="form-control"
-                                                name="choices[]" placeholder="Choice <?= $i + 1 ?>">
-                                        </div>
-                                    <?php endfor; ?>
+                                <div class="form-group">
+                                    <label>Question Type</label>
+                                    <select class="form-control" id="quiz_type" name="quiz_type">
+                                        <option value="multiple_choice">Multiple Choice</option>
+                                        <option value="true_false">True or False</option>
+                                        <option value="identification">Identification</option>
+                                        <option value="enumeration">Enumeration</option>
+                                    </select>
                                 </div>
 
-                                <button type="button" id="add_choice_btn"
-                                        class="btn btn-sm btn-secondary mt-2">
-                                    + Add Another Choice
+                                <div class="form-group mt-3">
+                                    <label>Question</label>
+                                    <textarea class="form-control" name="question" required rows="2"></textarea>
+                                </div>
+
+                                <!-- MCQ -->
+                                <div id="multiple_choice_section">
+                                    <label>Choices</label>
+
+                                    <div id="choices_container">
+                                        <?php for ($i = 0; $i < 4; $i++): ?>
+                                            <div class="d-flex align-items-center mt-2 mc-choice-row">
+                                                <input type="radio" name="mc_correct_choice"
+                                                    value="<?= $i ?>" class="form-check-input me-2">
+
+                                                <input type="text" class="form-control"
+                                                    name="choices[]" placeholder="Choice <?= $i + 1 ?>">
+                                            </div>
+                                        <?php endfor; ?>
+                                    </div>
+
+                                    <button type="button" id="add_choice_btn"
+                                            class="btn btn-sm btn-secondary mt-2">
+                                        + Add Another Choice
+                                    </button>
+                                </div>
+
+                                <!-- TRUE/FALSE -->
+                                <div id="true_false_section" style="display:none;">
+                                    <label>Correct Answer</label>
+                                    <div class="form-check mt-2">
+                                        <input type="radio" name="tf_answer" value="True" class="form-check-input">
+                                        <label class="form-check-label">True</label>
+                                    </div>
+                                    <div class="form-check mt-2">
+                                        <input type="radio" name="tf_answer" value="False" class="form-check-input">
+                                        <label class="form-check-label">False</label>
+                                    </div>
+                                </div>
+
+                                <!-- IDENTIFICATION -->
+                                <div id="identification_section" style="display:none;">
+                                    <label>Correct Answer</label>
+                                    <input type="text" class="form-control" name="identification_answer">
+                                </div>
+
+                                <!-- ENUMERATION -->
+                                <div id="enumeration_section" style="display:none;">
+                                    <label>Enumeration Answers</label>
+                                    <div id="enum_container">
+                                        <input type="text" class="form-control mt-2" name="enumeration_answers[]" placeholder="Answer 1">
+                                    </div>
+                                    <button type="button" id="add_enum" class="btn btn-sm btn-secondary mt-2">
+                                        Add More
+                                    </button>
+                                </div>
+
+                                <button type="button" id="addQuestionBtn"
+                                        class="btn btn-primary btn-block mt-3">
+                                    Add Question to Group
                                 </button>
-                            </div>
 
-                            <!-- TRUE/FALSE -->
-                            <div id="true_false_section" style="display:none;">
-                                <label>Correct Answer</label>
-                                <div class="form-check mt-2">
-                                    <input type="radio" name="tf_answer" value="True" class="form-check-input">
-                                    <label class="form-check-label">True</label>
-                                </div>
-                                <div class="form-check mt-2">
-                                    <input type="radio" name="tf_answer" value="False" class="form-check-input">
-                                    <label class="form-check-label">False</label>
-                                </div>
-                            </div>
-
-                            <!-- IDENTIFICATION -->
-                            <div id="identification_section" style="display:none;">
-                                <label>Correct Answer</label>
-                                <input type="text" class="form-control" name="identification_answer">
-                            </div>
-
-                            <!-- ENUMERATION -->
-                            <div id="enumeration_section" style="display:none;">
-                                <label>Enumeration Answers</label>
-                                <div id="enum_container">
-                                    <input type="text" class="form-control mt-2" name="enumeration_answers[]" placeholder="Answer 1">
-                                </div>
-                                <button type="button" id="add_enum" class="btn btn-sm btn-secondary mt-2">
-                                    Add More
-                                </button>
-                            </div>
-
-                            <button type="button" id="addQuestionBtn"
-                                    class="btn btn-primary btn-block mt-3">
-                                Add Question to Group
-                            </button>
+                            </fieldset>
 
                         </form>
 
                     </div>
 
                 </div>
+
+                <br />
+
+                <a href="<?= base_url('index.php/admin_Main/quizbee'); ?>" class="btn btn-secondary mb-3 ms-2">
+                    Back to Dashboard
+                </a>
 
             </div>
 
@@ -379,43 +398,76 @@ body {
 
 
 <script>
-let groupID = "<?= $group_id ?>";
+let groupID = null; 
+let groupCreated = false;
 
 
-document.getElementById("saveGroupBtn").onclick = function () {
+document.getElementById("createGroupBtn").onclick = function () {
     let form = document.getElementById("quizgroupform");
     let data = new FormData(form);
 
-    fetch("<?= base_url('index.php/admin_Main/save_quiz_group'); ?>", {
+    fetch("<?= base_url('index.php/admin_Main/create_temp_group'); ?>", {
         method: "POST",
         body: data
     })
-    .then(res => res.text())
-    .then(id => {
+    .then(res => res.json())
+    .then(res => {
+        if (res.status === "success") { 
+            groupID = res.group_id;
+            groupCreated = true;
 
-        if (!id || isNaN(id)) {
-            alert("Failed to create group");
-            return;
+            document.getElementById("group_id").value = groupID;
+
+   
+            document.getElementById("questionFieldset").disabled = false;
+            document.getElementById("finalSaveGroupBtn").disabled = false;
+
+            loadTempQuestions();
+            alert("Quiz Group created! Now you can add questions.");
+        } else {
+            alert(res.message || "Failed to create group");
         }
-
-        groupID = id;
-        document.getElementById("group_id").value = id;
-
-        loadQuestions(id);
-
-        alert("Quiz group created!");
-    });
+    })
+    .catch(() => alert("Error creating group"));
 };
 
 
-function loadQuestions(gid) {
-    fetch("<?= base_url('index.php/admin_Main/get_questions_by_group/'); ?>" + gid)
+document.getElementById("addQuestionBtn").onclick = function () {
+    if (!groupCreated) {
+        alert("Please create a quiz group first.");
+        return;
+    }
+
+    let form = document.getElementById("addQuestionForm");
+    let data = new FormData(form);
+
+    fetch("<?= base_url('index.php/admin_Main/temp_add_question'); ?>", {
+        method: "POST",
+        body: data
+    })
+    .then(res => res.json())
+    .then(res => {
+        if (res.status === "success") {
+            form.reset();
+            loadTempQuestions();
+        } else {
+            alert(res.message || "Failed to add question");
+        }
+    })
+    .catch(() => alert("Error adding question"));
+};
+
+
+function loadTempQuestions() {
+    if (!groupCreated) return;
+
+    fetch("<?= base_url('index.php/admin_Main/get_temp_questions/'); ?>" + groupID)
         .then(res => res.json())
         .then(data => {
             let box = document.getElementById("questionList");
 
-            if (data.length === 0) {
-                box.innerHTML = `<p class='text-muted'>No questions added yet.</p>`;
+            if (!data.length) {
+                box.innerHTML = `<p class="text-muted">No questions added yet.</p>`;
                 return;
             }
 
@@ -434,31 +486,6 @@ function loadQuestions(gid) {
 }
 
 
-if (groupID) loadQuestions(groupID);
-
-
-document.getElementById("addQuestionBtn").onclick = function () {
-
-    if (!groupID || groupID === "null") {
-        alert("Please create a quiz group first.");
-        return;
-    }
-
-    let form = document.getElementById("addQuestionForm");
-    let data = new FormData(form);
-
-    fetch("<?= base_url('index.php/admin_Main/save_quiz'); ?>", {
-        method: "POST",
-        body: data
-    })
-    .then(res => res.text())
-    .then(() => {
-        alert("Question added!");
-        form.reset();
-        loadQuestions(groupID);
-    });
-};
-
 document.getElementById("quiz_type").addEventListener("change", function () {
     document.getElementById("multiple_choice_section").style.display =
         this.value === "multiple_choice" ? "block" : "none";
@@ -473,13 +500,14 @@ document.getElementById("quiz_type").addEventListener("change", function () {
         this.value === "enumeration" ? "block" : "none";
 });
 
+
 document.getElementById("add_enum").onclick = () => {
     let f = document.createElement("input");
     f.type = "text";
     f.classList.add("form-control", "mt-2");
     f.name = "enumeration_answers[]";
     f.placeholder = "Another Answer";
-    enum_container.appendChild(f);
+    document.getElementById("enum_container").appendChild(f);
 };
 
 document.getElementById("add_choice_btn").onclick = () => {
@@ -488,15 +516,56 @@ document.getElementById("add_choice_btn").onclick = () => {
 
     let row = document.createElement("div");
     row.className = "d-flex align-items-center mt-2 mc-choice-row";
-
     row.innerHTML = `
         <input type="radio" name="mc_correct_choice" value="${index}" class="form-check-input me-2">
         <input type="text" class="form-control" name="choices[]" placeholder="New Choice">
     `;
-
     container.appendChild(row);
 };
+
+
+document.getElementById("finalSaveGroupBtn").onclick = function () {
+    if (!groupCreated || !groupID) {
+        alert("Please create a group first.");
+        return;
+    }
+
+    let form = document.getElementById("quizgroupform");
+    let data = new FormData(form);
+    data.set("group_id", groupID); 
+
+
+    const btn = this;
+    btn.disabled = true;
+
+    fetch("<?= base_url('index.php/admin_Main/save_quiz_group_final'); ?>", {
+        method: "POST",
+        body: data
+    })
+    .then(res => res.json())
+    .then(res => {
+        btn.disabled = false;
+
+        if (res.status === "success") {
+            alert("Quiz Group saved successfully!");
+            window.location.href = "<?= base_url('index.php/admin_Main/quiz_list'); ?>";
+        } else {
+            alert(res.message || "Failed to save quiz group");
+        }
+    })
+    .catch(() => {
+        btn.disabled = false;
+        alert("Error saving quiz group");
+    });
+};
+
+
+
+document.getElementById("questionFieldset").disabled = true;
+document.getElementById("finalSaveGroupBtn").disabled = true;
+
 </script>
+
 
 
 

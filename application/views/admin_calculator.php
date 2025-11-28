@@ -38,7 +38,7 @@
 <style>
 
 body {
-  background-image: url('<?php echo base_url("assets/portfolio_image/emeraldgreen.jpg"); ?>');
+  background-color: #e4e4e4ff;
   background-size: cover;         
   background-position: center;    
   background-repeat: no-repeat;   
@@ -61,74 +61,128 @@ body {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
-.main-container {
-  
-  padding-top: 90px;
-  box-sizing: border-box;
 
-  
+.main-container {
+  padding-top: 90px;
   height: calc(100vh - 90px);
   display: flex;
   align-items: center;
   justify-content: center;
-
- 
-  overflow: hidden;
+  box-sizing: border-box;
+  
 }
 
 
 .calculator {
   font-family: 'Roboto Mono', monospace;
   width: 100%;
-  max-width: 340px;        
-  background-color: #222;
-  border-radius: 12px;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.3);
-  overflow: hidden;
+  max-width: 340px;
+
+  background: #2b2f36;
+  border-radius: 18px;
+
+  padding: 18px;                 /* Creates outer edge */
+  box-shadow:
+    0 8px 25px rgba(0,0,0,0.4),
+    0 0 5px rgba(255,255,255,0.05) inset;
+
+  display: flex;
+  flex-direction: column;
+  gap: 16px;                     /* space between display and buttons */
 }
 
 
 .display {
-  background-color: #a8a8a8ff;
-  padding: 16px 18px;      
+  background: #3c424d;
+  padding: 18px;
+  border-radius: 12px;
   text-align: right;
+
+  box-shadow:
+    inset 0 2px 6px rgba(0,0,0,0.6),
+    inset 0 -2px 4px rgba(255,255,255,0.05);
 }
 
-
 .display .result {
-  font-size: 2.6rem;       
-  line-height: 1;
-  color: #fff;
-  width: 100%;
-  background: transparent;
+  font-size: 2.6rem;
+  color: #f7f7f7;
   border: none;
+  background: transparent;
   outline: none;
+  width: 100%;
 }
 
 
 .buttons {
+  background: #2b2f36;
+  padding: 8px;                     
+  border-radius: 14px;
+
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 1px;
-  background-color: #333;
+  gap: 8px;                      
 }
 
 
 .buttons button {
+  padding: 16px;
+  font-size: 1.3em;
   border: none;
-  padding: 14px;           
-  min-height: 56px;       
-  font-size: 1.3em;        
-  cursor: pointer;
-  background-color: #555;
+  border-radius: 10px;
+
+  background: #4a505c;
   color: #fff;
-  transition: background 0.2s ease;
+  cursor: pointer;
+
+  transition: 0.15s ease;
+  box-shadow:
+    0 3px 6px rgba(0,0,0,0.4),
+    inset 0 -2px 3px rgba(255,255,255,0.06);
 }
 
 
-.clear, .number, .decimal { background-color: #555; }
-.operator, .equals { background-color: #ff9800; color: #fff; }
-.zero { grid-column: span 2; }
+.buttons button:hover {
+  background: #5a606c;
+}
+
+.buttons button:active {
+  transform: scale(0.96);
+  background: #6a707c;
+}
+
+
+.operator,
+.equals {
+  background: #ff8c1a;
+  color: #fff;
+  font-weight: bold;
+  box-shadow:
+    0 3px 6px rgba(255,140,26,0.4),
+    inset 0 -2px 3px rgba(255,255,255,0.1);
+}
+
+.operator:hover,
+.equals:hover {
+  background: #ffa033;
+}
+
+.operator:active,
+.equals:active {
+  transform: scale(0.96);
+}
+
+
+.clear,
+.number,
+.decimal {
+  background: #4a505c;
+}
+
+.zero {
+  grid-column: span 2;
+}
+
+
 
 
 @media (max-width: 768px) {
@@ -155,6 +209,8 @@ body {
 </style>
 
 </head>
+
+
 
 <title>Calculator</title>
 
