@@ -3,22 +3,56 @@
 class Quiz_model extends CI_Model {
 
     public function createQuizGroup($data)
-    {
-        $insertData = [
-            'group_title'       => $data['group_title'],
-            'description'       => $data['description'] ?? null,
-            'date_created'      => date("Y-m-d H:i:s"),
-            'duration_minutes'  => $data['duration_minutes'] ?? 0
-        ];
+{
+    // Prevent duplicated quiz group titles
+    $this->db->where('group_title', $data['group_title']);
+    $existing = $this->db->get('quiz_groups')->row();
 
-        $this->db->insert('quiz_groups', $insertData);
-        return $this->db->insert_id();
+    if ($existing) {
+        return [
+            'status' => 'duplicate',
+            'group_id' => $existing->id
+        ];
     }
+
+    $insertData = [
+        'group_title'       => $data['group_title'],
+        'description'       => $data['description'] ?? null,
+        'date_created'      => date("Y-m-d H:i:s"),
+        'duration_minutes'  => $data['duration_minutes'] ?? 0
+    ];
+
+    $this->db->insert('quiz_groups', $insertData);
+    
+    return [
+        'status' => 'success',
+        'group_id' => $this->db->insert_id()
+    ];
+}
+
 
 
    
     public function createQuizQuestion($data)
 {
+    // Validate required fields
+    if (empty($data['group_id']) || empty($data['type']) || empty($data['question'])) {
+        return false;
+    }
+
+    // Check if group exists
+    $group = $this->db->where('group_id', $data['group_id'])
+                      ->get('quiz_groups')
+                      ->row_array();
+
+    if (!$group) {
+        return false; // Invalid group
+    }
+
+    // Start transaction (prevents partial inserts)
+    $this->db->trans_start();
+
+    // Insert question
     $insertQuestion = [
         'question_type' => $data['type'],
         'question'      => $data['question'],
@@ -26,23 +60,31 @@ class Quiz_model extends CI_Model {
         'answer'        => $data['answer']
     ];
 
-
     $this->db->insert('quiz_questions', $insertQuestion);
     $question_id = $this->db->insert_id();
 
-    
+    // Insert into link table
     $this->db->insert('quiz_group_questions', [
         'group_id'    => $data['group_id'],
         'question_id' => $question_id
     ]);
 
-    
-    $this->db->set('question_amount', 'question_amount+1', FALSE)
+    // Update question count
+    $this->db->set('question_amount', 'question_amount + 1', false)
              ->where('group_id', $data['group_id'])
              ->update('quiz_groups');
 
+    // Complete transaction
+    $this->db->trans_complete();
+
+    // Check success
+    if ($this->db->trans_status() === FALSE) {
+        return false;
+    }
+
     return $question_id;
 }
+
 
 
 

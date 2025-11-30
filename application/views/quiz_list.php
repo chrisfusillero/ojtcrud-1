@@ -373,15 +373,11 @@ body {
                             </small>
                         </p>
 
-                      <a href="<?= base_url('index.php/admin_Main/edit_quiz/'.$g['group_id']); ?>" 
-                         class="btn btn-primary btn-sm">
-                            Manage Questions
-                      </a>
 
 
 
 
-                        <a href="<?= base_url('index.php/admin_Main/quiz_questions_list/' . ($g['id'] ?? 0)); ?>" 
+                        <a href="<?= base_url('index.php/admin_Main/quiz_questions_list/' . ($g['group_id'] ?? 0)); ?>" 
                            class="btn btn-outline-secondary btn-sm ms-2">
                             View Questions
                         </a>
