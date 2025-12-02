@@ -34,56 +34,43 @@ class Quiz_model extends CI_Model {
 
    
     public function createQuizQuestion($data)
-{
-    // Validate required fields
-    if (empty($data['group_id']) || empty($data['type']) || empty($data['question'])) {
-        return false;
+    {
+        if (empty($data['group_id']) || empty($data['type']) || empty($data['question'])) {
+            return false;
+        }
+
+        $group = $this->db->where('group_id', $data['group_id'])
+                          ->get('quiz_groups')
+                          ->row_array();
+        if (!$group) return false;
+
+        $this->db->trans_start();
+
+        // Insert question
+        $insertQuestion = [
+            'question_type' => $data['type'],
+            'question'      => $data['question'],
+            'choices'       => $data['choices'] ?? null,
+            'answer'        => $data['answer']
+        ];
+        $this->db->insert('quiz_questions', $insertQuestion);
+        $question_id = $this->db->insert_id();
+
+        // Link to group
+        $this->db->insert('quiz_group_questions', [
+            'group_id'    => $data['group_id'],
+            'question_id' => $question_id
+        ]);
+
+        // Update question count
+        $this->db->set('question_amount', 'question_amount + 1', false)
+                 ->where('group_id', $data['group_id'])
+                 ->update('quiz_groups');
+
+        $this->db->trans_complete();
+
+        return $this->db->trans_status() ? $question_id : false;
     }
-
-    // Check if group exists
-    $group = $this->db->where('group_id', $data['group_id'])
-                      ->get('quiz_groups')
-                      ->row_array();
-
-    if (!$group) {
-        return false; // Invalid group
-    }
-
-    // Start transaction (prevents partial inserts)
-    $this->db->trans_start();
-
-    // Insert question
-    $insertQuestion = [
-        'question_type' => $data['type'],
-        'question'      => $data['question'],
-        'choices'       => $data['choices'] ?? null,
-        'answer'        => $data['answer']
-    ];
-
-    $this->db->insert('quiz_questions', $insertQuestion);
-    $question_id = $this->db->insert_id();
-
-    // Insert into link table
-    $this->db->insert('quiz_group_questions', [
-        'group_id'    => $data['group_id'],
-        'question_id' => $question_id
-    ]);
-
-    // Update question count
-    $this->db->set('question_amount', 'question_amount + 1', false)
-             ->where('group_id', $data['group_id'])
-             ->update('quiz_groups');
-
-    // Complete transaction
-    $this->db->trans_complete();
-
-    // Check success
-    if ($this->db->trans_status() === FALSE) {
-        return false;
-    }
-
-    return $question_id;
-}
 
 
 
@@ -99,10 +86,9 @@ class Quiz_model extends CI_Model {
 
     public function get_quiz_group($group_id)
     {
-        return $this->db
-            ->where('group_id', $group_id)
-            ->get('quiz_groups')
-            ->row_array();
+        return $this->db->where('group_id', $group_id)
+                        ->get('quiz_groups')
+                        ->row_array();
     }
 
 
@@ -153,16 +139,28 @@ class Quiz_model extends CI_Model {
     }
 
 
+   
+
     public function get_questions_by_group($group_id)
     {
         return $this->db
-            ->select('quiz_questions.*')
+            ->select('quiz_questions.id, quiz_questions.question, quiz_questions.question_type')
             ->from('quiz_group_questions')
             ->join('quiz_questions', 'quiz_questions.id = quiz_group_questions.question_id')
             ->where('quiz_group_questions.group_id', $group_id)
+            ->order_by('quiz_questions.id', 'ASC')
             ->get()
-            ->result_array();
+            ->result();
     }
+
+
+    public function get_single_question($id)
+    {
+    return $this->db->where('question_id', $id)
+                    ->get('quiz_questions')
+                    ->row();
+    }
+
 
 
   
@@ -194,9 +192,7 @@ class Quiz_model extends CI_Model {
     }
 
 
-    /* ============================================
-        UPDATE GROUP DETAILS
-    ============================================ */
+    
     public function update_quiz_group($group_id, $data)
     {
         return $this->db
@@ -205,13 +201,32 @@ class Quiz_model extends CI_Model {
     }
 
 
-    /* ============================================
-        UPDATE A SINGLE QUESTION
-    ============================================ */
+    
     public function update_quiz_question($question_id, $data)
     {
         return $this->db
             ->where('id', $question_id)
             ->update('quiz_questions', $data);
     }
+
+
+
+ 
+    public function deleteQuestionsByGroup($group_id)
+    {
+        
+        $this->db->where('group_id', $group_id)
+                ->delete('quiz_group_questions');
+    }
+
+    
+    public function deleteGroup($group_id)
+    {
+        $this->db->where('group_id', $group_id)
+                ->delete('quiz_groups');
+    }
+
+
+    
+
 }

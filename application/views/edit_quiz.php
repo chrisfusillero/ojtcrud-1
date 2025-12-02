@@ -1,3 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+
+  <link rel="stylesheet" href="<?php echo base_url('assets/css/bootstrap.min.css'); ?>">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/izitoast@1.4.0/dist/css/iziToast.min.css">
+
+
+  <script src="<?php echo base_url("assets/js/jquery-3.7.1.min.js"); ?>"></script>
+
+
+  <script type="text/javascript" src="<?php echo base_url("assets/js/bootstrap.min.js"); ?>"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/izitoast@1.4.0/dist/js/iziToast.min.js"></script>
+
+  
+  <script type="text/javascript">
+    window.history.forward();
+    function noBack() { 
+      window.history.forward(); 
+    }
+  </script>
+
 <style>
 
 body {
@@ -219,49 +253,44 @@ body {
                 </div>
                 <div class="card-body">
 
-                    <?php echo form_open('admin_Main/update_quiz_group/' . $groups['id']); ?>
+                    <?php echo form_open('admin_Main/update_quiz_group/' . $group['group_id']); ?>
 
                         <!-- Group Title -->
                         <div class="form-group">
                             <label>Group Title</label>
                             <input type="text" name="group_title" class="form-control" 
-                                   value="<?= htmlentities($groups['group_title']) ?>" required>
+                                   value="<?= htmlentities($group['group_title']) ?>" required>
                         </div>
 
                         <!-- Description -->
                         <div class="form-group mt-3">
                             <label>Description</label>
-                            <textarea name="description" class="form-control" rows="3"><?= htmlentities($groups['description']) ?></textarea>
+                            <textarea name="description" class="form-control" rows="3"><?= htmlentities($group['description']) ?></textarea>
                         </div>
 
                         <!-- TIMER FIELDS -->
                         <div class="form-group mt-3">
-                            <label>Time Limit</label>
+                            <label class="fw-bold">Time Limit</label>
 
-                            <div class="row">
-                                <div class="col-6">
-                                    <input type="number" 
-                                           name="time_limit_hours" 
-                                           class="form-control"
-                                           min="0"
-                                           value="<?= $groups['time_hours'] ?>"
-                                           placeholder="Hours">
-                                </div>
-
-                                <div class="col-6">
-                                    <input type="number" 
-                                           name="time_limit_minutes" 
-                                           class="form-control"
-                                           min="0"
-                                           value="<?= $groups['time_minutes'] ?>"
-                                           placeholder="Minutes">
-                                </div>
+                            <div class="input-group">
+                                <input type="number"
+                                      name="duration_minutes"
+                                      class="form-control"
+                                      min="0"
+                                      placeholder="Enter total minutes (e.g. 90)"
+                                      value="<?= htmlentities($group['duration_minutes'] ?? '') ?>">
+                                <span class="input-group-text">Minutes</span>
                             </div>
 
-                            <small class="text-muted">Set both to 0 for no time limit.</small>
+                            <small class="text-muted">
+                                Leave empty or zero for no time limit.
+                            </small>
                         </div>
 
                         <button class="btn btn-success btn-block mt-3">Update Quiz Group</button>
+                        <br />
+                        <br />
+                        <a href="<?= base_url('index.php/admin_Main/quiz_list'); ?>" class="btn btn-secondary mb-3 ms-2">Back to Dashboard</a>
 
                     <?php echo form_close(); ?>
 
@@ -270,35 +299,26 @@ body {
 
             <!-- LIST OF EXISTING QUESTIONS -->
             <div class="card shadow-sm mt-4">
-                <div class="card-header bg-secondary text-white">
-                    <h6 class="mb-0">Questions in This Group</h6>
-                </div>
+    <div class="card-header bg-secondary text-white">
+        <h6 class="mb-0">Questions in This Group</h6>
+    </div>
 
-                <div class="card-body" id="questionList">
-                    <?php if (empty($quizzes)): ?>
-                        <p class="text-muted">No questions added yet.</p>
-                    <?php else: ?>
-                        <?php foreach ($quizzes as $q): ?>
-                            <div class="alert alert-primary">
-                                <strong><?= htmlentities($q['question']) ?></strong>
-                                <br>
-                                <span class="text-muted">
-                                    Type: <?= ucfirst(str_replace('_', ' ', $q['type'])) ?>
-                                </span>
-
-                                <div class="mt-2">
-                                    <a href="<?= base_url('index.php/admin_Main/edit_question/' . $q['id']); ?>" 
-                                       class="btn btn-sm btn-info">Edit</a>
-
-                                    <a href="<?= base_url('index.php/admin_Main/delete_question/' . $q['id']); ?>" 
-                                       class="btn btn-sm btn-danger"
-                                       onclick="return confirm('Delete this question?');">Delete</a>
-                                </div>
-                            </div>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
-                </div>
+    <div class="card-body" id="questionList">
+                <?php if (empty($questions)): ?>
+                    <p class="text-muted">No questions added yet.</p>
+                <?php else: ?>
+                    <?php foreach ($questions as $q): ?>
+                        <div class="alert alert-primary py-2 mb-2 question-item"
+                            data-id="<?= $q->id; ?>"
+                            style="cursor:pointer;">
+                            <?= htmlentities($q->question); ?>
+                            <br>
+                            <small class="text-muted">Type: <?= ucfirst(str_replace('_', ' ', $q->question_type)) ?></small>
+                        </div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
             </div>
+        </div>
 
         </div>
 
@@ -312,38 +332,41 @@ body {
 
                 <div class="card-body">
 
-                    <?php echo form_open('admin_Main/update_question/' . $question['id']); ?>
+                    <?php if (isset($question) && !empty($question)): ?>
+                        <?php echo form_open('admin_Main/update_question/' . $question['id']); ?>
 
                         <!-- Type -->
                         <div class="form-group">
                             <label>Question Type</label>
                             <select class="form-control" id="quiz_type" name="quiz_type">
-                                <option value="multiple_choice"  <?= $question['type']=='multiple_choice'?'selected':'' ?>>Multiple Choice</option>
-                                <option value="true_false"       <?= $question['type']=='true_false'?'selected':'' ?>>True or False</option>
-                                <option value="identification"   <?= $question['type']=='identification'?'selected':'' ?>>Identification</option>
-                                <option value="enumeration"      <?= $question['type']=='enumeration'?'selected':'' ?>>Enumeration</option>
+                                <option value="multiple_choice"  <?= ($question['type']=='multiple_choice')?'selected':'' ?>>Multiple Choice</option>
+                                <option value="true_false"       <?= ($question['type']=='true_false')?'selected':'' ?>>True or False</option>
+                                <option value="identification"   <?= ($question['type']=='identification')?'selected':'' ?>>Identification</option>
+                                <option value="enumeration"      <?= ($question['type']=='enumeration')?'selected':'' ?>>Enumeration</option>
                             </select>
                         </div>
 
                         <!-- Question Text -->
                         <div class="form-group mt-3">
                             <label>Question</label>
-                            <textarea class="form-control" name="question" rows="2"><?= $question['question'] ?></textarea>
+                            <textarea class="form-control" name="question" rows="2"><?= htmlentities($question['question']) ?></textarea>
                         </div>
 
                         <!-- MULTIPLE CHOICE -->
-                        <div id="multiple_choice_section" style="<?= $question['type']=='multiple_choice'?'':'display:none' ?>">
+                        <div id="multiple_choice_section" style="<?= ($question['type']=='multiple_choice')?'':'display:none' ?>">
 
                             <label>Choices</label>
                             <div id="choices_container">
-                                <?php foreach ($question['choices'] as $i => $choice): ?>
-                                    <div class="input-group mt-2">
-                                        <span class="input-group-text">
-                                            <input type="radio" name="mc_correct" value="<?= $i ?>" <?= ($choice == $question['answer'])?'checked':'' ?>>
-                                        </span>
-                                        <input type="text" class="form-control" name="choices[]" value="<?= htmlentities($choice) ?>">
-                                    </div>
-                                <?php endforeach; ?>
+                                <?php if (!empty($question['choices']) && is_array($question['choices'])): ?>
+                                    <?php foreach ($question['choices'] as $i => $choice): ?>
+                                        <div class="input-group mt-2">
+                                            <span class="input-group-text">
+                                                <input type="radio" name="mc_correct" value="<?= $i ?>" <?= ($choice == $question['answer'])?'checked':'' ?>>
+                                            </span>
+                                            <input type="text" class="form-control" name="choices[]" value="<?= htmlentities($choice) ?>">
+                                        </div>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
                             </div>
 
                             <button type="button" class="btn btn-sm btn-secondary mt-2" id="add_choice_btn">
@@ -352,37 +375,39 @@ body {
                         </div>
 
                         <!-- TRUE / FALSE -->
-                        <div id="true_false_section" style="<?= $question['type']=='true_false'?'':'display:none' ?>">
+                        <div id="true_false_section" style="<?= ($question['type']=='true_false')?'':'display:none' ?>">
 
                             <label>Correct Answer</label>
 
                             <div class="form-check mt-2">
                                 <input type="radio" name="tf_answer" value="True" class="form-check-input" 
-                                       <?= $question['answer']=='True'?'checked':'' ?>>
+                                       <?= ($question['answer']=='True')?'checked':'' ?>>
                                 <label class="form-check-label">True</label>
                             </div>
 
                             <div class="form-check mt-2">
                                 <input type="radio" name="tf_answer" value="False" class="form-check-input" 
-                                       <?= $question['answer']=='False'?'checked':'' ?>>
+                                       <?= ($question['answer']=='False')?'checked':'' ?>>
                                 <label class="form-check-label">False</label>
                             </div>
                         </div>
 
                         <!-- IDENTIFICATION -->
-                        <div id="identification_section" style="<?= $question['type']=='identification'?'':'display:none' ?>">
+                        <div id="identification_section" style="<?= ($question['type']=='identification')?'':'display:none' ?>">
                             <label>Correct Answer</label>
                             <input type="text" class="form-control" name="identification_answer" 
-                                   value="<?= htmlentities($question['answer']) ?>">
+                                   value="<?= htmlentities($question['answer'] ?? '') ?>">
                         </div>
 
                         <!-- ENUMERATION -->
-                        <div id="enumeration_section" style="<?= $question['type']=='enumeration'?'':'display:none' ?>">
+                        <div id="enumeration_section" style="<?= ($question['type']=='enumeration')?'':'display:none' ?>">
                             <label>Enumeration Answers</label>
                             <div id="enum_container">
-                                <?php foreach ($question['choices'] as $ans): ?>
-                                    <input type="text" class="form-control mt-2" name="enumeration_answers[]" value="<?= htmlentities($ans) ?>">
-                                <?php endforeach; ?>
+                                <?php if (!empty($question['choices']) && is_array($question['choices'])): ?>
+                                    <?php foreach ($question['choices'] as $ans): ?>
+                                        <input type="text" class="form-control mt-2" name="enumeration_answers[]" value="<?= htmlentities($ans) ?>">
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
                             </div>
 
                             <button type="button" id="add_enum" class="btn btn-sm btn-secondary mt-2">Add More</button>
@@ -390,7 +415,11 @@ body {
 
                         <button class="btn btn-primary btn-block mt-3">Update Question</button>
 
-                    <?php echo form_close(); ?>
+                        <?php echo form_close(); ?>
+
+                    <?php else: ?>
+                        <p class="text-muted">Select a question to edit from the left list.</p>
+                    <?php endif; ?>
 
                 </div>
             </div>
@@ -399,6 +428,7 @@ body {
     </div>
 
 </div>
+
 
 <script>
 
@@ -431,6 +461,85 @@ document.getElementById('add_enum').onclick = () => {
     f.placeholder = "Another Answer";
     c.appendChild(f);
 };
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    const questionItems = document.querySelectorAll('.question-item');
+
+    questionItems.forEach(item => {
+        item.addEventListener('click', function() {
+            const questionId = this.getAttribute('data-id');
+
+            fetch(`<?= base_url('index.php/admin_Main/get_question/'); ?>${questionId}`)
+                .then(res => res.json())
+                .then(resp => {
+                    if(resp.status === 'success' && resp.data) {
+                        const data = resp.data; // the question object
+
+                        // Update the select and textarea
+                        const typeSelect = document.querySelector('select[name="quiz_type"]');
+                        const questionTextarea = document.querySelector('textarea[name="question"]');
+                        typeSelect.value = data.question_type || '';
+                        questionTextarea.value = data.question || '';
+
+                        // Hide all sections first
+                        document.getElementById('multiple_choice_section').style.display = 'none';
+                        document.getElementById('true_false_section').style.display = 'none';
+                        document.getElementById('identification_section').style.display = 'none';
+                        document.getElementById('enumeration_section').style.display = 'none';
+
+                        // Show the correct section and populate choices
+                        if(data.question_type === 'multiple_choice') {
+                            document.getElementById('multiple_choice_section').style.display = 'block';
+                            const container = document.getElementById('choices_container');
+                            container.innerHTML = '';
+
+                            if(Array.isArray(data.choices)) {
+                                data.choices.forEach((c, i) => {
+                                    container.innerHTML += `
+                                        <div class="input-group mt-2">
+                                            <span class="input-group-text">
+                                                <input type="radio" name="mc_correct" value="${i}" ${c === data.answer ? 'checked' : ''}>
+                                            </span>
+                                            <input type="text" class="form-control" name="choices[]" value="${c}">
+                                        </div>
+                                    `;
+                                });
+                            }
+                        } else if(data.question_type === 'true_false') {
+                            document.getElementById('true_false_section').style.display = 'block';
+                            const trueInput = document.querySelector('input[name="tf_answer"][value="True"]');
+                            const falseInput = document.querySelector('input[name="tf_answer"][value="False"]');
+                            if(data.answer === 'True') trueInput.checked = true;
+                            if(data.answer === 'False') falseInput.checked = true;
+                        } else if(data.question_type === 'identification') {
+                            document.getElementById('identification_section').style.display = 'block';
+                            document.querySelector('input[name="identification_answer"]').value = data.answer || '';
+                        } else if(data.question_type === 'enumeration') {
+                            document.getElementById('enumeration_section').style.display = 'block';
+                            const enumContainer = document.getElementById('enum_container');
+                            enumContainer.innerHTML = '';
+                            if(Array.isArray(data.choices)) {
+                                data.choices.forEach(ans => {
+                                    enumContainer.innerHTML += `<input type="text" class="form-control mt-2" name="enumeration_answers[]" value="${ans}">`;
+                                });
+                            }
+                        }
+
+                        // Optional: scroll to edit card
+                        const editCard = document.querySelector('.col-md-8 .card');
+                        editCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+                    } else {
+                        alert(resp.message || 'Failed to load question.');
+                    }
+                })
+                .catch(err => console.error(err));
+        });
+    });
+});
+
+
 </script>
 
 </body>

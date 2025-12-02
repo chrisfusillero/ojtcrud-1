@@ -382,6 +382,13 @@ body {
                             View Questions
                         </a>
 
+                        <a href="<?= base_url('index.php/admin_Main/delete_quiz/' . ($g['group_id'] ?? 0)); ?>" 
+                          class="btn btn-danger btn-sm ms-2"
+                          onclick="return confirm('Are you sure you want to delete this quiz group and all its questions?');">
+                            Delete Group
+                        </a>
+
+
                     </div>
                 </div>
             </div>

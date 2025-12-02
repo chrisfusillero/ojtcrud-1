@@ -323,10 +323,10 @@ body {
 <body>
 
 <div class="container my-5">
-    <h2 class="mb-4"><?= htmlentities($group['group_title'] ?? 'Untitled Group') ?></h2>
-    <p><?= htmlentities($group['description'] ?? '') ?></p>
+    <h2 class="mb-4"><?= htmlentities(is_object($group) ? $group->group_title : $group['group_title'] ?? 'Untitled Group') ?></h2>
+    <p><?= htmlentities(is_object($group) ? $group->description : $group['description'] ?? '') ?></p>
 
-    <a href="<?= base_url('index.php/admin_Main/edit_quiz/' . $group['group_id']) ?>" class="btn btn-primary mb-3">Edit Group</a>
+    <a href="<?= base_url('index.php/admin_Main/edit_quiz/' . $group_id) ?>" class="btn btn-primary mb-3">Edit Group</a>
     <a href="<?= base_url('index.php/admin_Main/quiz_list') ?>" class="btn btn-secondary mb-3 ms-2">Back to Quiz List</a>
 
     <?php if (!empty($questions)): ?>
@@ -341,24 +341,32 @@ body {
                 </tr>
             </thead>
             <tbody>
-            <?php foreach ($questions as $i => $q): ?>
-                <tr>
-                    <td><?= $i + 1 ?></td>
-                    <td><?= htmlentities($q['question']) ?></td>
-                    <td><?= htmlentities($q['question_type']) ?></td>
-                    <td><?= htmlentities($q['answer']) ?></td>
-                    <td>
-                        <a href="<?= base_url('index.php/admin_Main/edit_quiz_question/' . $q['id']) ?>" class="btn btn-sm btn-warning">Edit</a>
-                        <a href="<?= base_url('index.php/admin_Main/delete_quiz_question/' . $q['id'] . '/' . $group['group_id']) ?>" class="btn btn-sm btn-danger" onclick="return confirm('Delete this question?')">Delete</a>
-                    </td>
-                </tr>
-            <?php endforeach; ?>
-            </tbody>
+                  <?php foreach ($questions as $i => $q): ?>
+                      <tr>
+                          <td><?= $i + 1 ?></td>
+                          <td><?= htmlentities(is_object($q) ? ($q->question ?? '') : ($q['question'] ?? '')) ?></td>
+                          <td><?= htmlentities(is_object($q) ? ($q->question_type ?? '') : ($q['question_type'] ?? '')) ?></td>
+                          <td>
+                              <?= htmlentities(
+                                  is_object($q)
+                                      ? (property_exists($q, 'answer') ? $q->answer : '')
+                                      : ($q['answer'] ?? '')
+                              ) ?>
+                          </td>
+                          <td>
+                              <a href="<?= base_url('index.php/admin_Main/edit_quiz_question/' . (is_object($q) ? ($q->id ?? 0) : ($q['id'] ?? 0))) ?>" class="btn btn-sm btn-warning">Edit</a>
+                              <a href="<?= base_url('index.php/admin_Main/delete_quiz_question/' . (is_object($q) ? ($q->id ?? 0) : ($q['id'] ?? 0)) . '/' . $group_id) ?>" class="btn btn-sm btn-danger" onclick="return confirm('Delete this question?')">Delete</a>
+                          </td>
+                      </tr>
+                  <?php endforeach; ?>
+              </tbody>
+
         </table>
     <?php else: ?>
         <p>No questions found in this group.</p>
     <?php endif; ?>
 </div>
+
 
 <div class="footer">
 <p>&copy; <?php echo date("Y"); ?> Admin Site. All Rights Reserved.</p>

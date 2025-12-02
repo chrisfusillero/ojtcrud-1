@@ -288,7 +288,7 @@ body {
 
 
 <div class="container my-5">
-    <h2 class="mb-4">Quiz — Answer the Questions</h2>
+    <h2 class="mb-4">Quiz Group — Answer the Questions</h2>
 
     <?php echo form_open('quiz/submit', ['id' => 'quizForm']); ?>
 
@@ -298,7 +298,7 @@ body {
             <?php $index = 0; ?>
             <?php foreach ($quizzes as $q): ?>
                 <?php 
-                    $type = strtolower(trim($q['type']));
+                    $type = strtolower(trim($q['question_type']));
                     $choices = isset($q['choices']) ? json_decode($q['choices'], true) : [];
                 ?>
 
@@ -330,7 +330,12 @@ body {
 
 
                         <!-- TRUE/FALSE -->
-                        <?php elseif ($type === 'true_false'): ?>
+                        <?php elseif ($type === 'true_false' 
+                            || $type === 'true/false' 
+                            || $type === 'true-false' 
+                            || $type === 'truefalse' 
+                            || $type === 'true or false'):
+                        ?>
 
                             <div class="form-check">
                                 <input class="form-check-input answer-input"

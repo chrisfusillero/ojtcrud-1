@@ -393,6 +393,7 @@ public function react($post_id, $reaction_type)
 
 public function quizbee_user()
 {
+    // User must be logged in
     if (!$this->session->userdata('user_id')) {
         redirect('AuthLogin');
         return;
@@ -401,31 +402,63 @@ public function quizbee_user()
     $user_id = $this->session->userdata('user_id');
     $user = $this->My_model->get_single_data($user_id);
 
+    // Load quiz model
+    $this->load->model('quiz_model');
+
+    // Load quiz groups created by admin
     $data = [
         'firstname' => $user['firstname'] ?? 'Guest',
-        'lastname'  => $user['lastname'] ?? ''
+        'lastname'  => $user['lastname'] ?? '',
+        'groups'    => $this->quiz_model->get_all_quiz_groups()
     ];
 
+    // Load view
     $this->template('quizbee_user', $data);
 }
 
-public function quizbee_proper()
-{
 
+
+public function quizbee_proper($group_id = null)
+{
+    // Must have group ID
+    if ($group_id === null) {
+        redirect('welcome/quizbee_user');
+        return;
+    }
+
+    // Must be logged in
+    if (!$this->session->userdata('user_id')) {
+        redirect('AuthLogin');
+        return;
+    }
+
+    $user_id = $this->session->userdata('user_id');
+    $user = $this->My_model->get_single_data($user_id);
+
+    // Load model
+    $this->load->model('quiz_model');
+
+    // Load proper quiz group questions
+    $questions = $this->quiz_model->get_questions_by_group($group_id);
+
+    // If no questions, redirect or warn
+    if (empty($questions)) {
+        $this->session->set_flashdata('error', 'No questions found for this quiz group.');
+        redirect('welcome/quizbee_user');
+        return;
+    }
 
     $data = [
         'firstname' => $user['firstname'] ?? 'Guest',
-        'lastname'  => $user['lastname'] ?? ''
+        'lastname'  => $user['lastname'] ?? '',
+        'quizzes'   => $questions,
+        'group_id'  => $group_id
     ];
 
-    $this->load->model('quiz_model');
-
-   
-    $data['quizgroup'] = $this->quiz_model->get_all_quizzes();
-
-    
+    // Load view
     $this->template('quizbee_proper', $data);
 }
+
 
     
 

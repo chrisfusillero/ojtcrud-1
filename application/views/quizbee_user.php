@@ -291,14 +291,37 @@ body {
 
  <div class="container my-5">
 
+    <div class="intro-card text-center mb-4">
+        <h2 class="fw-bold">Welcome to the Quiz Bee!</h2>
+        <p class="text-muted">Choose any quiz group below to start.</p>
+    </div>
 
-  <div class="intro-card">
-    <h2 class="fw-bold">Welcome to this Quiz Bee!!</h2>
-    <p class="text-muted">Enjoy, Learn, and Have Fun!!</p>
+    <div class="row">
+        <?php if (!empty($groups)): ?>
+            <?php foreach ($groups as $g): ?>
+                <div class="col-12 mb-4">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-body text-center">
 
-   <a href="<?= base_url('index.php/welcome/quizbee_proper'); ?>" class="btn btn-primary btn-lg mt-3">
-        Start Quiz
-      </a>
+                            <h4 class="fw-bold"><?= $g['group_title']; ?></h4>
+                            <p class="text-muted"><?= $g['description']; ?></p>
+
+                            <a href="<?= base_url('index.php/welcome/quizbee_proper/' . $g['group_id']); ?>" 
+                               class="btn btn-primary mt-3">
+                                Start
+                            </a>
+
+                        </div>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <div class="alert alert-warning">No quiz groups found.</div>
+        <?php endif; ?>
+    </div>
+
+</div>
+
 
 
     
