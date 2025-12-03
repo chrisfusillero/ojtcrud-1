@@ -37,7 +37,7 @@
 <style>
 
 body {
-  background-image: url('<?php echo base_url("assets/portfolio_image/emeraldgreen.jpg"); ?>');
+  background-color: #a80000ff;
   background-size: cover;         
   background-position: center;    
   background-repeat: no-repeat;   
@@ -194,7 +194,7 @@ body {
   <div class="container">
 
     
-    <a class="navbar-brand fw-bold text-primary" href="<?= base_url('index.php/admin_Main'); ?>">
+    <a class="navbar-brand fw-bold" style="color: #616161ff;" href="<?= base_url('index.php/admin_Main'); ?>">
       DigiCrud101
     </a>
 
@@ -262,7 +262,7 @@ body {
         <!-- LEFT COLUMN — CREATE GROUP -->
         <div class="col-md-4">
             <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white">
+                <div class="card-header text-white" style="background-color: #d85e00ff;">
                     <h5 class="mb-0">Create Quiz Group</h5>
                 </div>
                 <div class="card-body">
@@ -294,7 +294,7 @@ body {
 
             <!-- Questions list -->
             <div class="card shadow-sm mt-4">
-                <div class="card-header bg-secondary text-white">
+                <div class="card-header text-black" style="background-color: #00eeffff;">
                     <h6 class="mb-0">Questions in This Group</h6>
                 </div>
                 <div class="card-body" id="questionList">
@@ -320,7 +320,7 @@ body {
 
             <div id="quizCardsContainer">
                 <div class="card shadow-sm quiz-card">
-                    <div class="card-header bg-info text-white">
+                    <div class="card-header" style="background-color: #d9ff00ff; color: #434343ff;">
                         <h5 class="mb-0">Add Question to Group</h5>
                     </div>
                     <div class="card-body">
@@ -440,13 +440,14 @@ function loadQuestions(){
 }
 
 
-// Initial load if group exists
+
 if (groupCreated) loadQuestions();
 
-// Create Group
+
 document.getElementById("createGroupBtn").onclick = () => {
     let form = document.getElementById("quizgroupform");
     let data = new FormData(form);
+    
 
     fetch("<?= base_url('index.php/admin_Main/create_temp_group'); ?>", {
         method: "POST",
@@ -468,7 +469,7 @@ document.getElementById("createGroupBtn").onclick = () => {
     });
 };
 
-// Add Question
+
 document.getElementById("addQuestionBtn").onclick = () => {
     if (!groupCreated) return alert("Please create a quiz group first.");
 
@@ -490,8 +491,8 @@ document.getElementById("addQuestionBtn").onclick = () => {
     });
 };
 
-// Quiz Type change
-document.getElementById("quiz_type").addEventListener("change", function () {
+
+    document.getElementById("quiz_type").addEventListener("change", function () {
     document.getElementById("multiple_choice_section").style.display = this.value === "multiple_choice" ? "block" : "none";
     document.getElementById("true_false_section").style.display = this.value === "true_false" ? "block" : "none";
     document.getElementById("identification_section").style.display = this.value === "identification" ? "block" : "none";
@@ -513,14 +514,14 @@ function resetChoices() {
     }
 }
 
-// Add more enumeration
+
 document.getElementById("add_enum").onclick = () => {
     let f = document.createElement("input");
     f.type = "text"; f.classList.add("form-control", "mt-2"); f.name = "enumeration_answers[]"; f.placeholder = "Another Answer";
     document.getElementById("enum_container").appendChild(f);
 };
 
-// Add another MCQ choice
+
 document.getElementById("add_choice_btn").onclick = () => {
     let container = document.getElementById("choices_container");
     let index = container.querySelectorAll(".mc-choice-row").length;
@@ -533,7 +534,7 @@ document.getElementById("add_choice_btn").onclick = () => {
     container.appendChild(row);
 };
 
-// Final save group
+
 document.getElementById("finalSaveGroupBtn").onclick = function () {
     if (!groupCreated || !groupID) return alert("Please create a group first.");
 
@@ -556,68 +557,122 @@ document.getElementById("finalSaveGroupBtn").onclick = function () {
         .catch(() => { btn.disabled = false; alert("Successfuly created"); });
 };
 
-$(document).ready(function() {
 
-    // Handle clicking a question
-    $(".question-item").on("click", function() {
+document.addEventListener("click", function (e) {
+    if (!e.target.classList.contains("question-item")) return;
 
-        let qid = $(this).data("id");
+    let qid = e.target.dataset.id;
+    document.getElementById("edit_question_id").value = qid;
 
-        $.ajax({
-            url: "<?= base_url('index.php/admin_Main/get_question/'); ?>" + qid,
-            type: "GET",
-            dataType: "json",
-            success: function(res) {
+    fetch("<?= base_url('index.php/admin_Main/get_question/'); ?>" + qid)
+        .then(res => res.json())
+        .then(data => {
 
-                if (res.status === "success") {
+            if (!data || !data.question_id) {
+                alert("Could not load question.");
+                return;
+            }
 
-                    let q = res.data;
+            document.getElementById("questionFieldset").disabled = false;
+            document.getElementById("edit_question_id").value = data.question_id;
 
-                    // Fill form fields
-                    $("#question").val(q.question);
-                    $("#question_type").val(q.question_type);
-                    $("#choice_a").val(q.choice_a);
-                    $("#choice_b").val(q.choice_b);
-                    $("#choice_c").val(q.choice_c);
-                    $("#choice_d").val(q.choice_d);
-                    $("#correct_answer").val(q.correct_answer);
+            document.querySelector(".quiz-card h5").innerText = "Edit Question";
+            document.getElementById("addQuestionBtn").innerText = "Update Question";
+            document.getElementById("cancelEditBtn").style.display = "block";
 
-                    // Put ID in hidden field
-                    $("#edit_question_id").val(q.question_id);
+            document.querySelector("textarea[name='question']").value = data.question;
+            document.getElementById("quiz_type").value = data.quiz_type;
+            document.getElementById("quiz_type").dispatchEvent(new Event("change"));
 
-                    // Change header
-                    $("#formHeader").text("Edit Question");
+            if (data.quiz_type === "multiple_choice") {
 
-                    // Show Cancel button
-                    $("#cancelEditBtn").show();
+                resetChoices();
+                let container = document.getElementById("choices_container");
+                container.innerHTML = "";
 
-                    // Change submit button text
-                    $("#submitBtn").text("Update Question");
+                data.choices.forEach((choice, i) => {
+                    let row = document.createElement("div");
+                    row.className = "d-flex align-items-center mt-2 mc-choice-row";
+                    row.innerHTML = `
+                        <input type="radio" name="mc_correct_choice" value="${i}" class="form-check-input me-2" ${data.correct_index == i ? "checked" : ""}>
+                        <input type="text" class="form-control" name="choices[]" value="${choice}">
+                    `;
+                    container.appendChild(row);
+                });
 
-                } else {
-                    alert("Error: " + res.message);
-                }
+            } else if (data.quiz_type === "true_false") {
+                document.querySelector(`input[name='tf_answer'][value='${data.correct_answer}']`).checked = true;
+
+            } else if (data.quiz_type === "identification") {
+                document.querySelector("input[name='identification_answer']").value = data.correct_answer;
+
+            } else if (data.quiz_type === "enumeration") {
+                let container = document.getElementById("enum_container");
+                container.innerHTML = "";
+                data.answers.forEach(a => {
+                    let el = document.createElement("input");
+                    el.type = "text";
+                    el.className = "form-control mt-2";
+                    el.name = "enumeration_answers[]";
+                    el.value = a;
+                    container.appendChild(el);
+                });
             }
         });
-    });
+});
 
 
-    // Cancel the edit mode
-    $("#cancelEditBtn").on("click", function() {
 
-        $("#edit_question_id").val("");
 
-        // Clear all fields
-        $("input[type=text], textarea").val("");
-        $("#question_type").val("");
+document.getElementById("cancelEditBtn").addEventListener("click", function () {
 
-        $("#formHeader").text("Add New Question");
-        $("#submitBtn").text("Add Question");
 
-        $(this).hide();
-    });
+    document.getElementById("questionFieldset").disabled = true;
+
+
+    document.querySelector(".quiz-card h5").innerText = "Add Question to Group";
+    document.getElementById("addQuestionBtn").innerText = "Add Question to Group";
+
+   
+    this.style.display = "none";
+
+
+    document.getElementById("edit_question_id").value = "";
+
+
+    document.getElementById("addQuestionForm").reset();
+
+
+    resetDefaultChoices();
+
+ 
+    document.getElementById("multiple_choice_section").style.display = "block";
+    document.getElementById("true_false_section").style.display = "none";
+    document.getElementById("identification_section").style.display = "none";
+    document.getElementById("enumeration_section").style.display = "none";
 
 });
+
+
+function resetDefaultChoices() {
+    let container = document.getElementById("choices_container");
+    container.innerHTML = "";
+
+    for (let i = 0; i < 4; i++) {
+        let row = document.createElement("div");
+        row.className = "d-flex align-items-center mt-2 mc-choice-row";
+
+        row.innerHTML = `
+            <input type="radio" name="mc_correct_choice" value="${i}" class="form-check-input me-2">
+            <input type="text" class="form-control" name="choices[]" placeholder="Choice ${i + 1}">
+        `;
+
+        container.appendChild(row);
+    }
+}
+
+
+
 
 
 

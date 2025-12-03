@@ -1,6 +1,6 @@
 <style>
 body {
-  background-image: url('<?php echo base_url("assets/portfolio_image/emeraldgreen.jpg"); ?>');
+  background-color: #a80000ff;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -231,8 +231,8 @@ body {
       <div class="container">
 
 
-        <a class="navbar-brand fw-bold text-primary" href="<?= base_url('index.php/admin_Main'); ?>">
-          DigiCrud101
+        <a class="navbar-brand fw-bold" style="color: #616161ff;" href="<?= base_url('index.php/admin_Main'); ?>">
+      DigiCrud101
         </a>
 
 
@@ -304,10 +304,10 @@ body {
 
     <!-- Admin buttons -->
     <div class="admin-buttons">
-      <a href="<?= base_url('index.php/admin_Main/add_quiz'); ?>" class="btn btn-success me-2">
+      <a href="<?= base_url('index.php/admin_Main/add_quiz'); ?>" class="btn btn-secondary me-5">
         Create Quiz
       </a>
-      <a href="<?= base_url('index.php/admin_Main/quiz_list'); ?>" class="btn btn-warning">
+      <a href="<?= base_url('index.php/admin_Main/quiz_list'); ?>" class="btn btn-secondary">
         Quiz List
       </a>
     </div>

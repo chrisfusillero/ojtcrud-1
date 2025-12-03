@@ -42,7 +42,7 @@ html, body {
 }
 
 body {
-  background-image: url('<?php echo base_url("assets/portfolio_image/emeraldgreen.jpg"); ?>');
+  background-color: #a80000ff;
   background-size: cover;         
   background-position: center;    
   background-repeat: no-repeat;   
@@ -322,7 +322,7 @@ body {
 
 <body>
 
-<div class="container my-5">
+<div class="container my-5" style="color: #ffffff">
     <h2 class="mb-4"><?= htmlentities(is_object($group) ? $group->group_title : $group['group_title'] ?? 'Untitled Group') ?></h2>
     <p><?= htmlentities(is_object($group) ? $group->description : $group['description'] ?? '') ?></p>
 

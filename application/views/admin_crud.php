@@ -30,7 +30,7 @@ html, body {
   font-family: 'Poppins', sans-serif;
   display: flex;
   flex-direction: column;
-  background: #b3b3b3ff;
+  background-color: #a80000ff;
   background-size: cover;         
   background-position: center;    
   background-repeat: no-repeat;   
@@ -100,7 +100,9 @@ body {
 <header class="header">
 <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top">
   <div class="container">
-    <a class="navbar-brand fw-bold text-primary" href="<?= base_url('index.php/admin_Main'); ?>">DigiCrud101</a>
+    <a class="navbar-brand fw-bold" style="color: #616161ff;" href="<?= base_url('index.php/admin_Main'); ?>">
+      DigiCrud101
+    </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
       <span class="navbar-toggler-icon"></span>
     </button>

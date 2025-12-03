@@ -17,9 +17,8 @@
 
   <style>
     body {
-      background-image: url('<?php echo base_url("assets/portfolio_image/emeraldgreen.jpg"); ?>');
       padding-top: 80px;
-      background-color: #f8f9fa;
+      background-color: #a80000ff;
     }
 
 
@@ -101,7 +100,9 @@ small {
   <header class="header">
     <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top">
       <div class="container">
-        <a class="navbar-brand fw-bold text-primary" href="<?= base_url('index.php/admin_Main'); ?>">DigiCrud101</a>
+        <a class="navbar-brand fw-bold" style="color: #616161ff;" href="<?= base_url('index.php/admin_Main'); ?>">
+          DigiCrud101
+        </a>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
           aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">

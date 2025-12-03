@@ -98,7 +98,7 @@
 
 
 body {
-    background: #b3b3b3ff;
+    background-color: #a80000ff;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -110,6 +110,7 @@ body {
 
 
 .profile-container {
+    color: #ffffff;
     max-width: 1100px;
     margin: auto;
     text-align: center;
@@ -217,7 +218,7 @@ body {
 <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top">
   <div class="container">
 
-    <a class="navbar-brand fw-bold text-primary" href="<?= base_url('index.php/admin_Main'); ?>">
+    <a class="navbar-brand fw-bold" style="color: #616161ff;" href="<?= base_url('index.php/admin_Main'); ?>">
       DigiCrud101
     </a>
 
@@ -310,13 +311,13 @@ body {
         <p>This is my personal portfolio where I showcase my skills, projects, and experiences.</p>
 
       
-        <ul class="nav justify-content-center section-nav">
-            <li class="nav-item"><a class="nav-link active" data-section="home">Home</a></li>
-            <li class="nav-item"><a class="nav-link" data-section="about">About</a></li>
-            <li class="nav-item"><a class="nav-link" data-section="skills">Skills</a></li>
-            <li class="nav-item"><a class="nav-link" data-section="education">Education</a></li>
-            <li class="nav-item"><a class="nav-link" data-section="hobbies">Hobbies</a></li>
-            <li class="nav-item"><a class="nav-link" data-section="contact">Contact</a></li>
+        <ul class="nav justify-content-center section-nav" style="background-color: #a80000ff">
+            <li class="nav-item"><a class="nav-link active" style="color: #ffffff" data-section="home">Home</a></li>
+            <li class="nav-item"><a class="nav-link" style="color: #ffffff" data-section="about">About</a></li>
+            <li class="nav-item"><a class="nav-link" style="color: #ffffff" data-section="skills">Skills</a></li>
+            <li class="nav-item"><a class="nav-link" style="color: #ffffff" data-section="education">Education</a></li>
+            <li class="nav-item"><a class="nav-link" style="color: #ffffff" data-section="hobbies">Hobbies</a></li>
+            <li class="nav-item"><a class="nav-link" style="color: #ffffff" data-section="contact">Contact</a></li>
         </ul>
     </section>
 
@@ -327,13 +328,13 @@ body {
         <br>
         </p>
 
-        <ul class="nav justify-content-center section-nav">
-            <li class="nav-item"><a class="nav-link" data-section="home">Home</a></li>
-            <li class="nav-item"><a class="nav-link active" data-section="about">About</a></li>
-            <li class="nav-item"><a class="nav-link" data-section="skills">Skills</a></li>
-            <li class="nav-item"><a class="nav-link" data-section="education">Education</a></li>
-            <li class="nav-item"><a class="nav-link" data-section="hobbies">Hobbies</a></li>
-            <li class="nav-item"><a class="nav-link" data-section="contact">Contact</a></li>
+        <ul class="nav justify-content-center section-nav" style="background-color: #a80000ff">
+            <li class="nav-item"><a class="nav-link active" style="color: #ffffff" data-section="home">Home</a></li>
+            <li class="nav-item"><a class="nav-link" style="color: #ffffff" data-section="about">About</a></li>
+            <li class="nav-item"><a class="nav-link" style="color: #ffffff" data-section="skills">Skills</a></li>
+            <li class="nav-item"><a class="nav-link" style="color: #ffffff" data-section="education">Education</a></li>
+            <li class="nav-item"><a class="nav-link" style="color: #ffffff" data-section="hobbies">Hobbies</a></li>
+            <li class="nav-item"><a class="nav-link" style="color: #ffffff" data-section="contact">Contact</a></li>
         </ul>
     </section>
 
@@ -345,13 +346,13 @@ body {
         
         </p>
 
-        <ul class="nav justify-content-center section-nav">
-            <li class="nav-item"><a class="nav-link" data-section="home">Home</a></li>
-            <li class="nav-item"><a class="nav-link" data-section="about">About</a></li>
-            <li class="nav-item"><a class="nav-link active" data-section="skills">Skills</a></li>
-            <li class="nav-item"><a class="nav-link" data-section="education">Education</a></li>
-            <li class="nav-item"><a class="nav-link" data-section="hobbies">Hobbies</a></li>
-            <li class="nav-item"><a class="nav-link" data-section="contact">Contact</a></li>
+        <ul class="nav justify-content-center section-nav" style="background-color: #a80000ff">
+            <li class="nav-item"><a class="nav-link active" style="color: #ffffff" data-section="home">Home</a></li>
+            <li class="nav-item"><a class="nav-link" style="color: #ffffff" data-section="about">About</a></li>
+            <li class="nav-item"><a class="nav-link" style="color: #ffffff" data-section="skills">Skills</a></li>
+            <li class="nav-item"><a class="nav-link" style="color: #ffffff" data-section="education">Education</a></li>
+            <li class="nav-item"><a class="nav-link" style="color: #ffffff" data-section="hobbies">Hobbies</a></li>
+            <li class="nav-item"><a class="nav-link" style="color: #ffffff" data-section="contact">Contact</a></li>
         </ul>
     </section>
 
@@ -361,13 +362,13 @@ body {
 
         </p>
 
-        <ul class="nav justify-content-center section-nav">
-            <li class="nav-item"><a class="nav-link" data-section="home">Home</a></li>
-            <li class="nav-item"><a class="nav-link" data-section="about">About</a></li>
-            <li class="nav-item"><a class="nav-link" data-section="skills">Skills</a></li>
-            <li class="nav-item"><a class="nav-link active" data-section="education">Education</a></li>
-            <li class="nav-item"><a class="nav-link" data-section="hobbies">Hobbies</a></li>
-            <li class="nav-item"><a class="nav-link" data-section="contact">Contact</a></li>
+        <ul class="nav justify-content-center section-nav" style="background-color: #a80000ff">
+            <li class="nav-item"><a class="nav-link active" style="color: #ffffff" data-section="home">Home</a></li>
+            <li class="nav-item"><a class="nav-link" style="color: #ffffff" data-section="about">About</a></li>
+            <li class="nav-item"><a class="nav-link" style="color: #ffffff" data-section="skills">Skills</a></li>
+            <li class="nav-item"><a class="nav-link" style="color: #ffffff" data-section="education">Education</a></li>
+            <li class="nav-item"><a class="nav-link" style="color: #ffffff" data-section="hobbies">Hobbies</a></li>
+            <li class="nav-item"><a class="nav-link" style="color: #ffffff" data-section="contact">Contact</a></li>
         </ul>
     </section>
 
@@ -379,13 +380,13 @@ body {
           <br>
         </p>
 
-        <ul class="nav justify-content-center section-nav">
-            <li class="nav-item"><a class="nav-link" data-section="home">Home</a></li>
-            <li class="nav-item"><a class="nav-link" data-section="about">About</a></li>
-            <li class="nav-item"><a class="nav-link" data-section="skills">Skills</a></li>
-            <li class="nav-item"><a class="nav-link" data-section="education">Education</a></li>
-            <li class="nav-item"><a class="nav-link active" data-section="hobbies">Hobbies</a></li>
-            <li class="nav-item"><a class="nav-link" data-section="contact">Contact</a></li>
+        <ul class="nav justify-content-center section-nav" style="background-color: #a80000ff">
+            <li class="nav-item"><a class="nav-link active" style="color: #ffffff" data-section="home">Home</a></li>
+            <li class="nav-item"><a class="nav-link" style="color: #ffffff" data-section="about">About</a></li>
+            <li class="nav-item"><a class="nav-link" style="color: #ffffff" data-section="skills">Skills</a></li>
+            <li class="nav-item"><a class="nav-link" style="color: #ffffff" data-section="education">Education</a></li>
+            <li class="nav-item"><a class="nav-link" style="color: #ffffff" data-section="hobbies">Hobbies</a></li>
+            <li class="nav-item"><a class="nav-link" style="color: #ffffff" data-section="contact">Contact</a></li>
         </ul>
     </section>
 
@@ -396,13 +397,13 @@ body {
           <br>
         </p>
 
-        <ul class="nav justify-content-center section-nav">
-            <li class="nav-item"><a class="nav-link" data-section="home">Home</a></li>
-            <li class="nav-item"><a class="nav-link" data-section="about">About</a></li>
-            <li class="nav-item"><a class="nav-link" data-section="skills">Skills</a></li>
-            <li class="nav-item"><a class="nav-link" data-section="education">Education</a></li>
-            <li class="nav-item"><a class="nav-link" data-section="hobbies">Hobbies</a></li>
-            <li class="nav-item"><a class="nav-link active" data-section="contact">Contact</a></li>
+        <ul class="nav justify-content-center section-nav" style="background-color: #a80000ff">
+            <li class="nav-item"><a class="nav-link active" style="color: #ffffff" data-section="home">Home</a></li>
+            <li class="nav-item"><a class="nav-link" style="color: #ffffff" data-section="about">About</a></li>
+            <li class="nav-item"><a class="nav-link" style="color: #ffffff" data-section="skills">Skills</a></li>
+            <li class="nav-item"><a class="nav-link" style="color: #ffffff" data-section="education">Education</a></li>
+            <li class="nav-item"><a class="nav-link" style="color: #ffffff" data-section="hobbies">Hobbies</a></li>
+            <li class="nav-item"><a class="nav-link" style="color: #ffffff" data-section="contact">Contact</a></li>
         </ul>
     </section>
 

@@ -156,7 +156,7 @@ class Quiz_model extends CI_Model {
 
     public function get_single_question($id)
     {
-    return $this->db->where('question_id', $id)
+    return $this->db->where('id', $id)
                     ->get('quiz_questions')
                     ->row();
     }

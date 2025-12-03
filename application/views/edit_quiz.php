@@ -35,7 +35,7 @@
 <style>
 
 body {
-  background-image: url('<?php echo base_url("assets/portfolio_image/emeraldgreen.jpg"); ?>');
+  background-color: #a80000ff;
   background-size: cover;         
   background-position: center;    
   background-repeat: no-repeat;   
@@ -248,7 +248,7 @@ body {
         <!-- LEFT SIDE — EDIT QUIZ GROUP -->
         <div class="col-md-4">
             <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white">
+                <div class="card-header text-white" style="background-color: #c40208ff;">
                     <h5 class="mb-0">Edit Quiz Group</h5>
                 </div>
                 <div class="card-body">
@@ -299,7 +299,7 @@ body {
 
             <!-- LIST OF EXISTING QUESTIONS -->
             <div class="card shadow-sm mt-4">
-    <div class="card-header bg-secondary text-white">
+    <div class="card-header text-white" style="background-color: #ff0000ff;">
         <h6 class="mb-0">Questions in This Group</h6>
     </div>
 
@@ -326,7 +326,7 @@ body {
         <div class="col-md-8">
             <div class="card shadow-sm">
 
-                <div class="card-header bg-info text-white">
+                <div class="card-header text-white" style="background-color: #c40208ff;">
                     <h5 class="mb-0">Edit Question</h5>
                 </div>
 
@@ -431,115 +431,172 @@ body {
 
 
 <script>
+document.addEventListener('DOMContentLoaded', () => {
 
-document.getElementById('quiz_type').addEventListener('change', function() {
-    document.getElementById('multiple_choice_section').style.display = this.value === 'multiple_choice' ? 'block' : 'none';
-    document.getElementById('true_false_section').style.display      = this.value === 'true_false' ? 'block' : 'none';
-    document.getElementById('identification_section').style.display = this.value === 'identification' ? 'block' : 'none';
-    document.getElementById('enumeration_section').style.display    = this.value === 'enumeration' ? 'block' : 'none';
-});
+    // --- Handle quiz type change ---
+    const quizTypeSelect = document.getElementById('quiz_type');
+    if (quizTypeSelect) {
+        quizTypeSelect.addEventListener('change', function() {
+            document.getElementById('multiple_choice_section').style.display = this.value === 'multiple_choice' ? 'block' : 'none';
+            document.getElementById('true_false_section').style.display      = this.value === 'true_false' ? 'block' : 'none';
+            document.getElementById('identification_section').style.display = this.value === 'identification' ? 'block' : 'none';
+            document.getElementById('enumeration_section').style.display    = this.value === 'enumeration' ? 'block' : 'none';
 
-document.getElementById('add_choice_btn').onclick = () => {
-    let c = document.getElementById('choices_container');
-    let div = document.createElement('div');
-    div.classList.add('input-group','mt-2');
-    div.innerHTML = `
-        <span class="input-group-text">
-            <input type="radio" name="mc_correct">
-        </span>
-        <input type="text" class="form-control" name="choices[]" placeholder="New Choice">
-    `;
-    c.appendChild(div);
-};
-
-document.getElementById('add_enum').onclick = () => {
-    let c = document.getElementById('enum_container');
-    let f = document.createElement('input');
-    f.type = "text";
-    f.classList.add("form-control", "mt-2");
-    f.name = "enumeration_answers[]";
-    f.placeholder = "Another Answer";
-    c.appendChild(f);
-};
-
-
-document.addEventListener('DOMContentLoaded', function() {
-    const questionItems = document.querySelectorAll('.question-item');
-
-    questionItems.forEach(item => {
-        item.addEventListener('click', function() {
-            const questionId = this.getAttribute('data-id');
-
-            fetch(`<?= base_url('index.php/admin_Main/get_question/'); ?>${questionId}`)
-                .then(res => res.json())
-                .then(resp => {
-                    if(resp.status === 'success' && resp.data) {
-                        const data = resp.data; // the question object
-
-                        // Update the select and textarea
-                        const typeSelect = document.querySelector('select[name="quiz_type"]');
-                        const questionTextarea = document.querySelector('textarea[name="question"]');
-                        typeSelect.value = data.question_type || '';
-                        questionTextarea.value = data.question || '';
-
-                        // Hide all sections first
-                        document.getElementById('multiple_choice_section').style.display = 'none';
-                        document.getElementById('true_false_section').style.display = 'none';
-                        document.getElementById('identification_section').style.display = 'none';
-                        document.getElementById('enumeration_section').style.display = 'none';
-
-                        // Show the correct section and populate choices
-                        if(data.question_type === 'multiple_choice') {
-                            document.getElementById('multiple_choice_section').style.display = 'block';
-                            const container = document.getElementById('choices_container');
-                            container.innerHTML = '';
-
-                            if(Array.isArray(data.choices)) {
-                                data.choices.forEach((c, i) => {
-                                    container.innerHTML += `
-                                        <div class="input-group mt-2">
-                                            <span class="input-group-text">
-                                                <input type="radio" name="mc_correct" value="${i}" ${c === data.answer ? 'checked' : ''}>
-                                            </span>
-                                            <input type="text" class="form-control" name="choices[]" value="${c}">
-                                        </div>
-                                    `;
-                                });
-                            }
-                        } else if(data.question_type === 'true_false') {
-                            document.getElementById('true_false_section').style.display = 'block';
-                            const trueInput = document.querySelector('input[name="tf_answer"][value="True"]');
-                            const falseInput = document.querySelector('input[name="tf_answer"][value="False"]');
-                            if(data.answer === 'True') trueInput.checked = true;
-                            if(data.answer === 'False') falseInput.checked = true;
-                        } else if(data.question_type === 'identification') {
-                            document.getElementById('identification_section').style.display = 'block';
-                            document.querySelector('input[name="identification_answer"]').value = data.answer || '';
-                        } else if(data.question_type === 'enumeration') {
-                            document.getElementById('enumeration_section').style.display = 'block';
-                            const enumContainer = document.getElementById('enum_container');
-                            enumContainer.innerHTML = '';
-                            if(Array.isArray(data.choices)) {
-                                data.choices.forEach(ans => {
-                                    enumContainer.innerHTML += `<input type="text" class="form-control mt-2" name="enumeration_answers[]" value="${ans}">`;
-                                });
-                            }
-                        }
-
-                        // Optional: scroll to edit card
-                        const editCard = document.querySelector('.col-md-8 .card');
-                        editCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-                    } else {
-                        alert(resp.message || 'Failed to load question.');
-                    }
-                })
-                .catch(err => console.error(err));
+            if (this.value === 'multiple_choice') resetChoices();
         });
-    });
+    }
+
+    // --- Add Multiple Choice row ---
+    const addChoiceBtn = document.getElementById('add_choice_btn');
+    if (addChoiceBtn) {
+        addChoiceBtn.addEventListener('click', () => {
+            const container = document.getElementById('choices_container');
+            const index = container.querySelectorAll('.mc-choice-row').length;
+            const row = document.createElement('div');
+            row.className = 'd-flex align-items-center mt-2 mc-choice-row';
+            row.innerHTML = `
+                <input type="radio" name="mc_correct_choice" value="${index}" class="form-check-input me-2">
+                <input type="text" class="form-control" name="choices[]" placeholder="New Choice">
+            `;
+            container.appendChild(row);
+        });
+    }
+
+    // --- Add Enumeration row ---
+    const addEnumBtn = document.getElementById('add_enum');
+    if (addEnumBtn) {
+        addEnumBtn.addEventListener('click', () => {
+            const container = document.getElementById('enum_container');
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'form-control mt-2';
+            input.name = 'enumeration_answers[]';
+            input.placeholder = 'Another Answer';
+            container.appendChild(input);
+        });
+    }
+
+    // --- Reset choices for multiple choice ---
+    function resetChoices() {
+        const container = document.getElementById('choices_container');
+        container.innerHTML = '';
+        for (let i = 0; i < 4; i++) {
+            const div = document.createElement('div');
+            div.className = 'd-flex align-items-center mt-2 mc-choice-row';
+            div.innerHTML = `
+                <input type="radio" name="mc_correct_choice" value="${i}" class="form-check-input me-2">
+                <input type="text" class="form-control" name="choices[]" placeholder="Choice ${i+1}">
+            `;
+            container.appendChild(div);
+        }
+    }
+
+    // --- Event delegation for question items ---
+    const questionList = document.getElementById('questionList');
+    if (questionList) {
+        questionList.addEventListener('click', (e) => {
+            const card = e.target.closest('.question-item');
+            if (!card) return;
+
+            const qid = card.dataset.id;
+            let details = card.querySelector('.question-details');
+
+            if (!details) {
+                details = document.createElement('div');
+                details.className = 'question-details mt-2';
+                card.appendChild(details);
+            }
+
+            const isVisible = details.style.display === 'block';
+            details.style.display = isVisible ? 'none' : 'block';
+
+            if (!isVisible) {
+                // Fetch question details
+                fetch(`<?= base_url('index.php/admin_Main/get_question/'); ?>${qid}`)
+                    .then(res => res.json())
+                    .then(resp => {
+                        if (resp.status === 'success' && resp.data) {
+                            const q = resp.data;
+                            details.innerHTML = `
+                                <strong>Type:</strong> ${q.question_type}<br>
+                                <strong>Answer:</strong> ${q.answer}<br>
+                                <button class="btn btn-sm btn-warning mt-2 edit-btn" data-id="${qid}">
+                                    Edit This Question
+                                </button>
+                            `;
+                        } else {
+                            details.innerHTML = `<p class="text-danger">Failed to load question details.</p>`;
+                        }
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        details.innerHTML = `<p class="text-danger">Error fetching data.</p>`;
+                    });
+            }
+        });
+
+        // --- Delegated click for dynamically added edit buttons ---
+        questionList.addEventListener('click', (e) => {
+            const editBtn = e.target.closest('.edit-btn');
+            if (!editBtn) return;
+            const qid = editBtn.dataset.id;
+            populateEditForm(qid);
+        });
+    }
+
+    // --- Populate main edit form ---
+    function populateEditForm(questionId) {
+        fetch(`<?= base_url('index.php/admin_Main/get_question/'); ?>${questionId}`)
+            .then(res => res.json())
+            .then(resp => {
+                if (resp.status === 'success' && resp.data) {
+                    const q = resp.data;
+
+                    // Populate fields
+                    const form = document.querySelector('form'); // adjust if multiple forms
+                    form.querySelector('input[name="question_id"]').value = q.id;
+                    form.querySelector('textarea[name="question"]').value = q.question;
+                    form.querySelector('select[name="quiz_type"]').value = q.question_type;
+
+                    document.getElementById('multiple_choice_section').style.display = q.question_type === 'multiple_choice' ? 'block' : 'none';
+                    document.getElementById('true_false_section').style.display = q.question_type === 'true_false' ? 'block' : 'none';
+                    document.getElementById('identification_section').style.display = q.question_type === 'identification' ? 'block' : 'none';
+                    document.getElementById('enumeration_section').style.display = q.question_type === 'enumeration' ? 'block' : 'none';
+
+                    // Populate multiple choice
+                    if (q.question_type === 'multiple_choice' && Array.isArray(q.choices)) {
+                        const container = document.getElementById('choices_container');
+                        container.innerHTML = '';
+                        q.choices.forEach((c, i) => {
+                            container.innerHTML += `
+                                <div class="input-group mt-2">
+                                    <span class="input-group-text">
+                                        <input type="radio" name="mc_correct_choice" value="${i}" ${c === q.answer ? 'checked' : ''}>
+                                    </span>
+                                    <input type="text" class="form-control" name="choices[]" value="${c}">
+                                </div>
+                            `;
+                        });
+                    }
+
+                    // Populate enumeration
+                    if (q.question_type === 'enumeration' && Array.isArray(q.choices)) {
+                        const container = document.getElementById('enum_container');
+                        container.innerHTML = '';
+                        q.choices.forEach(ans => {
+                            container.innerHTML += `<input type="text" class="form-control mt-2" name="enumeration_answers[]" value="${ans}">`;
+                        });
+                    }
+
+                } else {
+                    alert(resp.message || "Failed to load question for editing.");
+                }
+            })
+            .catch(err => console.error(err));
+    }
+
 });
-
-
 </script>
+
 
 </body>

@@ -15,12 +15,11 @@
 
 <style>
   body {
-    background-image: url('<?php echo base_url("assets/portfolio_image/emeraldgreen.jpg"); ?>');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     background-attachment: fixed;
-    background-color: #f8f9fa;
+    background-color: #a80000ff;
     margin: 0;
     min-height: 100vh;
     display: flex;
@@ -88,7 +87,7 @@
   <div class="container">
 
     
-    <a class="navbar-brand fw-bold text-primary" href="<?= base_url('index.php/admin_Main'); ?>">
+    <a class="navbar-brand fw-bold" style="color: #616161ff;" href="<?= base_url('index.php/admin_Main'); ?>">
       DigiCrud101
     </a>
 

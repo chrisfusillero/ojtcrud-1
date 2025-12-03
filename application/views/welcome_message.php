@@ -3,7 +3,7 @@
 <style>
 
 body {
-  background-image: url('<?php echo base_url("assets/portfolio_image/skyblue.jpg"); ?>');
+  background-color: #a80000ff;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -596,7 +596,7 @@ textarea {
 
 </header>
 
-<div class="welcome-message text-center mt-4">
+<div class="welcome-message text-center mt-4" style="color: #ffffff">
   <?php if (!empty($firstname)): ?>
     <h4>👋 Welcome, <?= htmlspecialchars($firstname); ?>!</h4>
     <p class="text-muted mb-0">Feel free to post in this blog</p>

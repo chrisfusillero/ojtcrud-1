@@ -1,6 +1,6 @@
 <style>
 body {
-    background-image: url('<?php echo base_url("assets/portfolio_image/skyblue.jpg"); ?>');
+  background-color: #a80000ff;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

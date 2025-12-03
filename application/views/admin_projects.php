@@ -1,7 +1,7 @@
 <style>
 
 body {
-  background-image: url('<?php echo base_url("assets/portfolio_image/emeraldgreen.jpg"); ?>');
+  background-color: #a80000ff;
   background-size: cover;         
   background-position: center;    
   background-repeat: no-repeat;   
@@ -165,7 +165,7 @@ body {
 <div class="container py-5">
   <div class="card shadow-lg border-0 p-4" style="max-width: 900px; margin: 0 auto; background-color: white;">
     <div class="text-center mb-4">
-      <h3 class="fw-bold text-primary">Our Projects</h3>
+      <h3 class="fw-bold" style="color: #000000ff;">Our Projects</h3>
       <p class="text-muted">Click a project to view details</p>
     </div>
 

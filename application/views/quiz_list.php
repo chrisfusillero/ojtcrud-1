@@ -42,7 +42,7 @@ html, body {
 }
 
 body {
-  background-image: url('<?php echo base_url("assets/portfolio_image/emeraldgreen.jpg"); ?>');
+  background-color: #a80000ff;
   background-size: cover;         
   background-position: center;    
   background-repeat: no-repeat;   
@@ -272,8 +272,8 @@ body {
       <div class="container">
 
 
-        <a class="navbar-brand fw-bold text-primary" href="<?= base_url('index.php/admin_Main'); ?>">
-          DigiCrud101
+        <a class="navbar-brand fw-bold" style="color: #616161ff;" href="<?= base_url('index.php/admin_Main'); ?>">
+      DigiCrud101
         </a>
 
 
@@ -336,7 +336,7 @@ body {
 
   </header>
 
-<div class="container-fluid my-5 main-content">
+<div class="container-fluid my-5 main-content" style="color: #ffffff">
     <h2 class="mb-4">Quiz Groups</h2>
 
     <a href="<?= base_url('index.php/admin_Main/add_quiz'); ?>" class="btn btn-success mb-3">

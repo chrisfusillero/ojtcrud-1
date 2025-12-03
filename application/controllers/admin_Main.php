@@ -331,7 +331,7 @@ public function save_quiz_group_final()
     $data = [
         'group_title'      => $this->input->post('group_title'),
         'description'      => $this->input->post('description'),
-        'duration_minutes' => (int)$this->input->post('time_limit_minutes_total')
+        'duration_minutes' => (int)$this->input->post('duration_minutes')
     ];
 
     $result = $this->Quiz_model->createQuizGroup($data);
@@ -385,7 +385,7 @@ public function get_questions($group_id)
     }
 
 
-    public function get_question($question_id)
+        public function get_question($question_id)
 {
     header('Content-Type: application/json');
 
@@ -404,11 +404,40 @@ public function get_questions($group_id)
         return;
     }
 
-    echo json_encode([
-        'status' => 'success',
-        'data'   => $q
-    ]);
+    
+    $choices = !empty($q['choices']) ? json_decode($q['choices'], true) : [];
+
+    
+    $payload = [
+        'question_id' => $q['question_id'],
+        'question'    => $q['question'],
+        'quiz_type'   => $q['question_type'],
+    ];
+
+    switch ($q['question_type']) {
+
+        case 'multiple_choice':
+            $payload['choices'] = $choices;
+            $payload['correct_index'] = array_search($q['answer'], $choices);
+            break;
+
+        case 'true_false':
+            $payload['correct_answer'] = $q['answer'];
+            break;
+
+        case 'identification':
+            $payload['correct_answer'] = $q['answer'];
+            break;
+
+        case 'enumeration':
+            $payload['answers'] = $choices;
+            break;
+    }
+
+    echo json_encode($payload);
 }
+
+
 
 
 
