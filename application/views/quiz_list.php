@@ -339,11 +339,15 @@ body {
 <div class="container-fluid my-5 main-content" style="color: #ffffff">
     <h2 class="mb-4">Quiz Groups</h2>
 
-    <a href="<?= base_url('index.php/admin_Main/add_quiz'); ?>" class="btn btn-success mb-3">
-        Create Quiz Group
+    <a href="<?= base_url('index.php/admin_Main/add_quiz'); ?>" 
+   class="btn btn-success mb-3"
+   style="background-color: transparent; color: white; border-color: white;">
+    Create Quiz Group
     </a>
+  
 
-    <a href="<?= base_url('index.php/admin_Main/quizbee'); ?>" class="btn btn-secondary mb-3 ms-2">
+    <a href="<?= base_url('index.php/admin_Main/quizbee'); ?>" class="btn btn-secondary mb-3 ms-2"
+    style="background-color: transparent; color: white; border-color: white;">
         Back to Dashboard
     </a>
 
@@ -378,12 +382,18 @@ body {
 
 
                         <a href="<?= base_url('index.php/admin_Main/quiz_questions_list/' . ($g['group_id'] ?? 0)); ?>" 
-                           class="btn btn-outline-secondary btn-sm ms-2">
+                          class="btn btn-outline-secondary btn-sm ms-2"
+                          style="background-color: transparent; color: black; border-color: black;">
                             View Questions
                         </a>
 
+                        <a href="<?= base_url('index.php/admin_Main/edit_quiz/' . ($g['group_id'] ?? 0)); ?>" 
+                           class="btn btn-outline-primary btn-sm ms-2" style="background-color: transparent; color: #008cffff">
+                            Edit Group
+                        </a>
+
                         <a href="<?= base_url('index.php/admin_Main/delete_quiz/' . ($g['group_id'] ?? 0)); ?>" 
-                          class="btn btn-danger btn-sm ms-2"
+                          class="btn btn-outline-danger btn-sm ms-2" style="background-color: transparent; color: #ff0000e1"
                           onclick="return confirm('Are you sure you want to delete this quiz group and all its questions?');">
                             Delete Group
                         </a>

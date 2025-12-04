@@ -286,31 +286,44 @@ body {
                             <small class="text-muted">Leave empty or zero for no time limit.</small>
                         </div>
 
-                        <button type="button" id="createGroupBtn" class="btn btn-primary btn-block mt-3">Create Quiz Group</button>
-                        <button type="button" id="finalSaveGroupBtn" class="btn btn-success btn-block mt-2" disabled>Save Quiz Group</button>
+                        <button type="button" id="createGroupBtn" class="btn btn-primary btn-block mt-3" style="background-color: transparent; color: #0086c4ff;">Create Quiz Group</button>
+                        <button type="button" id="finalSaveGroupBtn" class="btn btn-success btn-block mt-2" style="background-color: transparent; color: #008618ff;" disabled> Save Quiz Group</button>
                     </form>
                 </div>
             </div>
 
-            <!-- Questions list -->
-            <div class="card shadow-sm mt-4">
-                <div class="card-header text-black" style="background-color: #00eeffff;">
-                    <h6 class="mb-0">Questions in This Group</h6>
-                </div>
-                <div class="card-body" id="questionList">
-                    <?php if (empty($questions)): ?>
-                        <p class="text-muted">No questions added yet.</p>
-                    <?php else: ?>
-                        <?php foreach ($questions as $q): ?>
-                            <div class="alert alert-primary py-2 mb-2 question-item"
-                                data-id="<?= $q['question_id']; ?>"
-                                style="cursor:pointer;">
-                                <?= htmlentities($q['question']); ?>
-                            </div>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
-                </div>
-            </div>
+               
+          <!-- Questions list -->
+          <div class="card shadow-sm mt-4">
+              <div class="card-header text-black" style="background-color: #00eeffff;">
+                  <h6 class="mb-0">Questions in This Group</h6>
+              </div>
+              <div class="card-body" id="questionList">
+                  <?php if (empty($questions)): ?>
+                      <p class="text-muted">No questions added yet.</p>
+                  <?php else: ?>
+                      <ol class="list-group list-group-numbered" style="padding-left: 0;">
+                          <?php foreach ($questions as $q): ?>
+                              <li class="list-group-item question-item"
+                                  data-id="<?= $q['id']; ?>"
+                                  style="
+                                      cursor: pointer;
+                                      background-color: #cce5ff; /* same as alert-primary */
+                                      color: #004085;
+                                      border: 1px solid #b8daff;
+                                      border-radius: 4px;
+                                      padding: 0.5rem 1rem;
+                                      margin-bottom: 0.5rem;
+                                  ">
+                                  <?= htmlentities($q['question']); ?>
+                              </li>
+                          <?php endforeach; ?>
+                      </ol>
+                  <?php endif; ?>
+              </div>
+          </div>
+
+
 
         </div>
 
@@ -358,7 +371,9 @@ body {
                                             </div>
                                         <?php endfor; ?>
                                     </div>
-                                    <button type="button" id="add_choice_btn" class="btn btn-sm btn-secondary mt-2">+ Add Another Choice</button>
+                                    <br>
+                                    <button type="button" id="add_choice_btn" class="btn btn-sm btn-secondary mt-2"
+                                    style="background-color: transparent; color: #474747ff;">+ Add Another Choice</button>
                                 </div>
 
                                 <!-- TRUE/FALSE -->
@@ -386,10 +401,13 @@ body {
                                     <div id="enum_container">
                                         <input type="text" class="form-control mt-2" name="enumeration_answers[]" placeholder="Answer 1">
                                     </div>
-                                    <button type="button" id="add_enum" class="btn btn-sm btn-secondary mt-2">Add More</button>
+                                    <br>  
+                                    <button type="button" id="add_enum" class="btn btn-sm btn-secondary mt-2" 
+                                    style="background-color: transparent; color: #515151ff;">Add More</button>
                                 </div>
 
-                                <button type="button" id="addQuestionBtn" class="btn btn-primary btn-block mt-3">Add Question to Group</button>
+                                <button type="button" id="addQuestionBtn" class="btn btn-primary btn-block mt-3" 
+                                style="background-color: transparent; color: #0086c4ff;">Add Question to Group</button>
                                 <button type="button" id="cancelEditBtn" class="btn btn-secondary mb-3" style="display:none;">Cancel</button>
 
                             </fieldset>
@@ -399,7 +417,8 @@ body {
 
                 <br />
 
-                <a href="<?= base_url('index.php/admin_Main/quizbee'); ?>" class="btn btn-secondary mb-3 ms-2">Back to Dashboard</a>
+                <a href="<?= base_url('index.php/admin_Main/quizbee'); ?>" class="btn btn-secondary mb-3 ms-2"
+                style="background-color: transparent; color: white; border-color: white;">Back to Dashboard</a>
             </div>
         </div>
 
@@ -407,7 +426,7 @@ body {
 </div>
 
 <script>
-let groupID = <?= $group_id ?? 'null' ?>; // If editing existing group
+let groupID = <?= $group_id ?? 'null' ?>; 
 let groupCreated = groupID !== null;
 
 document.getElementById("questionFieldset").disabled = !groupCreated;
@@ -536,7 +555,8 @@ document.getElementById("add_choice_btn").onclick = () => {
 
 
 document.getElementById("finalSaveGroupBtn").onclick = function () {
-    if (!groupCreated || !groupID) return alert("Please create a group first.");
+
+    if (!groupCreated || !groupID) return;
 
     let form = document.getElementById("quizgroupform");
     let data = new FormData(form);
@@ -545,36 +565,45 @@ document.getElementById("finalSaveGroupBtn").onclick = function () {
     const btn = this;
     btn.disabled = true;
 
-    fetch("<?= base_url('index.php/admin_Main/save_quiz_group_final'); ?>", { method: "POST", body: data })
-        .then(res => res.json())
-        .then(res => {
-            btn.disabled = false;
-            if (res.status === "success") {
-                alert("Quiz Group saved successfully!");
-                window.location.href = "<?= base_url('index.php/admin_Main/quiz_list'); ?>";
-            } else alert(res.message || "Success");
-        })
-        .catch(() => { btn.disabled = false; alert("Successfuly created"); });
+    fetch("<?= base_url('index.php/admin_Main/save_quiz_group_final'); ?>", {
+        method: "POST",
+        body: data
+    })
+    .then(res => res.json())
+    .then(res => {
+        btn.disabled = false;
+
+        
+        window.location.href = "<?= base_url('index.php/admin_Main/quiz_list'); ?>";
+    })
+    .catch(() => {
+        btn.disabled = false;
+
+       
+        window.location.href = "<?= base_url('index.php/admin_Main/quiz_list'); ?>";
+    });
 };
+
 
 
 document.addEventListener("click", function (e) {
     if (!e.target.classList.contains("question-item")) return;
 
     let qid = e.target.dataset.id;
-    document.getElementById("edit_question_id").value = qid;
 
     fetch("<?= base_url('index.php/admin_Main/get_question/'); ?>" + qid)
         .then(res => res.json())
-        .then(data => {
+        .then(response => {
 
-            if (!data || !data.question_id) {
+            if (!response || response.status !== "success") {
                 alert("Could not load question.");
                 return;
             }
 
+            let data = response.data;
+
             document.getElementById("questionFieldset").disabled = false;
-            document.getElementById("edit_question_id").value = data.question_id;
+            document.getElementById("edit_question_id").value = data.id; 
 
             document.querySelector(".quiz-card h5").innerText = "Edit Question";
             document.getElementById("addQuestionBtn").innerText = "Update Question";
@@ -585,37 +614,38 @@ document.addEventListener("click", function (e) {
             document.getElementById("quiz_type").dispatchEvent(new Event("change"));
 
             if (data.quiz_type === "multiple_choice") {
-
-                resetChoices();
                 let container = document.getElementById("choices_container");
                 container.innerHTML = "";
 
                 data.choices.forEach((choice, i) => {
-                    let row = document.createElement("div");
-                    row.className = "d-flex align-items-center mt-2 mc-choice-row";
-                    row.innerHTML = `
-                        <input type="radio" name="mc_correct_choice" value="${i}" class="form-check-input me-2" ${data.correct_index == i ? "checked" : ""}>
-                        <input type="text" class="form-control" name="choices[]" value="${choice}">
+                    container.innerHTML += `
+                        <div class="d-flex align-items-center mt-2 mc-choice-row">
+                            <input type="radio" name="mc_correct_choice" value="${i}" class="form-check-input me-2"
+                                ${data.correct_index == i ? "checked" : ""}>
+                            <input type="text" class="form-control" name="choices[]" value="${choice}">
+                        </div>
                     `;
-                    container.appendChild(row);
                 });
 
             } else if (data.quiz_type === "true_false") {
-                document.querySelector(`input[name='tf_answer'][value='${data.correct_answer}']`).checked = true;
+
+                document.querySelector(
+                    `input[name='tf_answer'][value='${data.correct_answer}']`
+                ).checked = true;
 
             } else if (data.quiz_type === "identification") {
+
                 document.querySelector("input[name='identification_answer']").value = data.correct_answer;
 
             } else if (data.quiz_type === "enumeration") {
+
                 let container = document.getElementById("enum_container");
                 container.innerHTML = "";
+
                 data.answers.forEach(a => {
-                    let el = document.createElement("input");
-                    el.type = "text";
-                    el.className = "form-control mt-2";
-                    el.name = "enumeration_answers[]";
-                    el.value = a;
-                    container.appendChild(el);
+                    container.innerHTML += `
+                        <input type="text" class="form-control mt-2" name="enumeration_answers[]" value="${a}">
+                    `;
                 });
             }
         });
@@ -624,52 +654,47 @@ document.addEventListener("click", function (e) {
 
 
 
+
 document.getElementById("cancelEditBtn").addEventListener("click", function () {
 
-
     document.getElementById("questionFieldset").disabled = true;
-
 
     document.querySelector(".quiz-card h5").innerText = "Add Question to Group";
     document.getElementById("addQuestionBtn").innerText = "Add Question to Group";
 
-   
     this.style.display = "none";
-
 
     document.getElementById("edit_question_id").value = "";
 
-
     document.getElementById("addQuestionForm").reset();
-
 
     resetDefaultChoices();
 
- 
     document.getElementById("multiple_choice_section").style.display = "block";
     document.getElementById("true_false_section").style.display = "none";
     document.getElementById("identification_section").style.display = "none";
     document.getElementById("enumeration_section").style.display = "none";
-
 });
 
+document.addEventListener("DOMContentLoaded", () => {
+    const saveBtn = document.getElementById("finalSaveGroupBtn");
 
-function resetDefaultChoices() {
-    let container = document.getElementById("choices_container");
-    container.innerHTML = "";
+    saveBtn.addEventListener("click", function () {
+   
+        if (this.disabled) return;
 
-    for (let i = 0; i < 4; i++) {
-        let row = document.createElement("div");
-        row.className = "d-flex align-items-center mt-2 mc-choice-row";
+     
+        const hiddenSubmit = document.querySelector('button[type="submit"][hidden], input[type="submit"][hidden]');
+        if (hiddenSubmit) {
+            hiddenSubmit.click();
+        }
 
-        row.innerHTML = `
-            <input type="radio" name="mc_correct_choice" value="${i}" class="form-check-input me-2">
-            <input type="text" class="form-control" name="choices[]" placeholder="Choice ${i + 1}">
-        `;
-
-        container.appendChild(row);
-    }
-}
+       
+        setTimeout(() => {
+            window.location.href = "<?= base_url('index.php/admin_Main/quiz_list'); ?>";
+        }, 400);
+    });
+});
 
 
 

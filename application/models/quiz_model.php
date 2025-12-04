@@ -4,31 +4,36 @@ class Quiz_model extends CI_Model {
 
     public function createQuizGroup($data)
 {
-    // Prevent duplicated quiz group titles
+    
     $this->db->where('group_title', $data['group_title']);
     $existing = $this->db->get('quiz_groups')->row();
 
     if ($existing) {
         return [
             'status' => 'duplicate',
-            'group_id' => $existing->id
+            'group_id' => $existing->group_id 
         ];
     }
 
+    
     $insertData = [
         'group_title'       => $data['group_title'],
         'description'       => $data['description'] ?? null,
-        'date_created'      => date("Y-m-d H:i:s"),
-        'duration_minutes'  => $data['duration_minutes'] ?? 0
+        'question_amount'   => $data['question_amount'] ?? 0,        
+        'duration_minutes'  => isset($data['duration_minutes']) 
+                                ? (int)$data['duration_minutes'] 
+                                : 0,                                 
+        'date_created'      => date("Y-m-d H:i:s")
     ];
 
     $this->db->insert('quiz_groups', $insertData);
-    
+
     return [
         'status' => 'success',
         'group_id' => $this->db->insert_id()
     ];
 }
+
 
 
 
@@ -144,7 +149,7 @@ class Quiz_model extends CI_Model {
     public function get_questions_by_group($group_id)
     {
         return $this->db
-            ->select('quiz_questions.id, quiz_questions.question, quiz_questions.question_type')
+            ->select('quiz_questions.id, quiz_questions.question, quiz_questions.question_type, quiz_questions.answer')
             ->from('quiz_group_questions')
             ->join('quiz_questions', 'quiz_questions.id = quiz_group_questions.question_id')
             ->where('quiz_group_questions.group_id', $group_id)
@@ -158,7 +163,7 @@ class Quiz_model extends CI_Model {
     {
     return $this->db->where('id', $id)
                     ->get('quiz_questions')
-                    ->row();
+                    ->row_array();
     }
 
 
@@ -194,20 +199,48 @@ class Quiz_model extends CI_Model {
 
     
     public function update_quiz_group($group_id, $data)
-    {
-        return $this->db
-            ->where('group_id', $group_id)
-            ->update('quiz_groups', $data);
+{
+    
+    $allowed_fields = [
+        'group_title',
+        'description',
+        'question_amount',
+        'duration_minutes'
+    ];
+
+    
+    $update_data = array_intersect_key($data, array_flip($allowed_fields));
+
+    if (empty($update_data)) {
+        return false; 
     }
+
+    return $this->db
+        ->where('group_id', $group_id)
+        ->update('quiz_groups', $update_data);
+}
+
 
 
     
-    public function update_quiz_question($question_id, $data)
-    {
-        return $this->db
-            ->where('id', $question_id)
-            ->update('quiz_questions', $data);
+    public function update_quiz_question($id, $data)
+{
+    // Only allow updates to valid columns
+    $allowed_columns = ['question_type', 'question', 'choices', 'answer'];
+
+    // Filter $data to only allowed columns
+    $update_data = array_intersect_key($data, array_flip($allowed_columns));
+
+    if (empty($update_data)) {
+        return false; // Nothing to update
     }
+
+    // Perform update
+    return $this->db
+        ->where('id', $id)
+        ->update('quiz_questions', $update_data);
+}
+
 
 
 
@@ -221,12 +254,33 @@ class Quiz_model extends CI_Model {
 
     
     public function deleteGroup($group_id)
-    {
+{
+   
+    $question_ids = $this->db
+        ->select('question_id')
+        ->where('group_id', $group_id)
+        ->get('quiz_group_questions')
+        ->result_array();
+
+    $question_ids = array_column($question_ids, 'question_id');
+
+    if (!empty($question_ids)) {
+        
+        $this->db->where_in('id', $question_ids)
+                 ->delete('quiz_questions');
+
+      
         $this->db->where('group_id', $group_id)
-                ->delete('quiz_groups');
+                 ->delete('quiz_group_questions');
     }
 
-
     
+    $this->db->where('group_id', $group_id)
+             ->delete('quiz_groups');
+}
+
+
+
+
 
 }

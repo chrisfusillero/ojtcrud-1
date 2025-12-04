@@ -36,9 +36,9 @@
 <style>
 
 html, body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
+  overflow-x: hidden; 
+  word-wrap: break-word; 
+  hyphens: auto;
 }
 
 body {
@@ -68,17 +68,30 @@ body {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
+
 .table {
   width: 100%;
   margin: 20px auto;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  table-layout: fixed; 
 }
-.table td, .table th {
+
+.table th, .table td {
   word-wrap: break-word;
-  white-space: normal;
+  overflow-wrap: break-word;
+  white-space: normal; 
   padding: 12px;
   vertical-align: middle;
 }
+
+
+.table td.answer-col {
+  max-width: 250px; 
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
 
 .hero-section {
   position: relative;
@@ -96,87 +109,19 @@ body {
   margin-top: -56px;
 }
 
-.navbar-toggler:hover {
-  transform: scale(1.1); 
-  transition: transform 0.2s ease-in-out; 
-}
-
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.1);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
-.main-content {
-  flex: 1; 
-}
-
-.navbar-toggler:hover {
-  animation: pulse 1s infinite;
-}
-
-.col-md-4 {
-  margin-bottom: 30px; 
-}
 
 .footer {
- 
   background-color: #f8f9fa;
   padding: 20px;
   text-align: center;
   width: 100%;
-
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 
-.container-fluid.my-5 {
-  flex: 1; 
-}
-
-
-
-.intro-card {
-  text-align: center;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  background-color: white;
-  width: 80%; 
-  max-width: 600px; 
-}
-
-.intro-card h2 {
-  font-size: 2.5em;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 10px;
-}
-
-.intro-card p {
-  font-size: 1.1em;
-  color: #666;
-  margin-bottom: 20px;
-}
-
-.intro-card .btn-primary {
-  padding: 12px 24px;
-  font-size: 1.2em;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.intro-card .btn-primary:hover {
-  background-color: #0056b3;
+.main-content {
+  flex: 1;
 }
 
 
@@ -188,33 +133,41 @@ body {
 
   .hero-section h1 {
     font-size: 2rem;
+    word-wrap: break-word;
   }
 
   .hero-section p {
     font-size: 1rem;
+    word-wrap: break-word;
   }
 }
 
 @media (max-width: 768px) {
   body {
     font-size: 14px;
+    overflow-x: hidden;
   }
 
   .navbar-brand {
     font-size: 1.2rem;
+    word-wrap: break-word;
   }
 
   .navbar-nav .nav-link {
     font-size: 0.9rem;
+    word-wrap: break-word;
   }
 
   .profile-img {
     width: 120px;
     height: 120px;
+    object-fit: cover;
   }
 
-  .portfolio-section {
+  .portfolio-section, .quiz-box {
     padding: 15px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
   }
 }
 
@@ -236,29 +189,29 @@ body {
     cursor: pointer;
     border-radius: 12px;
     overflow: hidden;
-  }
-
-  .project-tile:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    word-wrap: break-word;
   }
 
   .project-tile img {
     height: 160px;
     object-fit: cover;
-  }
-
-  .quiz-box {
-    background: #fff;
-    border: 1px solid #e3e3e3;
-  }
-
-  @media (max-width: 768px) {
-    .quiz-box {
-      padding: 20px;
-    }
+    max-width: 100%;
   }
 }
+
+
+.container, .container-fluid {
+    max-width: 100%;
+    overflow-x: hidden; 
+}
+
+.card, .alert, .quiz-box {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    width: 100%;
+}
+
+
 </style>
 
 
@@ -270,7 +223,7 @@ body {
 <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top">
   <div class="container">
 
-    <a class="navbar-brand fw-bold text-primary" href="<?= base_url('index.php/admin_Main'); ?>">
+    <a class="navbar-brand fw-bold" style="color: #616161ff;" href="<?= base_url('index.php/admin_Main'); ?>">
       DigiCrud101
     </a>
 
@@ -326,7 +279,6 @@ body {
     <h2 class="mb-4"><?= htmlentities(is_object($group) ? $group->group_title : $group['group_title'] ?? 'Untitled Group') ?></h2>
     <p><?= htmlentities(is_object($group) ? $group->description : $group['description'] ?? '') ?></p>
 
-    <a href="<?= base_url('index.php/admin_Main/edit_quiz/' . $group_id) ?>" class="btn btn-primary mb-3">Edit Group</a>
     <a href="<?= base_url('index.php/admin_Main/quiz_list') ?>" class="btn btn-secondary mb-3 ms-2">Back to Quiz List</a>
 
     <?php if (!empty($questions)): ?>
@@ -353,8 +305,9 @@ body {
                                       : ($q['answer'] ?? '')
                               ) ?>
                           </td>
+
                           <td>
-                              <a href="<?= base_url('index.php/admin_Main/edit_quiz_question/' . (is_object($q) ? ($q->id ?? 0) : ($q['id'] ?? 0))) ?>" class="btn btn-sm btn-warning">Edit</a>
+                              <a href="<?= base_url('index.php/admin_Main/edit_quiz_questions/' . (is_object($q) ? ($q->id ?? 0) : ($q['id'] ?? 0))) ?>" class="btn btn-sm btn-warning">Edit</a>
                               <a href="<?= base_url('index.php/admin_Main/delete_quiz_question/' . (is_object($q) ? ($q->id ?? 0) : ($q['id'] ?? 0)) . '/' . $group_id) ?>" class="btn btn-sm btn-danger" onclick="return confirm('Delete this question?')">Delete</a>
                           </td>
                       </tr>

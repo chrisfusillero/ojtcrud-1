@@ -331,7 +331,12 @@ public function save_quiz_group_final()
     $data = [
         'group_title'      => $this->input->post('group_title'),
         'description'      => $this->input->post('description'),
-        'duration_minutes' => (int)$this->input->post('duration_minutes')
+
+        // Ensure duration is captured correctly
+        'duration_minutes' => (int)$this->input->post('duration_minutes', true),
+
+        // Ensure question_count exists even if 0
+        'question_amount'  => (int)$this->input->post('question_amount', true) ?? 0
     ];
 
     $result = $this->Quiz_model->createQuizGroup($data);
@@ -361,6 +366,7 @@ public function save_quiz_group_final()
 
 
 
+
 public function get_questions($group_id)
     {
         $this->load->model('Quiz_model');
@@ -385,33 +391,33 @@ public function get_questions($group_id)
     }
 
 
-        public function get_question($question_id)
+        public function get_question($id)
 {
     header('Content-Type: application/json');
 
-    $question_id = (int)$question_id;
+    $id = (int)$id;
 
-    if ($question_id <= 0) {
+    if ($id <= 0) {
         echo json_encode(['status' => 'error', 'message' => 'Invalid question ID']);
         return;
     }
 
     $this->load->model('Quiz_model');
-    $q = $this->Quiz_model->get_single_question($question_id);
+    $q = $this->Quiz_model->get_single_question($id); 
 
     if (!$q) {
         echo json_encode(['status' => 'error', 'message' => 'Question not found']);
         return;
     }
 
-    
+
     $choices = !empty($q['choices']) ? json_decode($q['choices'], true) : [];
 
     
     $payload = [
-        'question_id' => $q['question_id'],
-        'question'    => $q['question'],
-        'quiz_type'   => $q['question_type'],
+        'id'         => $q['id'],               
+        'question'   => $q['question'],
+        'question_type'  => $q['question_type'],
     ];
 
     switch ($q['question_type']) {
@@ -434,8 +440,12 @@ public function get_questions($group_id)
             break;
     }
 
-    echo json_encode($payload);
+    echo json_encode([
+        'status' => 'success',
+        'data' => $payload
+    ]);
 }
+
 
 
 
@@ -614,6 +624,24 @@ public function edit_quiz($group_id = 0)
     $this->load->view('edit_quiz', $data);
 }
 
+public function edit_quiz_questions($id)
+{
+    $this->load->model('Quiz_model');
+
+    $question = $this->Quiz_model->get_single_question($id);
+
+    if (!$question) {
+        show_error("Invalid question ID");
+    }
+
+    $data['question'] = $question;
+
+    
+    $this->load->view('edit_quiz_questions', $data);
+
+}
+
+
 
 
 
@@ -638,20 +666,82 @@ public function update_quiz($id)
 
 public function update_question()
 {
+    $this->load->model('Quiz_model');
+
     $id = $this->input->post('question_id');
 
+   
+    $question_type = $this->input->post('question_type');
+
+    
+    switch ($question_type) {
+        case 'multiple_choice':
+            $choices = $this->input->post('choices');  
+            $answer  = $this->input->post('mc_correct_choice');
+            $choices = is_array($choices) ? json_encode($choices) : $choices;
+            break;
+
+        case 'true_false':
+            $choices = null;
+            $answer  = $this->input->post('tf_answer');
+            break;
+
+        case 'identification':
+            $choices = null;
+            $answer  = $this->input->post('identification_answer');
+            break;
+
+        case 'enumeration':
+            $choices = null;
+            $answer  = json_encode($this->input->post('enumeration_answers'));
+            break;
+
+        default:
+            $choices = null;
+            $answer  = null;
+    }
+
     $data = [
-        'question_type' => $this->input->post('quiz_type'),
+        'question_type' => $question_type,
         'question'      => $this->input->post('question'),
-        'choices'       => json_encode($this->input->post('choices')),
-        'answer'        => $this->input->post('mc_correct_choice') ??
-                           $this->input->post('tf_answer') ??
-                           $this->input->post('identification_answer') ??
-                           json_encode($this->input->post('enumeration_answers'))
+        'choices'       => $choices,
+        'answer'        => $answer
     ];
 
-    $this->db->where('question_id', $id)->update('quiz_questions', $data);
+
+    $this->Quiz_model->update_quiz_question($id, $data);
+
+    
+    redirect('admin_Main/edit_quiz_questions/' . $id . '?updated=1');
 }
+
+public function update_quiz_group($group_id)
+{
+    $this->load->model('Quiz_model');
+
+    
+    $group_id = (int)$group_id;
+    if ($group_id <= 0) {
+        show_error("Invalid quiz group ID.");
+        return;
+    }
+
+ 
+    $data = [
+        'group_title'       => $this->input->post('group_title'),
+        'description'       => $this->input->post('description'),
+        'duration_minutes'  => (int)$this->input->post('duration_minutes'),
+        'question_amount'   => (int)$this->input->post('question_amount')
+    ];
+
+   
+    $this->Quiz_model->update_quiz_group($group_id, $data);
+
+   
+    redirect('admin_Main/quiz_list');
+}
+
+
 
 
 public function delete_quiz($group_id)
